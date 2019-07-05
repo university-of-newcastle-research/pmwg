@@ -8,12 +8,12 @@
 % data.rt: the response time
 % data.response: response = 1 for incorrect and response = 2 for correct.
 
-load('LBA_realdata.mat'); %load the dataset, see an example in the 'LBA_realdata.mat' 
+load('LBA_firstthree.mat'); %load the dataset, see an example in the 'LBA_realdata.mat' 
 num_subjects=length(data.rt); %number of subjects in the experiments
 for j=1:num_subjects
     num_trials(j,1)=length(data.rt{j,1}); %computing the number of trials per subject
 end
-num_particles=1000; %number of particles in the conditional Monte Carlo algorithm
+num_particles=100; %number of particles in the conditional Monte Carlo algorithm
 %parpool(28) %number of processors available to be used.
 
 %initial values of the hyperparameters for lower level parameters
@@ -149,7 +149,7 @@ while i<=s
     
     %save the output to your directory
      if i==500 | i==1000 | i==2000 | i==3000 | i==4000 | i==5000 | i==6000 | i==7000 | i==8000 | i==9000 | i==10000 | i==20000 | i==30000 | i==40000 | i==50000 | i==60000 | i==70000 | i==80000 | i==90000 | i==100000
-        save('/srv/scratch/z3512791/LBA_Forstmann.mat','theta_mu_store','theta_sig2_store1','theta_sig2_store2','theta_sig2_store3','theta_sig2_store4',...
+        save('LBA_firstthree_scratch.mat','theta_mu_store','theta_sig2_store1','theta_sig2_store2','theta_sig2_store3','theta_sig2_store4',...
              'theta_sig2_store5','theta_sig2_store6','theta_sig2_store7','theta_latent_b1_store','theta_latent_b2_store','theta_latent_b3_store',...
              'theta_latent_A_store','theta_latent_v1_store','theta_latent_v2_store','theta_latent_tau_store'); 
      end
@@ -183,7 +183,7 @@ chol_theta_sig2_store6=chol_theta_sig2_store6(length_draws-9999:end,:);
 chol_theta_sig2_store7=chol_theta_sig2_store7(length_draws-9999:end,:);
 
 %save the output to your directory. Update directory path as required.
-save('/YourDirectoryHere/LBA_Forstmann.mat','theta_mu_store','theta_sig2_store1','theta_sig2_store2','theta_sig2_store3','theta_sig2_store4',...
+save('LBA_firstthree.mat','theta_mu_store','theta_sig2_store1','theta_sig2_store2','theta_sig2_store3','theta_sig2_store4',...
              'theta_sig2_store5','theta_sig2_store6','theta_sig2_store7','theta_latent_b1_store','theta_latent_b2_store','theta_latent_b3_store',...
              'theta_latent_A_store','theta_latent_v1_store','theta_latent_v2_store','theta_latent_tau_store',...
              'chol_theta_sig2_store1','chol_theta_sig2_store2','chol_theta_sig2_store3','chol_theta_sig2_store4',...
