@@ -6,14 +6,14 @@ library(MASS) ## For matrix inverse.
 library(MCMCpack) ## For the inverse Wishart random numbers.
 
 restart=FALSE
-cpus=10 ## =1 will give serial operation.
-n.particles=1000
-n.iterations=5000
+cpus=5## =1 will give serial operation.
+n.particles=100
+n.iterations=10000
 
 ## Load Forstmann et al.'s data.
-data=read.csv("data.csv",header=FALSE)
+data=read.csv("data/data.csv",header=FALSE)
 names(data)=c("subject","rt","correct","condition")
-S=19
+S=3
 
 parameter.names=c("b1","b2","b3","A","v1","v2","t0")
 n.parameters=length(parameter.names)
@@ -104,7 +104,7 @@ pm.corl=function(s,data,n.particles,mu,sig2,particles) {
 
 if (restart) {
     cat("\nRestarting from saved run.\n")
-    load("restart.RData")
+    load("data/output/restart.RData")
     ## Check a couple of things.
     if (dim(particles)[1]!=n.parameters) stop("Restart does not match size (params).")
     if (dim(particles)[2]!=S) stop("Restart does not match size (subjects).")
@@ -159,5 +159,5 @@ for (i in 1:n.iterations) {
 }
 if (cpus>1) sfStop()
 
-save(file="restart.RData",list=c("pts2.inv","particles","ptm","pts2"))
-save.image("PMwG.RData")
+save(file="data/output/restart.RData",list=c("pts2.inv","particles","ptm","pts2"))
+save.image("data/output/PMwG.RData")
