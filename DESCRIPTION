@@ -1,0 +1,22 @@
+Package: psamplers
+Title: Particle Based Samplers for MCMC
+Version: 0.0.1
+Maintainer: Gavin Cooper <gavin@gavincooper.net>
+Description: Implementations of particle based sampling methods for model parameter estimation. Initially primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available at https://arxiv.org/abs/1806.10089
+Author: Gavin Cooper
+Depends: R (>= 3.3.1)
+Imports:
+	rtdists,
+	mvtnorm,
+	MASS,
+	MCMCpack
+Suggests:
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/gjcooper/psamplers
+BugReports: https://github.com/gjcooper/psamplers/issues
