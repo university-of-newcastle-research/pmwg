@@ -106,6 +106,13 @@ if (restart) {
 }
 
 if (cpus>1) {
+	# You need the suggested package for this function    
+	if (!requireNamespace("snowfall", quietly = TRUE)) {
+		stop("Package \"snowfall\" needed for multiple cpu's to work. Please install it.",
+		  call. = FALSE)
+	  }
+	}
+
     library(snowfall)
     sfInit(parallel=TRUE,cpus=4)
     sfClusterSetupRNG()
