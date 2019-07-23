@@ -1,25 +1,3 @@
-# Function to calculate the log-likelihood of data, given random
-# effects, or coversely to produce synthetic data from given random
-# effects which match shape of "data".
-ll <- function(x, data, sample = FALSE) {
-  x <- exp(x)
-  if (any(data$rt < x["t0"])) {
-    return(-Inf)
-  }
-  # b.ind=paste0("b",data$condition)
-  # bs=x["A"]+x[b.ind]
-  bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition] # This is faster than "paste".
-  if (sample) {
-    out <- rLBA(n = nrow(data), A = x["A"], b = bs, t0 = x["t0"], mean_v = x[c("v1", "v2")], sd_v = c(1, 1), distribution = "norm", silent = TRUE)
-  } else {
-    out <- dLBA(rt = data$rt, response = data$correct, A = x["A"], b = bs, t0 = x["t0"], mean_v = x[c("v1", "v2")], sd_v = c(1, 1), distribution = "norm", silent = TRUE)
-    bad <- (out < 1e-10) | (!is.finite(out))
-    out[bad] <- 1e-10
-    out <- sum(log(out))
-  }
-  out
-}
-
 # Paralellisable particle sampling function (cond/orig/real/log).
 pm.corl <- function(s, data, n.particles, mu, sig2, particles) {
   # This uses the simplest, and slowest, proposals: mixture of the
