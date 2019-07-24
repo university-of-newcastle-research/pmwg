@@ -6,3 +6,6 @@
 ^\.travis\.yml$
 ^packrat/
 ^\.Rprofile$
+^\.lintr$
+^packrat$
+^\.git$

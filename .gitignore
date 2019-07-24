@@ -26,3 +26,6 @@ original_rcode/
 
 #Ignore output data
 data/output/
+
+#Ignore RCheck directory
+..Rcheck/
