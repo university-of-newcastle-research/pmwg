@@ -24,7 +24,7 @@
 new_sample <- function(s, data, num_proposals,
                        mu, sig2, particles, mix_ratio = 0.5) {
   # Create proposals for new particles
-  proposals <- psamplers::gen_proposals(
+  proposals <- gen_proposals(
     num_proposals,
     mu,
     sig2,
@@ -37,7 +37,7 @@ new_sample <- function(s, data, num_proposals,
   lw <- apply(
     proposals,
     1,
-    psamplers::lba_loglike,
+    lba_loglike,
     data = data[data$subject == s, ]
   )
   # Density of random effects proposal given population-level distribution.
