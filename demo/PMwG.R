@@ -82,7 +82,10 @@ prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 # as for the main resampling down below.
 particles <- array(dim = c(length(ptm), S))
 num_particles <- pmwg_args$adaptation_particles
+cat('Sampling Initial values for random effects\n')
+pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
+  setTxtProgressBar(pb, s)
   proposals <- rmvnorm(num_particles, ptm, pts2)
   lw <- apply(proposals, 1, lba_loglike, data = data[data$subject == s, ])
   weight <- exp(lw - max(lw))
@@ -90,6 +93,7 @@ for (s in 1:S) {
     sample(x = num_particles, size = 1, prob = weight),
   ]
 }
+close(pb)
 
 # Sample the mixture variables' initial values.
 a_half <- 1 / rgamma(n = num_parameters, shape = 0.5, scale = 1)
