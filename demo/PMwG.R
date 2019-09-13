@@ -14,10 +14,10 @@ runner_args <- list(
 
 pmwg_args <- list(
   "adaptation_particles" = 100,
-  "burnin_iterations" = 500,
+  "burnin_iter" = 500,
   "sampling_particles" = 100,
-  "sampling_iterations" = 1000,
-  "max_iterations" = 10000,
+  "sampling_iter" = 1000,
+  "max_iter" = 10000,
   "thin" = 1
 )
 # pmwg_args <- list(
@@ -82,7 +82,7 @@ prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 # as for the main resampling down below.
 particles <- array(dim = c(length(ptm), S))
 num_particles <- pmwg_args$adaptation_particles
-cat('Sampling Initial values for random effects\n')
+cat("Sampling Initial values for random effects")
 pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
   setTxtProgressBar(pb, s)
@@ -125,47 +125,6 @@ if (runner_args$cpus > 1) {
   ))
 }
 
-# create progress bar
-pu <- runner_args$progress_update
-pb <- txtProgressBar(min = 0, max = pmwg_args$sampling_iterations/pu, style = 3)
-
-for (i in 1:pmwg_args$sampling_iterations) {
-  if (i %% pu == 0){
-    setTxtProgressBar(pb, i %/% pu)
-  }
-  # Sample population-level parameters.
-  var_mu <- ginv(S * pts2_inv + prior_mu_sigma2_inv)
-  mean_mu <- as.vector(var_mu %*% (pts2_inv %*% apply(particles, 1, sum)))
-  chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
-  ptm <- rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ] # New sample for mu.
-  names(ptm) <- parameters
-
-  theta_temp <- particles - ptm
-  # cov.temp=array(0,dim=c(num_parameters,num_parameters))
-  # for (j in 1:S) cov.temp=cov.temp+(theta.temp[,j])%*%t(theta.temp[,j])
-  cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * v_half * diag(1 / a_half) + cov_temp
-  pts2 <- riwish(k_half, B_half) # New sample for sigma.
-  pts2_inv <- ginv(pts2)
-
-  # Sample new mixing weights.
-  a_half <- 1 / rgamma(n = num_parameters, shape = v_shape, scale = 1 / (v_half + diag(pts2_inv) + A_half))
-
-  # Sample new particles for random effects.
-  if (runner_args$cpus > 1) {
-    tmp <- sfLapply(x = 1:S, fun = new_sample, data = data, num_proposals = num_particles, mu = ptm, sig2 = pts2, particles = particles)
-  } else {
-    tmp <- lapply(X = 1:S, FUN = new_sample, data = data, num_proposals = num_particles, mu = ptm, sig2 = pts2, particles = particles)
-  }
-  particles <- array(unlist(tmp), dim = dim(particles))
-
-  # Store results.
-  latent_theta_mu[, , i] <- particles
-  param_theta_sigma2[, , i] <- pts2
-  param_theta_mu[, i] <- ptm
-}
-close(pb)
-if (runner_args$cpus > 1) sfStop()
 
 save(file = runner_args$restart_file, list = c("pts2_inv", "particles", "ptm", "pts2"))
 save.image("data/output/PMwG.RData")
