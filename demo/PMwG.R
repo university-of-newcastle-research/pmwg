@@ -13,26 +13,22 @@ runner_args <- list(
 )
 
 pmwg_args <- list(
-  "adaptation_particles" = 100,
+  "adaptation_particles" = 1000,
+  "burnin_particles" = 1000,
   "burnin_iter" = 500,
   "sampling_particles" = 100,
   "sampling_iter" = 1000,
-  "max_iter" = 10000,
-  "thin" = 1
+  "max_iter" = 10000
 )
-# pmwg_args <- list(
-#   "adaptation_particles" = 1000,
-#   "burnin_iterations" = 500,
-#   "sampling_particles" = 100,
-#   "sampling_iterations" = 10000,
-#   "max_iterations" = 100000,
-#   "thin" = 1
-# )
 
 # Load Forstmann et al.'s data.
 data <- read.csv("data/data.csv", header = FALSE)
 names(data) <- c("subject", "rt", "correct", "condition")
 S <- length(unique(data$subject))
+sdata <- list(
+  "S" = S,
+  "data" = data
+)
 
 parameters <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 num_parameters <- length(parameters)
@@ -47,13 +43,13 @@ A_half <- 1
 # Storage for the samples.
 latent_theta_mu <- array(
   NA,
-  dim = c(num_parameters, S, pmwg_args$sampling_iterations),
+  dim = c(num_parameters, S, pmwg_args$sampling_iter),
   dimnames = list(parameters, NULL, NULL)
 )
 param_theta_mu <- latent_theta_mu[, 1, ]
 param_theta_sigma2 <- array(
   NA,
-  dim = c(num_parameters, num_parameters, pmwg_args$sampling_iterations),
+  dim = c(num_parameters, num_parameters, pmwg_args$sampling_iter),
   dimnames = list(parameters, parameters, NULL)
 )
 
@@ -63,7 +59,8 @@ pts2 <- param_theta_sigma2[, , 1] # nolint
 
 # Start points for the population-level parameters only. Hard coded here, just
 # for convenience.
-ptm[1:num_parameters] <- start_points_mu # Weird subscripts maintains the naming.
+# Weird subscripts maintains the naming.
+ptm[1:num_parameters] <- start_points_mu
 pts2 <- start_points_sig2 # Who knows??
 # Because this is calculated near the end of the main loop, needs initialising for iter=1.
 pts2_inv <- ginv(pts2)
@@ -82,7 +79,7 @@ prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 # as for the main resampling down below.
 particles <- array(dim = c(length(ptm), S))
 num_particles <- pmwg_args$adaptation_particles
-cat("Sampling Initial values for random effects")
+cat("Sampling Initial values for random effects\n")
 pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
   setTxtProgressBar(pb, s)
@@ -125,6 +122,10 @@ if (runner_args$cpus > 1) {
   ))
 }
 
+pmwg(
 
-save(file = runner_args$restart_file, list = c("pts2_inv", "particles", "ptm", "pts2"))
+save(
+  file = runner_args$restart_file,
+  list = c("pts2_inv", "particles", "ptm", "pts2")
+)
 save.image("data/output/PMwG.RData")
