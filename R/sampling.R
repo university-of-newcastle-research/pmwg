@@ -51,6 +51,7 @@ new_sample <- function(s, data, num_proposals,
   proposals[sample(x = num_proposals, size = 1, prob = weights), ]
 }
 
+
 #' Inefficiently generate proposal particles.
 #'
 #' Generate particles for a particular subject from a mix of either the
@@ -85,6 +86,7 @@ init_proposals <- function(num_proposals, mu, sig2, particle, mix_ratio = 0.5) {
   colnames(proposals) <- names(mu) # stripped otherwise.
   proposals
 }
+
 
 #' Efficiently generate proposal particles.
 #'
