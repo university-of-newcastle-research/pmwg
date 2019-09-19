@@ -29,3 +29,6 @@ data/output/
 
 #Ignore RCheck directory
 ..Rcheck/
+
+#Ignore vim swap files
+*.swp
