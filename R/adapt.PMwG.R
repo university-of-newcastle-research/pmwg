@@ -10,8 +10,8 @@ restart=FALSE
 cpus=4 ## =1 will give serial operation.
 n.particles=200
 n.iterations=500
-burnin = 250
-proposal_parameters = NULL
+burnin = 250  # REILLY
+proposal_parameters = NULL  # REILLY
 
 ## Load Forstmann et al.'s data.
 data=read.csv("data.csv",header=FALSE)
@@ -25,9 +25,9 @@ n.parameters=length(parameter.names)
 latent.theta.mu=array(NA,dim=c(n.parameters,S,n.iterations),dimnames=list(parameter.names,NULL,NULL))
 param.theta.mu=latent.theta.mu[,1,]
 param.theta.sigma2=array(NA,dim=c(n.parameters,n.parameters,n.iterations),dimnames=list(parameter.names,parameter.names,NULL))
-proposal_means=array(dim = c(n.parameters,S))
-proposal_sigmas=array(dim = c(n.parameters,n.parameters,S))
-proposal_parameters=array(NA,dim=c(S,n.parameters,n.parameters,n.parameters),dimnames=list(NULL,parameter.names,parameter.names,parameter.names))
+proposal_means=array(dim = c(n.parameters,S))  # REILLY
+proposal_sigmas=array(dim = c(n.parameters,n.parameters,S))  # REILLY
+proposal_parameters=array(NA,dim=c(S,n.parameters,n.parameters,n.parameters),dimnames=list(NULL,parameter.names,parameter.names,parameter.names))  # REILLY
 ## Make single-iteration-sized versions, for easier reading of code below.
 ptm=param.theta.mu[,1]
 pts2=param.theta.sigma2[,,1]
@@ -100,7 +100,7 @@ a.half=1/rgamma(n=n.parameters,shape=0.5,scale=1)
 
 ## Paralellisable particle sampling function (cond/orig/real/log).
 pm.corl=function(s,data,n.particles,mu,sig2,particles) {
-  if (is.na(proposal_means[1,])==TRUE) {
+  if (is.na(proposal_means[1,])==TRUE) {  # REILLY
     ## This uses the simplest, and slowest, proposals: mixture of the
     ## the popultion distribution and gaussian around current random effect.
     wmix=0.5
@@ -108,9 +108,9 @@ pm.corl=function(s,data,n.particles,mu,sig2,particles) {
     if (n1<2) n1=2
     if (n1>(n.particles-2)) n1=n.particles-2 ## These just avoid degenerate arrays.
     proposals1=rmvnorm(n1,mu,sig2)
-    proposals2=rmvnorm(n.particles-n1,particles[,s],sig2/2)
+    proposals2=rmvnorm(n.particles-n1,particles[,s],sig2/2)  # REILLY
     proposals=rbind(proposals1,proposals2)
-  }
+  }  # REILLY START
   else{
     wmix=c(0.01,0.29,0.7)
     n1=rbinom(n=2,size=n.particles,prob=wmix)
@@ -123,16 +123,16 @@ pm.corl=function(s,data,n.particles,mu,sig2,particles) {
     proposals2=rmvnorm(n2,particles[,s],sig2/2)
     proposals3=rmvnorm(n.particles-(n1+n2),mean=proposal_means[,s],sigma=proposal_sigmas[,,s])
     proposals=rbind(proposals1,proposals2,proposals3)
-  }
+  }  # REILLY END
     colnames(proposals)=names(mu) # stripped otherwise.
     proposals[1,]=particles[,s] # Put the current particle in slot 1.
     lw=apply(proposals,1,ll,data=data[data$subject==s,]) # Density of data given random effects proposal.
     lp=dmvnorm(x=proposals,mean=mu,sigma=sig2,log=TRUE) # Density of random effects proposal given population-level distribution.
-    lm=log(wmix*exp(lp)+(1-wmix)*dmvnorm(x=proposals,mean=particles[,s],sigma=sig2/2)) # Density of proposals given proposal distribution.
+    lm=log(wmix*exp(lp)+(1-wmix)*dmvnorm(x=proposals,mean=particles[,s],sigma=sig2/2)) # Density of proposals given proposal distribution.  # REILLY
     l=lw+lp-lm # log of importance weights.
     weight=exp(l-max(l))
     proposals[sample(x=n.particles,size=1,prob=weight),]
-  }
+  }  # REILLY
 
 if (restart) {
     cat("\nRestarting from saved run.\n")
@@ -142,6 +142,7 @@ if (restart) {
     if (dim(particles)[2]!=S) stop("Restart does not match size (subjects).")
 }
 
+  # REILLY START
 unwind=function(x,reverse=FALSE) {
   ## Takes a variance matrix and unwinds to vector
   ## via Cholesky then log. Or puts it back if
@@ -162,7 +163,7 @@ unwind=function(x,reverse=FALSE) {
 }
 
 source("condMNV.R")
-
+  # REILLY END
 if (cpus>1) {
     library(snowfall)
     sfInit(parallel=TRUE,cpus=4)
@@ -177,7 +178,7 @@ if (cpus>1) {
 }
 
 for (i in 1:n.iterations) {
-  if (i > burnin){
+  if (i > burnin){  # REILLY START
     if (i%%20==1) {
       for (s in 1:S){
         pts2.unwound = apply(param.theta.sigma2[,,1:i-1],3,unwind)
@@ -189,7 +190,7 @@ for (i in 1:n.iterations) {
         proposal_sigmas[,,s] = condmvn$condVar
       }
     }
-  }
+  }  # REILLY END
     cat("\t",i)
     ## Sample population-level parameters.
     var_mu=ginv(S*pts2.inv+prior.mu.sigma2.inv)
@@ -203,7 +204,7 @@ for (i in 1:n.iterations) {
     ##for (j in 1:S) cov.temp=cov.temp+(theta.temp[,j])%*%t(theta.temp[,j])
     cov.temp=(theta.temp)%*%(t(theta.temp))
     B.half=2*v.half*diag(1/a.half)+cov.temp
-    pts2=riwish(k.half,B.half) ## New sample for sigma. 
+    pts2=riwish(k.half,B.half) ## New sample for sigma.
     pts2.inv=ginv(pts2)
 
     ## Sample new mixing weights.
@@ -240,6 +241,7 @@ save.image("PMwG.RData")
 
 #####Checking particle movement#####
 
+#  REILLY START
 apply(latent.theta.mu[1,,-1]==latent.theta.mu[1,,-250],1,sum)
 apply(latent.theta.mu[1,,-251]==latent.theta.mu[1,,-500],1,sum)
 
@@ -250,3 +252,4 @@ par(mfcol=c(5,4),mar=c(2,2,1,1))
 for (i in 1:s) {
   matplot(t(latent.theta.mu[,i,]),type="l") 
 }
+# REILLY END
