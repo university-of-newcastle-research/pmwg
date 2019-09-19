@@ -51,11 +51,49 @@ new_sample <- function(s, data, num_proposals,
   proposals[sample(x = num_proposals, size = 1, prob = weights), ]
 }
 
-#' Generate proposal particles.
+#' Inefficiently generate proposal particles.
 #'
 #' Generate particles for a particular subject from a mix of either the
 #' population level (hierarchical) distribution or from the particles
 #' (containing individual level distribution).
+#' This simple method is used both in burnin and when generating the more efficient
+#' proposal densities (adaptation phase)
+#'
+#' @param num_proposals A number representing the number of proposal particles to generate
+#' @param mu A vector of means for the multivariate normal
+#' @param sig2 A covariate matrix for the multivariate normal
+#' @param particle A particle (re proposals for latent variables)
+#' @param mix_ratio A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters
+#'
+#' @return The new proposals
+#' @examples
+#' init_proposals(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
+#' @keywords internal
+init_proposals <- function(num_proposals, mu, sig2, particle, mix_ratio = 0.5) {
+  num_from_population <- rbinom(n = 1, size = num_proposals, prob = mix_ratio)
+  if (num_from_population < 2) {
+    num_from_population <- 2
+  }
+  if (num_from_population > (num_proposals - 2)) {
+    num_from_population <- num_proposals - 2
+  }
+  num_from_subject <- num_proposals - num_from_population
+  # Generate proposal particles
+  population_proposals <- mvtnorm::rmvnorm(num_from_population, mu, sig2)
+  subject_proposals <- mvtnorm::rmvnorm(num_from_subject, particle, sig2)
+  proposals <- rbind(population_proposals, subject_proposals)
+  colnames(proposals) <- names(mu) # stripped otherwise.
+  proposals
+}
+
+#' Efficiently generate proposal particles.
+#'
+#' Generate particles for a particular subject from a mix of either the
+#' * population level (hierarchical) distribution
+#' * from the particles (containing individual level distribution).
+#' * Or from a more efficient proposal distribution based on uniqie accepted particles (conditional)
+#' This more efficient method is used in the sampling phase. The efficient proposals should be updated
+#' regularly (every 100 iterations or so
 #'
 #' @param num_proposals A number representing the number of proposal particles to generate
 #' @param mu A vector of means for the multivariate normal
@@ -67,7 +105,11 @@ new_sample <- function(s, data, num_proposals,
 #' @examples
 #' gen_proposals(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
 #' @keywords internal
-gen_proposals <- function(num_proposals, mu, sig2, particle, mix_ratio = 0.5) {
+efficient_proposals <- function(num_proposals,
+                                mu,
+                                sig2,
+                                particle,
+                                mix_ratio = 0.5) {
   num_from_population <- rbinom(n = 1, size = num_proposals, prob = mix_ratio)
   if (num_from_population < 2) {
     num_from_population <- 2
