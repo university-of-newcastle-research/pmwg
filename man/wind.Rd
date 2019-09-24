@@ -16,6 +16,6 @@ The wound vector as a matrix
 The reverse of the unwind function, takes a variance vector and windows back into matrix
 }
 \examples{
-wind(diag(rep(1, num_parameters)))
+psamplers:::wind(diag(rep(1, 7)))
 }
 \keyword{internal}

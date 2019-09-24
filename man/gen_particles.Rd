@@ -5,7 +5,7 @@
 \title{Generate proposal particles.}
 \usage{
 gen_particles(num_particles, mu, sig2, particle, ..., mix_ratio = c(0.5,
-  0.5, 0))
+  0.5, 0), proposal_means = NULL, proposal_sigmas = NULL)
 }
 \arguments{
 \item{num_particles}{The total number of particles to generate using a combination of the
@@ -31,6 +31,6 @@ The conditional on accepted individual level particles, a more efficient prposal
 This function is used in burnin, adaptation and sampling using various combinations of the arguments
 }
 \examples{
-gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
+psamplers:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
 }
 \keyword{internal}

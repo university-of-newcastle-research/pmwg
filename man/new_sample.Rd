@@ -4,7 +4,7 @@
 \alias{new_sample}
 \title{Generate a new particle}
 \usage{
-new_sample(s, data, num_proposals, mu, sig2, particles, mix_ratio = 0.5)
+new_sample(s, data, num_particles, mu, sig2, particles, mix_ratio = 0.5)
 }
 \arguments{
 \item{s}{A number - the subject ID, also selects particles}
@@ -14,8 +14,6 @@ response time (\code{rt}), trial condition (\code{condition}),
 accuracy (\code{correct}) and subject (\code{subject}) which
 contains the data against which the particles are assessed}
 
-\item{num_proposals}{A number representing the number of proposal particles to generate}
-
 \item{mu}{A vector of means for the multivariate normal}
 
 \item{sig2}{A covariate matrix for the multivariate normal}
@@ -23,6 +21,8 @@ contains the data against which the particles are assessed}
 \item{particles}{An array of particles (re proposals for latent variables)}
 
 \item{mix_ratio}{A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters}
+
+\item{num_proposals}{A number representing the number of proposal particles to generate}
 }
 \value{
 A single sample from the new proposals

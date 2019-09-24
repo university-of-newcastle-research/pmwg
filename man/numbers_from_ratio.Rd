@@ -22,6 +22,6 @@ Takes a mix ratio vector (3 x float) and a number of particles to generate and r
 a vector containing the number of each particle type to generate
 }
 \examples{
-wind(diag(rep(1, num_parameters)))
+psamplers:::numbers_from_ratio(c(0.1, 0.3, 0.6))
 }
 \keyword{internal}

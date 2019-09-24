@@ -22,7 +22,7 @@ particles to generate and return random draws from the multivariate normal if th
 particles is > 0, otherwise return NULL. At least one of mean or sigma must be provided.
 }
 \examples{
-particle_draws(100, rep(0.2, 7))
-particle_draws(0, rep(0.2, 7))
+psamplers:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
+psamplers:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
 }
 \keyword{internal}
