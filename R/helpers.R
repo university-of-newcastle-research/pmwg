@@ -56,7 +56,7 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
   if (length(mix_ratio) != 3) {
     stop("mix_ratio vector must have three elements which sum to 1")
   }
-  numbers <- rbinom(n = 2, size = num_particles, prob = mix_ratio)
+  numbers <- stats::rbinom(n = 2, size = num_particles, prob = mix_ratio)
   if (mix_ratio[3] == 0) {
     numbers[3] <- 0
     numbers[2] <- num_particles - numbers[1]

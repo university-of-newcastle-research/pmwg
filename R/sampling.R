@@ -21,7 +21,7 @@
 #' @examples
 #' # No example yet
 #' @export
-new_sample <- function(s, data, num_proposals,
+new_sample <- function(s, data, num_particles,
                        mu, sig2, particles, mix_ratio = 0.5) {
   # Create proposals for new particles
   proposals <- gen_particles(
@@ -43,13 +43,16 @@ new_sample <- function(s, data, num_proposals,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = particles[, s], sigma = sig2)
+  prop_density <- mvtnorm::dmvnorm(x = proposals,
+                                   mean = particles[, s],
+                                   sigma = sig2)
   lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
-  proposals[sample(x = num_proposals, size = 1, prob = weights), ]
+  proposals[sample(x = num_particles, size = 1, prob = weights), ]
 }
+
 
 #' Generate proposal particles.
 #'
@@ -72,7 +75,9 @@ gen_particles <- function(num_particles,
                           sig2,
                           particle,
                           ...,
-                          mix_ratio = c(0.5, 0.5, 0.0)) {
+                          mix_ratio = c(0.5, 0.5, 0.0),
+                          proposal_means = NULL,
+                          proposal_sigmas = NULL) {
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
   population_particles <- particle_draws(particle_numbers[1], mu, sig2)
