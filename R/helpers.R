@@ -6,7 +6,7 @@
 #'
 #' @return The unwound matrix as a vector
 #' @examples
-#' unwind(diag(rep(1, num_parameters)))
+#' psamplers:::unwind(diag(rep(1, 7)))
 #' @keywords internal
 unwind <- function(var_matrix, ...) {
   y <- t(chol(var_matrix))
@@ -22,7 +22,7 @@ unwind <- function(var_matrix, ...) {
 #'
 #' @return The wound vector as a matrix
 #' @examples
-#' wind(diag(rep(1, num_parameters)))
+#' psamplers:::wind(diag(rep(1, 7)))
 #' @keywords internal
 wind <- function(var_vector, ...) {
   n <- sqrt(2 * length(var_vector) + 0.25) - 0.5 ## Dim of matrix.
@@ -47,7 +47,7 @@ wind <- function(var_vector, ...) {
 #'
 #' @return The wound vector as a matrix
 #' @examples
-#' wind(diag(rep(1, num_parameters)))
+#' psamplers:::numbers_from_ratio(c(0.1, 0.3, 0.6))
 #' @keywords internal
 numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
   if (!isTRUE(all.equal(sum(mix_ratio), 1))) {
@@ -79,8 +79,8 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
 #'
 #' @return If n > 0 returns n draws from the multivariate normal with mean and sigma, otherwise returns NULL
 #' @examples
-#' particle_draws(100, rep(0.2, 7))
-#' particle_draws(0, rep(0.2, 7))
+#' psamplers:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
+#' psamplers:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
 #' @keywords internal
 particle_draws <- function(n, mu, covar) {
   if (n <= 0) {
