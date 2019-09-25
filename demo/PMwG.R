@@ -159,20 +159,22 @@ for (i in 1:pmwg_args$sampling_iterations) {
       x = 1:S,
       fun = new_sample,
       data = data,
-      num_proposals = num_particles,
+      num_particles = num_particles,
       mu = ptm,
       sig2 = pts2,
-      particles = particles
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
     )
   } else {
     tmp <- lapply(
       X = 1:S,
       FUN = new_sample,
       data = data,
-      num_proposals = num_particles,
+      num_particles = num_particles,
       mu = ptm,
       sig2 = pts2,
-      particles = particles
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
     )
   }
   particles <- array(unlist(tmp), dim = dim(particles))
