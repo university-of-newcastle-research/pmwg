@@ -32,3 +32,6 @@ data/output/
 
 #Ignore vim swap files
 *.swp
+
+#Ignore TEMP dir (for comparing to Reilly/Scott code
+TEMP/
