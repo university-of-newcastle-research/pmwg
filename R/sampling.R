@@ -11,7 +11,7 @@
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
-#' @param num_proposals A number representing the number of proposal particles to generate
+#' @param num_particles A number representing the number of proposal particles to generate
 #' @param mu A vector of means for the multivariate normal
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particles An array of particles (re proposals for latent variables)

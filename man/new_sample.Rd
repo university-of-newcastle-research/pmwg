@@ -14,6 +14,8 @@ response time (\code{rt}), trial condition (\code{condition}),
 accuracy (\code{correct}) and subject (\code{subject}) which
 contains the data against which the particles are assessed}
 
+\item{num_particles}{A number representing the number of proposal particles to generate}
+
 \item{mu}{A vector of means for the multivariate normal}
 
 \item{sig2}{A covariate matrix for the multivariate normal}
@@ -21,8 +23,6 @@ contains the data against which the particles are assessed}
 \item{particles}{An array of particles (re proposals for latent variables)}
 
 \item{mix_ratio}{A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters}
-
-\item{num_proposals}{A number representing the number of proposal particles to generate}
 }
 \value{
 A single sample from the new proposals

@@ -7,6 +7,8 @@
 #'        response time (rt), trial condition (condition)
 #'        and accuracy (correct) for which the likelihood
 #'        should be calculated.
+#' @param sample Switch (default FALSE) to instead generate a sample
+#'        that matches the shape of data.
 #' @return The log likelihood of \code{x} given \code{data}.
 #' @examples
 #' x <- c(.2, .2, .2, .4, .3, 1.3, -2)

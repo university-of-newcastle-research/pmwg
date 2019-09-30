@@ -15,6 +15,9 @@ lba_loglike(x, data, sample = FALSE)
 response time (rt), trial condition (condition)
 and accuracy (correct) for which the likelihood
 should be calculated.}
+
+\item{sample}{Switch (default FALSE) to instead generate a sample
+that matches the shape of data.}
 }
 \value{
 The log likelihood of \code{x} given \code{data}.
