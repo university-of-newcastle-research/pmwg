@@ -43,12 +43,15 @@ new_sample <- function(s, data, num_particles,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals,
-                                   mean = particles[, s],
-                                   sigma = sig2)
+  prop_density <- mvtnorm::dmvnorm(
+    x = proposals,
+    mean = particles[, s],
+    sigma = sig2
+  )
   lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
   # log of importance weights.
   l <- lw + lp - lm
+  cat(sprintf("Matrix: %8s Rows: %3d Columns: %3d", "lw", dim(lw), "lp", dim(lp), "lm", dim(lm), "l", dim(l)), "\n")
   weights <- exp(l - max(l))
   proposals[sample(x = num_particles, size = 1, prob = weights), ]
 }
