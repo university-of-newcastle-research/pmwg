@@ -24,7 +24,7 @@ cd $dest_dir
 echo "Installing psamplers"
 if [[ $loc -eq 1 ]]
 then
-	Rscript -e "devtools::install_local('$source_dir/..')"
+	Rscript -e "devtools::install_local('$test_scripts/..')"
 else
 	Rscript -e "devtools::install_github('gjcooper/samplers', auth_token='c71394bda6a42db165ee8b114dbfa1688ed5882f')"
 fi
