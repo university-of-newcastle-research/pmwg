@@ -33,6 +33,25 @@ new_sample <- function(s, data, num_particles,
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- particles[, s]
+  #      %computing the log density of the LBA given the particles of random
+  #    %effects
+  #
+  #    logw_first=sum(lw_reshape);
+  #
+  #    %computing the log of p(\alpha|\theta) and density of the proposal for
+  #    %burn in and initial sampling stage (count<=switch_num) and sampling
+  #    %stage (count>switch_num)
+  #
+  #    logw_second=(logmvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
+  #    if  sum(count>switch_num)==num_subjects
+  #        logw_third=log(w_mix.*mvnpdf(rnorm_theta,cond_mean',chol_cond_var*chol_cond_var')+...
+  #            (1-w_mix).*mvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
+  #    else
+  #        logw_third=log(w_mix.*mvnpdf(rnorm_theta,reference_par,(epsilon^2).*(chol_covmat*chol_covmat'))+...
+  #            (1-w_mix).*mvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
+  #    end
+  #    logw=logw_first'+logw_second'-logw_third;
+
   # Density of data given random effects proposal.
   lw <- apply(
     proposals,
@@ -51,7 +70,10 @@ new_sample <- function(s, data, num_particles,
   lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
   # log of importance weights.
   l <- lw + lp - lm
-  cat(sprintf("Matrix: %8s Rows: %3d Columns: %3d", "lw", dim(lw), "lp", dim(lp), "lm", dim(lm), "l", dim(l)), "\n")
+  if (s == 1){
+    print('test')
+    cat(sprintf("Matrix: %8s Rows: %3d Columns: %3d", "lw", dim(lw), "lp", dim(lp), "lm", dim(lm), "l", dim(l)), "\n")
+  }
   weights <- exp(l - max(l))
   proposals[sample(x = num_particles, size = 1, prob = weights), ]
 }
