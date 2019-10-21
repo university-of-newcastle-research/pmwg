@@ -13,12 +13,12 @@ runner_args <- list(
 )
 
 pmwg_args <- list(
-  "adaptation_particles" = 100,
-  "burnin_iterations" = 500,
-  "sampling_particles" = 100,
-  "sampling_iterations" = 1000,
-  "max_iterations" = 10000,
-  "thin" = 1
+  "burn_iter" = 500,
+  "burn_particles" = 1000,
+  "adapt_particles" = 100,
+  "adapt_maxiter" = 5000,
+  "sample_particles" = 100,
+  "sample_iter" = 1000,
 )
 
 # Load Forstmann et al.'s data.
