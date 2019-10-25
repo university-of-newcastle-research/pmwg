@@ -11,18 +11,19 @@
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
-#' @param num_particles A number representing the number of proposal particles to generate
 #' @param mu A vector of means for the multivariate normal
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particles An array of particles (re proposals for latent variables)
-#' @param mix_ratio A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters
+#' @inheritParams numbers_from_ratio
 #'
 #' @return A single sample from the new proposals
 #' @examples
 #' # No example yet
 #' @export
 new_sample <- function(s, data, num_particles,
-                       mu, sig2, particles, mix_ratio = 0.5) {
+                       mu, sig2, particles,
+                       efficient_mu = NULL, efficient_sig2 = NULL,
+                       mix_ratio = c(0.5, 0.5, 0.0)) {
   # Create proposals for new particles
   proposals <- gen_particles(
     num_particles,
@@ -67,13 +68,17 @@ new_sample <- function(s, data, num_particles,
     mean = particles[, s],
     sigma = sig2
   )
-  lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
+  # Density of efficient proposals
+  eff_density <- mvtnorm::dmvnorm(x = proposals,
+                                  mean = efficient_mu,
+                                  sigma = efficient_sig2
+                                 )
+
+  lm <- log(mix_ratio[1] * exp(lp) +
+        (mix_ratio[2] * prop_density) +
+        (mix_ratio[3] * le))
   # log of importance weights.
   l <- lw + lp - lm
-  if (s == 1){
-    print('test')
-    cat(sprintf("Matrix: %8s Rows: %3d Columns: %3d", "lw", dim(lw), "lp", dim(lp), "lm", dim(lm), "l", dim(l)), "\n")
-  }
   weights <- exp(l - max(l))
   proposals[sample(x = num_particles, size = 1, prob = weights), ]
 }
