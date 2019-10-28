@@ -24,6 +24,17 @@ new_sample <- function(s, data, num_particles,
                        mu, sig2, particles,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0)) {
+  if (mix_ratio[3] != 0) {
+    if (is.null(efficient_mu) || is.null(efficient_sig2)) {
+      stop(
+        paste0(
+          "Mu and sigma from efficient conditional ",
+          "proposals must be provided for mix_ratio[3] > 0"
+        )
+      )
+    }
+  }
+
   # Create proposals for new particles
   proposals <- gen_particles(
     num_particles,
@@ -34,24 +45,6 @@ new_sample <- function(s, data, num_particles,
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- particles[, s]
-  #      %computing the log density of the LBA given the particles of random
-  #    %effects
-  #
-  #    logw_first=sum(lw_reshape);
-  #
-  #    %computing the log of p(\alpha|\theta) and density of the proposal for
-  #    %burn in and initial sampling stage (count<=switch_num) and sampling
-  #    %stage (count>switch_num)
-  #
-  #    logw_second=(logmvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
-  #    if  sum(count>switch_num)==num_subjects
-  #        logw_third=log(w_mix.*mvnpdf(rnorm_theta,cond_mean',chol_cond_var*chol_cond_var')+...
-  #            (1-w_mix).*mvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
-  #    else
-  #        logw_third=log(w_mix.*mvnpdf(rnorm_theta,reference_par,(epsilon^2).*(chol_covmat*chol_covmat'))+...
-  #            (1-w_mix).*mvnpdf(rnorm_theta,param.theta_mu,chol_covmat*chol_covmat'));
-  #    end
-  #    logw=logw_first'+logw_second'-logw_third;
 
   # Density of data given random effects proposal.
   lw <- apply(
@@ -69,14 +62,20 @@ new_sample <- function(s, data, num_particles,
     sigma = sig2
   )
   # Density of efficient proposals
-  eff_density <- mvtnorm::dmvnorm(x = proposals,
-                                  mean = efficient_mu,
-                                  sigma = efficient_sig2
-                                 )
+  if (mix_ratio[3] != 0) {
+    eff_density <- mvtnorm::dmvnorm(
+      x = proposals,
+      mean = efficient_mu,
+      sigma = efficient_sig2
+    )
+  }
+  else {
+    eff_density <- 0
+  }
 
   lm <- log(mix_ratio[1] * exp(lp) +
-        (mix_ratio[2] * prop_density) +
-        (mix_ratio[3] * le))
+    (mix_ratio[2] * prop_density) +
+    (mix_ratio[3] * eff_density))
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
