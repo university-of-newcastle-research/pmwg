@@ -1,4 +1,3 @@
-library(rtdists)
 library(mvtnorm) ## for the multivariate normal.
 library(MASS) ## for matrix inverse.
 library(MCMCpack) ## for the inverse wishart random numbers.
