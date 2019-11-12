@@ -11,18 +11,22 @@
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
-#' @param num_particles A number representing the number of proposal particles to generate
 #' @param mu A vector of means for the multivariate normal
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particles An array of particles (re proposals for latent variables)
-#' @param mix_ratio A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters
+#' @inheritParams numbers_from_ratio
+#' @inheritParams check_efficient
 #'
 #' @return A single sample from the new proposals
 #' @examples
 #' # No example yet
 #' @export
 new_sample <- function(s, data, num_particles,
-                       mu, sig2, particles, mix_ratio = 0.5) {
+                       mu, sig2, particles,
+                       efficient_mu = NULL, efficient_sig2 = NULL,
+                       mix_ratio = c(0.5, 0.5, 0.0)) {
+  # Check for efficient proposalvalues if necessary
+  check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   # Create proposals for new particles
   proposals <- gen_particles(
     num_particles,
@@ -33,6 +37,7 @@ new_sample <- function(s, data, num_particles,
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- particles[, s]
+
   # Density of data given random effects proposal.
   lw <- apply(
     proposals,
@@ -48,10 +53,23 @@ new_sample <- function(s, data, num_particles,
     mean = particles[, s],
     sigma = sig2
   )
-  lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
+  # Density of efficient proposals
+  if (mix_ratio[3] != 0) {
+    eff_density <- mvtnorm::dmvnorm(
+      x = proposals,
+      mean = efficient_mu,
+      sigma = efficient_sig2
+    )
+  }
+  else {
+    eff_density <- 0
+  }
+
+  lm <- log(mix_ratio[1] * exp(lp) +
+    (mix_ratio[2] * prop_density) +
+    (mix_ratio[3] * eff_density))
   # log of importance weights.
   l <- lw + lp - lm
-  cat(sprintf("Matrix: %8s Rows: %3d Columns: %3d", "lw", dim(lw), "lp", dim(lp), "lm", dim(lm), "l", dim(l)), "\n")
   weights <- exp(l - max(l))
   proposals[sample(x = num_particles, size = 1, prob = weights), ]
 }

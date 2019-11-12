@@ -67,6 +67,36 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
 }
 
 
+#' Check for efficient proposals if necessary
+#'
+#' Takes a mix ratio vector (3 x float) and the efficient proposal mu and sigma
+#' If efficient proposals are to be used (mix_ratio[3] > 0) then test the
+#' efficient proposal values to see whether they are not null and appropriate.
+#'
+#' @param efficient_mu The mu value for the efficient proposals
+#' @param efficient_sig2 The sigma value for the efficient proposals
+#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
+#'   of particles to generate from the population level parameters, the individual random
+#'   effects and the conditional parameters repectively
+#'
+#' @return nothing, stops operation on incorrect combiation of parameters.
+#' @examples
+#' psamplers:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
+#' @keywords internal
+check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
+  if (mix_ratio[3] != 0) {
+    if (is.null(efficient_mu) || is.null(efficient_sig2)) {
+      stop(
+        paste0(
+          "Mu and sigma from efficient conditional ",
+          "proposals must be provided for mix_ratio[3] > 0"
+        )
+      )
+    }
+  }
+}
+
+
 #' Generate a cloud of particles from a multivariate normal distribution
 #'
 #' Takes the mean and variance for a multivariate normal distribution, as well as the number of

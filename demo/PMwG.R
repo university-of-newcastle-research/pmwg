@@ -1,4 +1,3 @@
-library(rtdists)
 library(mvtnorm) ## for the multivariate normal.
 library(MASS) ## for matrix inverse.
 library(MCMCpack) ## for the inverse wishart random numbers.
@@ -13,12 +12,12 @@ runner_args <- list(
 )
 
 pmwg_args <- list(
-  "adaptation_particles" = 100,
-  "burnin_iterations" = 500,
-  "sampling_particles" = 100,
-  "sampling_iterations" = 1000,
-  "max_iterations" = 10000,
-  "thin" = 1
+  "burn_particles" = 1000,
+  "burn_iter" = 500,
+  "adapt_particles" = 100,
+  "adapt_maxiter" = 5000,
+  "sample_particles" = 100,
+  "sample_iter" = 1000
 )
 
 # Load Forstmann et al.'s data.
@@ -35,17 +34,17 @@ start_points_sig2 <- diag(rep(.01, num_parameters))
 v_half <- 2
 A_half <- 1
 
-# theta is the parameter values, mu is mean of normnal distribution and sigma2 is variance
+# theta is the parameter values, mu is mean of normal distribution and sigma2 is variance
 # Storage for the samples.
 latent_theta_mu <- array(
   NA,
-  dim = c(num_parameters, S, pmwg_args$sampling_iterations),
+  dim = c(num_parameters, S, pmwg_args$sample_iter),
   dimnames = list(parameters, NULL, NULL)
 )
 param_theta_mu <- latent_theta_mu[, 1, ]
 param_theta_sigma2 <- array(
   NA,
-  dim = c(num_parameters, num_parameters, pmwg_args$sampling_iterations),
+  dim = c(num_parameters, num_parameters, pmwg_args$sample_iter),
   dimnames = list(parameters, parameters, NULL)
 )
 
@@ -65,7 +64,6 @@ pts2_inv <- ginv(pts2)
 prior_mu_mean <- rep(0, num_parameters)
 prior_mu_sigma2 <- diag(rep(1, num_parameters))
 
-
 # Things I save rather than re-compute inside the loops.
 k_half <- v_half + num_parameters - 1 + S
 v_shape <- (v_half + num_parameters) / 2
@@ -74,7 +72,7 @@ prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 # Sample the initial values for the random effects. Algorithm is same
 # as for the main resampling down below.
 particles <- array(dim = c(length(ptm), S))
-num_particles <- pmwg_args$adaptation_particles
+num_particles <- pmwg_args$adapt_particles
 cat("Sampling Initial values for random effects\n")
 pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
@@ -124,11 +122,11 @@ if (runner_args$cpus > 1) {
 pu <- runner_args$progress_update
 pb <- txtProgressBar(
   min = 0,
-  max = pmwg_args$sampling_iterations / pu,
+  max = pmwg_args$sample_iter / pu,
   style = 3
 )
 
-for (i in 1:pmwg_args$sampling_iterations) {
+for (i in 1:pmwg_args$sample_iter) {
   if (i %% pu == 0) {
     setTxtProgressBar(pb, i %/% pu)
   }
