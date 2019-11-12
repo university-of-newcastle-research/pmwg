@@ -34,7 +34,7 @@ start_points_sig2 <- diag(rep(.01, num_parameters))
 v_half <- 2
 A_half <- 1
 
-# theta is the parameter values, mu is mean of normnal distribution and sigma2 is variance
+# theta is the parameter values, mu is mean of normal distribution and sigma2 is variance
 # Storage for the samples.
 latent_theta_mu <- array(
   NA,
@@ -63,7 +63,6 @@ pts2_inv <- ginv(pts2)
 # Priors.
 prior_mu_mean <- rep(0, num_parameters)
 prior_mu_sigma2 <- diag(rep(1, num_parameters))
-
 
 # Things I save rather than re-compute inside the loops.
 k_half <- v_half + num_parameters - 1 + S

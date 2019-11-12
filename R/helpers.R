@@ -83,7 +83,7 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
 #' @examples
 #' psamplers:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
 #' @keywords internal
-check_efficient <- function(mix_ratio, efficent_mu, efficient_sig2) {
+check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
   if (mix_ratio[3] != 0) {
     if (is.null(efficient_mu) || is.null(efficient_sig2)) {
       stop(
