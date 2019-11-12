@@ -15,6 +15,7 @@
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particles An array of particles (re proposals for latent variables)
 #' @inheritParams numbers_from_ratio
+#' @inheritParams check_efficient
 #'
 #' @return A single sample from the new proposals
 #' @examples
@@ -24,17 +25,8 @@ new_sample <- function(s, data, num_particles,
                        mu, sig2, particles,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0)) {
-  if (mix_ratio[3] != 0) {
-    if (is.null(efficient_mu) || is.null(efficient_sig2)) {
-      stop(
-        paste0(
-          "Mu and sigma from efficient conditional ",
-          "proposals must be provided for mix_ratio[3] > 0"
-        )
-      )
-    }
-  }
-
+  # Check for efficient proposalvalues if necessary
+  check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   # Create proposals for new particles
   proposals <- gen_particles(
     num_particles,
