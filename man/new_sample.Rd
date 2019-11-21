@@ -6,7 +6,7 @@
 \usage{
 new_sample(s, data, num_particles, mu, sig2, particles,
   efficient_mu = NULL, efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5,
-  0))
+  0), likelihood_func = lba_loglike)
 }
 \arguments{
 \item{s}{A number - the subject ID, also selects particles}
@@ -32,6 +32,8 @@ three methods.}
 \item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
 of particles to generate from the population level parameters, the individual random
 effects and the conditional parameters repectively}
+
+\item{likelihood_func}{A likelihood function for calculating log likelihood of samples}
 }
 \value{
 A single sample from the new proposals

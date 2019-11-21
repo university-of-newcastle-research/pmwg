@@ -17,7 +17,8 @@ pmwg_args <- list(
   "adapt_particles" = 100,
   "adapt_maxiter" = 5000,
   "sample_particles" = 100,
-  "sample_iter" = 1000
+  "sample_iter" = 1000,
+  "likelihood_func" = lba_loglike
 )
 
 # Load Forstmann et al.'s data.
@@ -78,7 +79,7 @@ pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
   setTxtProgressBar(pb, s)
   proposals <- rmvnorm(num_particles, ptm, pts2)
-  lw <- apply(proposals, 1, lba_loglike, data = data[data$subject == s, ])
+  lw <- apply(proposals, 1, pmwg_args$likelihood_func, data = data[data$subject == s, ])
   weight <- exp(lw - max(lw))
   particles[, s] <- proposals[
     sample(x = num_particles, size = 1, prob = weight),

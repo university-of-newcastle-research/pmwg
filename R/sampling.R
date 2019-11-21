@@ -16,6 +16,7 @@
 #' @param particles An array of particles (re proposals for latent variables)
 #' @inheritParams numbers_from_ratio
 #' @inheritParams check_efficient
+#' @param likelihood_func A likelihood function for calculating log likelihood of samples
 #'
 #' @return A single sample from the new proposals
 #' @examples
@@ -24,7 +25,8 @@
 new_sample <- function(s, data, num_particles,
                        mu, sig2, particles,
                        efficient_mu = NULL, efficient_sig2 = NULL,
-                       mix_ratio = c(0.5, 0.5, 0.0)) {
+                       mix_ratio = c(0.5, 0.5, 0.0),
+                       likelihood_func = lba_loglike) {
   # Check for efficient proposalvalues if necessary
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   # Create proposals for new particles
@@ -42,7 +44,7 @@ new_sample <- function(s, data, num_particles,
   lw <- apply(
     proposals,
     1,
-    lba_loglike,
+    likelihood_func,
     data = data[data$subject == s, ]
   )
   # Density of random effects proposal given population-level distribution.

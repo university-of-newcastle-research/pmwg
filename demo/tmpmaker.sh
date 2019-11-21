@@ -21,6 +21,6 @@ echo "Initialising Environment"
 Rscript -e "packrat::init()"
 sed -i 's/external.packages: /external.packages: devtools/g' packrat/packrat.opts
 echo "Installing psamplers"
-Rscript -e "devtools::install_github('gjcooper/samplers', auth_token='c71394bda6a42db165ee8b114dbfa1688ed5882f')"
+Rscript -e "devtools::install_github('gjcooper/samplers')"
 cp -a $test_scripts/* .
 echo "Try running Rscript PMwG.R from $dest_dir directory now..."

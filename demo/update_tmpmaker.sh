@@ -26,7 +26,7 @@ if [[ $loc -eq 1 ]]
 then
 	Rscript -e "devtools::install_local('$test_scripts/..', force=TRUE)"
 else
-	Rscript -e "devtools::install_github('gjcooper/samplers', auth_token='c71394bda6a42db165ee8b114dbfa1688ed5882f')"
+	Rscript -e "devtools::install_github('gjcooper/samplers')"
 fi
 cp -a $test_scripts/* .
 echo "Try running Rscript PMwG.R from $dest_dir directory now..."
