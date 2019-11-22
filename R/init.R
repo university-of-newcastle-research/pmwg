@@ -52,4 +52,5 @@ init_pmwg <- function(parameters, data, pmwg_args) {
   init$v_shape <- (init$v_half + init$num_par) / 2
   # Sample the mixture variables' initial values.
   init$a_half <- 1 / rgamma(n = init$num_par, shape = 0.5, scale = 1)
+	init
 }

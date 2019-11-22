@@ -22,11 +22,9 @@ pmwg_args <- list(
 )
 
 # Load Forstmann et al.'s data.
-data <- read.csv("data/data.csv", header = FALSE)
-names(data) <- c("subject", "rt", "correct", "condition")
-S <- length(unique(data$subject))
+data <- forstmann
 
-init <- init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+init <- init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), data, pmwg_args)
 start_points_mu <- c(.2, .2, .2, .4, .3, 1.3, -2)
 start_points_sig2 <- diag(rep(.01, init$num_par))
 
