@@ -26,32 +26,13 @@ data <- read.csv("data/data.csv", header = FALSE)
 names(data) <- c("subject", "rt", "correct", "condition")
 S <- length(unique(data$subject))
 
-parameters <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
-num_parameters <- length(parameters)
+init <- init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 start_points_mu <- c(.2, .2, .2, .4, .3, 1.3, -2)
-start_points_sig2 <- diag(rep(.01, num_parameters))
-
-# Tuning settings for the Gibbs steps
-v_half <- 2
-A_half <- 1
-
-# theta is the parameter values, mu is mean of normal distribution and sigma2 is variance
-# Storage for the samples.
-latent_theta_mu <- array(
-  NA,
-  dim = c(num_parameters, S, pmwg_args$sample_iter),
-  dimnames = list(parameters, NULL, NULL)
-)
-param_theta_mu <- latent_theta_mu[, 1, ]
-param_theta_sigma2 <- array(
-  NA,
-  dim = c(num_parameters, num_parameters, pmwg_args$sample_iter),
-  dimnames = list(parameters, parameters, NULL)
-)
+start_points_sig2 <- diag(rep(.01, init$num_par))
 
 # Make single-iteration-sized versions, for easier reading of code below.
-ptm <- param_theta_mu[, 1]
-pts2 <- param_theta_sigma2[, , 1] # nolint
+ptm <- init$param_theta_mu[, 1]
+pts2 <- init$param_theta_sigma2[, , 1] # nolint
 
 # Start points for the population-level parameters only. Hard coded here, just
 # for convenience.
@@ -66,8 +47,6 @@ prior_mu_mean <- rep(0, num_parameters)
 prior_mu_sigma2 <- diag(rep(1, num_parameters))
 
 # Things I save rather than re-compute inside the loops.
-k_half <- v_half + num_parameters - 1 + S
-v_shape <- (v_half + num_parameters) / 2
 prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 
 # Sample the initial values for the random effects. Algorithm is same
@@ -79,7 +58,12 @@ pb <- txtProgressBar(min = 0, max = S, style = 3)
 for (s in 1:S) {
   setTxtProgressBar(pb, s)
   proposals <- rmvnorm(num_particles, ptm, pts2)
-  lw <- apply(proposals, 1, pmwg_args$likelihood_func, data = data[data$subject == s, ])
+  lw <- apply(
+    proposals,
+    1,
+    pmwg_args$likelihood_func,
+    data = data[data$subject == s, ]
+  )
   weight <- exp(lw - max(lw))
   particles[, s] <- proposals[
     sample(x = num_particles, size = 1, prob = weight),
@@ -87,14 +71,11 @@ for (s in 1:S) {
 }
 close(pb)
 
-# Sample the mixture variables' initial values.
-a_half <- 1 / rgamma(n = num_parameters, shape = 0.5, scale = 1)
-
 if (runner_args$restart) {
   cat("\nRestarting from saved run.\n")
   load(runner_args$restart_file)
   # Check a couple of things.
-  if ((dim(particles)[1] != num_parameters) || (dim(particles)[2] != S)) {  #nolint
+  if ((dim(particles)[1] != num_parameters) || (dim(particles)[2] != S)) { # nolint
     stop("Restart does not match size (subjects).")
   }
 }
@@ -154,7 +135,7 @@ for (i in 1:pmwg_args$sample_iter) {
 
   # Sample new particles for random effects.
   if (runner_args$cpus > 1) {
-    tmp <- sfLapply(  #nolint
+    tmp <- sfLapply( # nolint
       x = 1:S,
       fun = new_sample,
       data = data,
