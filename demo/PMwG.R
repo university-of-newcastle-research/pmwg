@@ -35,25 +35,25 @@ pts2 <- init$param_theta_sigma2[, , 1] # nolint
 # Start points for the population-level parameters only. Hard coded here, just
 # for convenience.
 # Weird subscripts maintains the naming.
-ptm[1:num_parameters] <- start_points_mu
+ptm[1:init$num_par] <- start_points_mu
 pts2 <- start_points_sig2 # Who knows??
 # Because this is calculated near the end of the main loop, needs initialising for iter=1.
 pts2_inv <- ginv(pts2)
 
 # Priors.
-prior_mu_mean <- rep(0, num_parameters)
-prior_mu_sigma2 <- diag(rep(1, num_parameters))
+prior_mu_mean <- rep(0, init$num_par)
+prior_mu_sigma2 <- diag(rep(1, init$num_par))
 
 # Things I save rather than re-compute inside the loops.
 prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
 
 # Sample the initial values for the random effects. Algorithm is same
 # as for the main resampling down below.
-particles <- array(dim = c(length(ptm), S))
+particles <- array(dim = c(length(ptm), init$S))
 num_particles <- pmwg_args$adapt_particles
 cat("Sampling Initial values for random effects\n")
-pb <- txtProgressBar(min = 0, max = S, style = 3)
-for (s in 1:S) {
+pb <- txtProgressBar(min = 0, max = init$S, style = 3)
+for (s in 1:init$S) {
   setTxtProgressBar(pb, s)
   proposals <- rmvnorm(num_particles, ptm, pts2)
   lw <- apply(
@@ -73,7 +73,7 @@ if (runner_args$restart) {
   cat("\nRestarting from saved run.\n")
   load(runner_args$restart_file)
   # Check a couple of things.
-  if ((dim(particles)[1] != num_parameters) || (dim(particles)[2] != S)) { # nolint
+  if ((dim(particles)[1] != init$num_par) || (dim(particles)[2] != init$S)) { # nolint
     stop("Restart does not match size (subjects).")
   }
 }
@@ -91,9 +91,9 @@ if (runner_args$cpus > 1) {
   sfLibrary(MCMCpack) # For the inverse Wishart random numbers.
 
   sfExportAll(except = c(
-    "param_theta_mu",
-    "param_theta_sig2",
-    "latent_theta_mu"
+    "init$param_theta_mu",
+    "init$param_theta_sig2",
+    "init$latent_theta_mu"
   ))
   # nolint end
 }
@@ -111,30 +111,30 @@ for (i in 1:pmwg_args$sample_iter) {
     setTxtProgressBar(pb, i %/% pu)
   }
   # Sample population-level parameters.
-  var_mu <- ginv(S * pts2_inv + prior_mu_sigma2_inv)
+  var_mu <- ginv(init$S * pts2_inv + prior_mu_sigma2_inv)
   mean_mu <- as.vector(var_mu %*% (pts2_inv %*% apply(particles, 1, sum)))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   ptm <- rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
-  names(ptm) <- parameters
+  names(ptm) <- init$par_names
 
   theta_temp <- particles - ptm
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * v_half * diag(1 / a_half) + cov_temp
-  pts2 <- riwish(k_half, B_half) # New sample for sigma.
+  B_half <- 2 * init$v_half * diag(1 / init$a_half) + cov_temp
+  pts2 <- riwish(init$k_half, B_half) # New sample for sigma.
   pts2_inv <- ginv(pts2)
 
   # Sample new mixing weights.
-  a_half <- 1 / rgamma(
-    n = num_parameters,
-    shape = v_shape,
-    scale = 1 / (v_half + diag(pts2_inv) + A_half)
+  init$a_half <- 1 / rgamma(
+    n = init$num_par,
+    shape = init$v_shape,
+    scale = 1 / (init$v_half + diag(pts2_inv) + init$A_half)
   )
 
   # Sample new particles for random effects.
   if (runner_args$cpus > 1) {
     tmp <- sfLapply( # nolint
-      x = 1:S,
+      x = 1:init$S,
       fun = new_sample,
       data = data,
       num_particles = num_particles,
@@ -145,7 +145,7 @@ for (i in 1:pmwg_args$sample_iter) {
     )
   } else {
     tmp <- lapply(
-      X = 1:S,
+      X = 1:init$S,
       FUN = new_sample,
       data = data,
       num_particles = num_particles,
@@ -158,9 +158,9 @@ for (i in 1:pmwg_args$sample_iter) {
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
-  latent_theta_mu[, , i] <- particles # nolint
-  param_theta_sigma2[, , i] <- pts2 # nolint
-  param_theta_mu[, i] <- ptm
+  init$latent_theta_mu[, , i] <- particles # nolint
+  init$param_theta_sigma2[, , i] <- pts2 # nolint
+  init$param_theta_mu[, i] <- ptm
 }
 close(pb)
 if (runner_args$cpus > 1) sfStop() # nolint
