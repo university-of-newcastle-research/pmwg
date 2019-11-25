@@ -107,26 +107,8 @@ for (i in 1:pmwg_args$burn_iter) {
   if (i %% progress_update == 0) {
     setTxtProgressBar(pb, i %/% progress_update)
   }
-  # Sample population-level parameters.
-  var_mu <- ginv(init$S * pts2_inv + prior_mu_sigma2_inv)
-  mean_mu <- as.vector(var_mu %*% (pts2_inv %*% apply(particles, 1, sum)))
-  chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
-  # New sample for mu.
-  ptm <- rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
-  names(ptm) <- init$par_names
 
-  theta_temp <- particles - ptm
-  cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * init$v_half * diag(1 / init$a_half) + cov_temp
-  pts2 <- riwish(init$k_half, B_half) # New sample for sigma.
-  pts2_inv <- ginv(pts2)
-
-  # Sample new mixing weights.
-  init$a_half <- 1 / rgamma(
-    n = init$num_par,
-    shape = init$v_shape,
-    scale = 1 / (init$v_half + diag(pts2_inv) + init$A_half)
-  )
+  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
 
   # Sample new particles for random effects.
   if (cpus > 1) {
@@ -135,8 +117,8 @@ for (i in 1:pmwg_args$burn_iter) {
       fun = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
@@ -146,8 +128,8 @@ for (i in 1:pmwg_args$burn_iter) {
       FUN = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
