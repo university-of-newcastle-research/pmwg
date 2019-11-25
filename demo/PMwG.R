@@ -4,6 +4,7 @@ library(MCMCpack) ## for the inverse wishart random numbers.
 library(psamplers)
 rm(list = ls())
 
+# Vars used for controlling the run
 restart <- FALSE
 cpus <- 4
 restart_file <- "data/output/restart.RData"
@@ -39,16 +40,17 @@ pts2 <- start_points_sig2 # Who knows??
 pts2_inv <- ginv(pts2)
 
 # Priors.
-prior_mu_mean <- rep(0, init$num_par)
-prior_mu_sigma2 <- diag(rep(1, init$num_par))
-
+prior <- list(
+  mu_mean <- rep(0, init$num_par),
+  mu_sigma2 <- diag(rep(1, init$num_par))
+)
 # Things I save rather than re-compute inside the loops.
-prior_mu_sigma2_inv <- ginv(prior_mu_sigma2)
+prior$mu_sigma2_inv <- ginv(prior$mu_sigma2)
 
 # Sample the initial values for the random effects. Algorithm is same
 # as for the main resampling down below.
 particles <- array(dim = c(length(ptm), init$S))
-num_particles <- pmwg_args$adapt_particles
+num_particles <- pmwg_args$burn_particles
 cat("Sampling Initial values for random effects\n")
 pb <- txtProgressBar(min = 0, max = init$S, style = 3)
 for (s in 1:init$S) {
