@@ -23,7 +23,7 @@ Takes the initial parameter set and creates default values for a
 range of PMwG necessary variables.
 }
 \examples{
-#Load Forstmann et al.'s data.
+# Load Forstmann et al.'s data.
 args <- list(
   "burn_particles" = 1000,
   "burn_iter" = 500,

@@ -4,12 +4,10 @@ library(MCMCpack) ## for the inverse wishart random numbers.
 library(psamplers)
 rm(list = ls())
 
-runner_args <- list(
-  "restart" = FALSE,
-  "cpus" = 1,
-  "restart_file" = "data/output/restart.RData",
-  "progress_update" = 10
-)
+restart <- FALSE
+cpus <- 4
+restart_file <- "data/output/restart.RData"
+progress_update <- 10
 
 pmwg_args <- list(
   "burn_particles" = 1000,
@@ -69,21 +67,21 @@ for (s in 1:init$S) {
 }
 close(pb)
 
-if (runner_args$restart) {
+if (restart) {
   cat("\nRestarting from saved run.\n")
-  load(runner_args$restart_file)
+  load(restart_file)
   # Check a couple of things.
   if ((dim(particles)[1] != init$num_par) || (dim(particles)[2] != init$S)) { # nolint
     stop("Restart does not match size (subjects).")
   }
 }
 
-if (runner_args$cpus > 1) {
+if (cpus > 1) {
   # nolint start
   # You need the suggested package for this function
   library(snowfall)
 
-  sfInit(parallel = TRUE, cpus = runner_args$cpus)
+  sfInit(parallel = TRUE, cpus = cpus)
   sfClusterSetupRNG()
   sfLibrary(rtdists)
   sfLibrary(mvtnorm)
@@ -91,24 +89,21 @@ if (runner_args$cpus > 1) {
   sfLibrary(MCMCpack) # For the inverse Wishart random numbers.
 
   sfExportAll(except = c(
-    "init$param_theta_mu",
-    "init$param_theta_sig2",
-    "init$latent_theta_mu"
+    "init"
   ))
   # nolint end
 }
 
 # create progress bar
-pu <- runner_args$progress_update
 pb <- txtProgressBar(
   min = 0,
-  max = pmwg_args$sample_iter / pu,
+  max = pmwg_args$burn_iter / progress_update,
   style = 3
 )
 
-for (i in 1:pmwg_args$sample_iter) {
-  if (i %% pu == 0) {
-    setTxtProgressBar(pb, i %/% pu)
+for (i in 1:pmwg_args$burn_iter) {
+  if (i %% progress_update == 0) {
+    setTxtProgressBar(pb, i %/% progress_update)
   }
   # Sample population-level parameters.
   var_mu <- ginv(init$S * pts2_inv + prior_mu_sigma2_inv)
@@ -132,7 +127,7 @@ for (i in 1:pmwg_args$sample_iter) {
   )
 
   # Sample new particles for random effects.
-  if (runner_args$cpus > 1) {
+  if (cpus > 1) {
     tmp <- sfLapply( # nolint
       x = 1:init$S,
       fun = new_sample,
@@ -163,10 +158,11 @@ for (i in 1:pmwg_args$sample_iter) {
   init$param_theta_mu[, i] <- ptm
 }
 close(pb)
-if (runner_args$cpus > 1) sfStop() # nolint
+
+if (cpus > 1) sfStop() # nolint
 
 save(
-  file = runner_args$restart_file,
+  file = restart_file,
   list = c("pts2_inv", "particles", "ptm", "pts2")
 )
 save.image("data/output/PMwG.RData")

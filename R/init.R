@@ -11,7 +11,7 @@
 #'
 #' @return A list of generated variables that can be modified after the fact
 #' @examples
-#' #Load Forstmann et al.'s data.
+#' # Load Forstmann et al.'s data.
 #' args <- list(
 #'   "burn_particles" = 1000,
 #'   "burn_iter" = 500,
@@ -34,9 +34,11 @@ init_pmwg <- function(parameters, data, pmwg_args) {
   # Storage for the samples.
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
-  max_iter <- sum(pmwg_args$burn_iter,
-                  pmwg_args$adapt_maxiter,
-                  pmwg_args$sample_iter)
+  max_iter <- sum(
+    pmwg_args$burn_iter,
+    pmwg_args$adapt_maxiter,
+    pmwg_args$sample_iter
+  )
   init$latent_theta_mu <- array(
     NA,
     dim = c(init$num_par, init$S, max_iter),
