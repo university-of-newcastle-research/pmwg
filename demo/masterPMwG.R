@@ -96,6 +96,7 @@ if (cpus > 1) {
   # nolint end
 }
 
+cat("Phase 1: Burn in\n")
 # create progress bar
 pb <- txtProgressBar(
   min = 0,
@@ -104,6 +105,106 @@ pb <- txtProgressBar(
 )
 
 for (i in 1:pmwg_args$burn_iter) {
+  if (i %% progress_update == 0) {
+    setTxtProgressBar(pb, i %/% progress_update)
+  }
+
+  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+
+  # Sample new particles for random effects.
+  if (cpus > 1) {
+    tmp <- sfLapply( # nolint
+      x = 1:init$S,
+      fun = new_sample,
+      data = data,
+      num_particles = num_particles,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
+    )
+  } else {
+    tmp <- lapply(
+      X = 1:init$S,
+      FUN = new_sample,
+      data = data,
+      num_particles = num_particles,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
+    )
+  }
+  particles <- array(unlist(tmp), dim = dim(particles))
+
+  # Store results.
+  init$latent_theta_mu[, , i] <- particles # nolint
+  init$param_theta_sigma2[, , i] <- pts2 # nolint
+  init$param_theta_mu[, i] <- ptm
+}
+close(pb)
+
+# Adaptation Phase
+num_particles <- pmwg_args$adapt_particles
+cat("Phase 2: Adaptation\n")
+# create progress bar
+pb <- txtProgressBar(
+  min = 0,
+  max = pmwg_args$burn_iter / progress_update,
+  style = 3
+)
+
+for (i in 1:pmwg_args$adapt_maxiter) {
+  if (i %% progress_update == 0) {
+    setTxtProgressBar(pb, i %/% progress_update)
+  }
+
+  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+
+  # Sample new particles for random effects.
+  if (cpus > 1) {
+    tmp <- sfLapply( # nolint
+      x = 1:init$S,
+      fun = new_sample,
+      data = data,
+      num_particles = num_particles,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
+    )
+  } else {
+    tmp <- lapply(
+      X = 1:init$S,
+      FUN = new_sample,
+      data = data,
+      num_particles = num_particles,
+      mu = single_iter$ptm,
+      sig2 = single_iter$pts2,
+      particles = particles,
+      mix_ratio = c(0.5, 0.5, 0.0)
+    )
+  }
+  particles <- array(unlist(tmp), dim = dim(particles))
+
+  # Store results.
+  init$latent_theta_mu[, , i] <- particles # nolint
+  init$param_theta_sigma2[, , i] <- pts2 # nolint
+  init$param_theta_mu[, i] <- ptm
+}
+close(pb)
+
+# Sampling Phase
+num_particles <- pmwg_args$sample_particles
+cat("Phase 3: Sampling\n")
+# create progress bar
+pb <- txtProgressBar(
+  min = 0,
+  max = pmwg_args$burn_iter / progress_update,
+  style = 3
+)
+
+for (i in 1:pmwg_args$sample_iter) {
   if (i %% progress_update == 0) {
     setTxtProgressBar(pb, i %/% progress_update)
   }

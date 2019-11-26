@@ -24,13 +24,11 @@
 #' psamplers:::init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), forstmann, args)
 #' @export
 init_pmwg <- function(parameters, data, pmwg_args) {
-  init <- list()
-  init$par_names <- parameters
-  init$num_par <- length(parameters)
+  num_par <- length(parameters)
   # Tuning settings for the Gibbs steps
-  init$v_half <- 2
-  init$A_half <- 1
-  init$S <- length(unique(data$subject))
+  v_half <- 2
+  A_half <- 1
+  S <- length(unique(data$subject))
   # Storage for the samples.
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
@@ -39,22 +37,34 @@ init_pmwg <- function(parameters, data, pmwg_args) {
     pmwg_args$adapt_maxiter,
     pmwg_args$sample_iter
   )
-  init$latent_theta_mu <- array(
+  latent_theta_mu <- array(
     NA,
-    dim = c(init$num_par, init$S, max_iter),
+    dim = c(num_par, S, max_iter),
     dimnames = list(parameters, NULL, NULL)
   )
-  init$param_theta_mu <- init$latent_theta_mu[, 1, ]
-  init$param_theta_sigma2 <- array(
+  param_theta_mu <- latent_theta_mu[, 1, ]
+  param_theta_sigma2 <- array(
     NA,
-    dim = c(init$num_par, init$num_par, pmwg_args$sample_iter),
+    dim = c(num_par, num_par, max_iter),
     dimnames = list(parameters, parameters, NULL)
   )
-  init$k_half <- init$v_half + init$num_par - 1 + init$S
-  init$v_shape <- (init$v_half + init$num_par) / 2
+  k_half <- v_half + num_par - 1 + S
+  v_shape <- (v_half + num_par) / 2
   # Sample the mixture variables' initial values.
-  init$a_half <- 1 / stats::rgamma(n = init$num_par, shape = 0.5, scale = 1)
-  init
+  a_half <- 1 / stats::rgamma(n = num_par, shape = 0.5, scale = 1)
+  list(
+    par_names = parameters,
+    num_par = num_par,
+    S = S,
+    param_theta_mu = param_theta_mu,
+    param_theta_sigma2 = param_theta_sigma2,
+    latent_theta_mu = latent_theta_mu,
+    v_half = v_half,
+    a_half = a_half,
+    A_half = A_half,
+    k_half = k_half,
+    v_shape = v_shape
+  )
 }
 
 
