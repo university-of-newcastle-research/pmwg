@@ -1,16 +1,10 @@
 #!/bin/bash
 if [[ $# -ne 3 ]]
 then
-	echo "Usage: ./update_tmpmaker.sh (-l(local)/-g(github)) <destination> <test_source_dir>"
+	echo "Usage: ./update_tmpmaker.sh <destination> <test_source_dir>"
 	exit 1
 fi
 
-loc=0
-if [[ $1 -eq '-l' ]]
-then
-	echo "Grabbing from local"
-	loc=1
-fi
 dest_dir=$(readlink -f $2)
 test_scripts=$(readlink -f $3)
 
@@ -22,11 +16,11 @@ fi
 
 cd $dest_dir
 echo "Installing psamplers"
-if [[ $loc -eq 1 ]]
-then
-	Rscript -e "devtools::install_local('$test_scripts/..', force=TRUE)"
-else
-	Rscript -e "devtools::install_github('gjcooper/samplers')"
-fi
+Rscript -e "devtools::install_local('$test_scripts/..', force=TRUE)"
 cp -a $test_scripts/* .
-echo "Try running Rscript PMwG.R from $dest_dir directory now..."
+cd $test_scripts
+echo "Copying parallel and single core demo files"
+git show parallelDemo:demo/parallelPMwG.R > $dest_dir/parallelPMwG.R
+git show singleDemo:demo/singlePMwG.R > $dest_dir/singlePMwG.R
+cd $dest_dir
+echo "Try running Rscript <master|single|parallel>PMwG.R from $dest_dir directory now..."
