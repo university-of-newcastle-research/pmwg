@@ -41,8 +41,8 @@ pts2_inv <- ginv(pts2)
 
 # Priors.
 prior <- list(
-  mu_mean <- rep(0, init$num_par),
-  mu_sigma2 <- diag(rep(1, init$num_par))
+  mu_mean = rep(0, init$num_par),
+  mu_sigma2 = diag(rep(1, init$num_par))
 )
 # Things I save rather than re-compute inside the loops.
 prior$mu_sigma2_inv <- ginv(prior$mu_sigma2)
