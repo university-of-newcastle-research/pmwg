@@ -188,9 +188,26 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
-  init$latent_theta_mu[, , i] <- particles # nolint
-  init$param_theta_sigma2[, , i] <- pts2 # nolint
-  init$param_theta_mu[, i] <- ptm
+  init$latent_theta_mu[, , pmwg_args$burn_iter + i] <- particles # nolint
+  init$param_theta_sigma2[, , pmwg_args$burn_iter + i] <- pts2 # nolint
+  init$param_theta_mu[, pmwg_args$burn_iter + i] <- ptm
+
+  # Check adaptive phase ended
+  #  if i>burn
+  #    for j=1:num_subjects
+  #        count(1,j)=size(unique(theta_latent_A_store(burn:end,j)),1);
+  #    end
+  #  end
+  pmwg_adapted <- all(
+    lapply(
+      apply(ltm["A", , pmwg_args$burn_iter:pmwg_args$burn_iter + i], 1, unique),
+      length
+    ) > 1
+  )
+  if (pmwg_adapted) {
+    pmwg_args$adapted = TRUE
+    pmwg_args$adapt_iter = pwmg_args$burn_iter + i
+  }
 }
 close(pb)
 
@@ -221,7 +238,7 @@ for (i in 1:pmwg_args$sample_iter) {
       mu = single_iter$ptm,
       sig2 = single_iter$pts2,
       particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
+      mix_ratio = c(0.1, 0.2, 0.7)
     )
   } else {
     tmp <- lapply(
@@ -238,9 +255,9 @@ for (i in 1:pmwg_args$sample_iter) {
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
-  init$latent_theta_mu[, , i] <- particles # nolint
-  init$param_theta_sigma2[, , i] <- pts2 # nolint
-  init$param_theta_mu[, i] <- ptm
+  init$latent_theta_mu[, , pmwg_args$adapt_iter + i] <- particles # nolint
+  init$param_theta_sigma2[, , pmwg_args$adapt_iter + i] <- pts2 # nolint
+  init$param_theta_mu[, pmwg_args$adapt_iter + i] <- ptm
 }
 close(pb)
 
