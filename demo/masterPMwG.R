@@ -198,7 +198,11 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   # Test the if every length is greater than 20
   pmwg_adapted <- all(
     lapply(
-      apply(ltm["A", , pmwg_args$burn_iter:pmwg_args$burn_iter + i], 1, unique),
+      apply(
+        init$latent_theta_mu["A", , pmwg_args$burn_iter:pmwg_args$burn_iter + i],
+        1,
+        unique
+      ),
       length
     ) > 20
   )
