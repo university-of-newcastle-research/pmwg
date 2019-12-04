@@ -193,13 +193,13 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   init$param_theta_mu[, pmwg_args$burn_iter + i] <- ptm
 
   # Check adaptive phase ended
-  # Check the number of unique 'A' values since the end of the burnin (apply call)
-  # Get the length of each vector of uniqie values
+  # Check the number of unique 'A' values since the end of the burnin
+  # Get the length of each vector of unique values
   # Test the if every length is greater than 20
   pmwg_adapted <- all(
     lapply(
       apply(
-        init$latent_theta_mu["A", , pmwg_args$burn_iter:pmwg_args$burn_iter + i],
+        init$latent_theta_mu["A", , pmwg_args$burn_iter:(pmwg_args$burn_iter + i)],
         1,
         unique
       ),
