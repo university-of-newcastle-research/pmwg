@@ -28,4 +28,3 @@ Obtain the efficent mu and sigma from the adaptation phase draws
 \examples{
 # No example yet
 }
-\keyword{internal}
