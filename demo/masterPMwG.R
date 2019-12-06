@@ -34,6 +34,7 @@ pts2 <- init$param_theta_sigma2[, , 1] # nolint
 # Start points for the population-level parameters only. Hard coded here, just
 # for convenience.
 # Weird subscripts maintains the naming.
+# GC: Check the start points are correct?
 ptm[1:init$num_par] <- start_points_mu
 pts2 <- start_points_sig2 # Who knows??
 # Because this is calculated near the end of the main loop, needs initialising for iter=1.
@@ -110,6 +111,8 @@ for (i in 1:pmwg_args$burn_iter) {
   }
 
   single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+  ptm <- single_iter$ptm
+  pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
   if (cpus > 1) {
@@ -118,8 +121,8 @@ for (i in 1:pmwg_args$burn_iter) {
       fun = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
@@ -129,8 +132,8 @@ for (i in 1:pmwg_args$burn_iter) {
       FUN = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
@@ -150,7 +153,7 @@ cat("Phase 2: Adaptation\n")
 # create progress bar
 pb <- txtProgressBar(
   min = 0,
-  max = pmwg_args$burn_iter / progress_update,
+  max = pmwg_args$adapt_maxiter / progress_update,
   style = 3
 )
 
@@ -160,6 +163,8 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   }
 
   single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+  ptm <- single_iter$ptm
+  pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
   if (cpus > 1) {
@@ -168,8 +173,8 @@ for (i in 1:pmwg_args$adapt_maxiter) {
       fun = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
@@ -179,8 +184,8 @@ for (i in 1:pmwg_args$adapt_maxiter) {
       FUN = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
@@ -207,8 +212,8 @@ for (i in 1:pmwg_args$adapt_maxiter) {
     ) > 20
   )
   if (pmwg_adapted) {
-    pmwg_args$adapted = TRUE
-    pmwg_args$adapt_iter = pwmg_args$burn_iter + i
+    pmwg_args$adapted <- TRUE
+    pmwg_args$adapt_iter <- pwmg_args$burn_iter + i
     break
   }
 }
@@ -220,7 +225,7 @@ cat("Phase 3: Sampling\n")
 # create progress bar
 pb <- txtProgressBar(
   min = 0,
-  max = pmwg_args$burn_iter / progress_update,
+  max = pmwg_args$sample_iter / progress_update,
   style = 3
 )
 
@@ -230,6 +235,8 @@ for (i in 1:pmwg_args$sample_iter) {
   }
 
   single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+  ptm <- single_iter$ptm
+  pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
   if (cpus > 1) {
@@ -238,8 +245,8 @@ for (i in 1:pmwg_args$sample_iter) {
       fun = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
       mix_ratio = c(0.1, 0.2, 0.7)
     )
@@ -249,10 +256,10 @@ for (i in 1:pmwg_args$sample_iter) {
       FUN = new_sample,
       data = data,
       num_particles = num_particles,
-      mu = single_iter$ptm,
-      sig2 = single_iter$pts2,
+      mu = ptm,
+      sig2 = pts2,
       particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
+      mix_ratio = c(0.1, 0.2, 0.7)
     )
   }
   particles <- array(unlist(tmp), dim = dim(particles))
