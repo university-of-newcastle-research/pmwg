@@ -119,6 +119,7 @@ particle_draws <- function(n, mu, covar) {
   mvtnorm::rmvnorm(n, mean = mu, sigma = covar)
 }
 
+
 #' Obtain the efficent mu and sigma from the adaptation phase draws
 #'
 #' @param init list containing previous samples and more
@@ -131,7 +132,7 @@ particle_draws <- function(n, mu, covar) {
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
-#' @keywords internal
+#' @export
 conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
 
   pts2_unwound <- apply(init$param_theta_sigma2[, , start_idx:end_idx],
