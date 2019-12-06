@@ -27,6 +27,10 @@ init <- init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), data, pmwg_args)
 start_points_mu <- c(.2, .2, .2, .4, .3, 1.3, -2)
 start_points_sig2 <- diag(rep(.01, init$num_par))
 
+# Storing the proposal values for the conditional Monte Carlo
+proposal_means <- array(dim = c(init$num_par, init$S))
+proposal_sigmas <- array(dim = c(init$num_par, init$num_par, init$S))
+
 # Make single-iteration-sized versions, for easier reading of code below.
 ptm <- init$param_theta_mu[, 1]
 pts2 <- init$param_theta_sigma2[, , 1] # nolint
@@ -219,6 +223,16 @@ for (i in 1:pmwg_args$adapt_maxiter) {
 }
 close(pb)
 
+#Create conditional means/variances
+for (s in 1:init$S) {
+  cparms <- conditional_parms(init,
+                              s,
+                              pmwg$burn_iter + 1,
+                              pmwg_args$burn_iter + pmwg_args$adapt_iter)
+  proposal_means[, s] <- cparms$cmeans
+  proposal_sigmas[, , s] <- cparms$cvars
+}
+
 # Sampling Phase
 num_particles <- pmwg_args$sample_particles
 cat("Phase 3: Sampling\n")
@@ -248,6 +262,8 @@ for (i in 1:pmwg_args$sample_iter) {
       mu = ptm,
       sig2 = pts2,
       particles = particles,
+      efficient_mu = proposal_means,
+      efficient_sig2 = proposal_sigmas,
       mix_ratio = c(0.1, 0.2, 0.7)
     )
   } else {
@@ -259,6 +275,8 @@ for (i in 1:pmwg_args$sample_iter) {
       mu = ptm,
       sig2 = pts2,
       particles = particles,
+      efficient_mu = proposal_means,
+      efficient_sig2 = proposal_sigmas,
       mix_ratio = c(0.1, 0.2, 0.7)
     )
   }

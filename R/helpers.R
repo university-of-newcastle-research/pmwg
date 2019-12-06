@@ -118,3 +118,36 @@ particle_draws <- function(n, mu, covar) {
   }
   mvtnorm::rmvnorm(n, mean = mu, sigma = covar)
 }
+
+#' Obtain the efficent mu and sigma from the adaptation phase draws
+#'
+#' @param init list containing previous samples and more
+#' @param ptm a single iteration version of the param_theta_mu variable
+#' @param pts2 a single iter version of the param_theta_sigma2 variable
+#' @param s current subject number
+#' @param start_idx index specifying the starting sample to draw conditional distribution from
+#' @param end_idx index specifying the end sample to draw coditional distribution from
+#'
+#' @return A list containing the conditional mean and variances for this subject
+#' @examples
+#' # No example yet
+#' @keywords internal
+conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
+
+  pts2_unwound <- apply(init$param_theta_sigma2[, , start_idx:end_idx],
+                        3,
+                        unwind)
+  all_samples <- rbind(init$latent_theta_mu[, s, start_idx:end_idx],
+                       init$param_theta_mu[, start_idx:end_idx],
+                       pts2_unwound
+  )
+  mu_tilde <- apply(all_samples, 1, mean)
+  sigma_tilde <- stats::var(t(all_samples))
+  condmvn <- condMVNorm::condMVN(mean = mu_tilde,
+                     sigma = sigma_tilde,
+                     dependent.ind = 1:length(ptm),
+                     given.ind = (length(ptm) + 1):length(mu_tilde),
+                     X.given = c(ptm, unwind(pts2))
+  )
+  list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
+}

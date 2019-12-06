@@ -27,15 +27,19 @@ new_sample <- function(s, data, num_particles,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0),
                        likelihood_func = lba_loglike) {
-  # Check for efficient proposalvalues if necessary
+  # Check for efficient proposal values if necessary
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
+  e_mu <- efficient_mu[, s]
+  e_sig2 <- efficient_sig2[, , s]
   # Create proposals for new particles
   proposals <- gen_particles(
     num_particles,
     mu,
     sig2,
     particles[, s],
-    mix_ratio = mix_ratio
+    mix_ratio = mix_ratio,
+    proposal_means = e_mu,
+    proposal_sigmas = e_sig2
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- particles[, s]
@@ -59,8 +63,8 @@ new_sample <- function(s, data, num_particles,
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
       x = proposals,
-      mean = efficient_mu,
-      sigma = efficient_sig2
+      mean = e_mu,
+      sigma = e_sig2
     )
   }
   else {
