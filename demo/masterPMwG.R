@@ -229,7 +229,7 @@ for (s in 1:init$S) {
                               ptm,
                               pts2,
                               s,
-                              pmwg$burn_iter + 1,
+                              pmwg_args$burn_iter + 1,
                               pmwg_args$burn_iter + pmwg_args$adapt_iter)
   proposal_means[, s] <- cparms$cmeans
   proposal_sigmas[, , s] <- cparms$cvars
