@@ -226,6 +226,8 @@ close(pb)
 #Create conditional means/variances
 for (s in 1:init$S) {
   cparms <- conditional_parms(init,
+                              ptm,
+                              pts2,
                               s,
                               pmwg$burn_iter + 1,
                               pmwg_args$burn_iter + pmwg_args$adapt_iter)
