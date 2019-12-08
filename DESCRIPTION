@@ -1,6 +1,6 @@
 Package: psamplers
 Title: Particle Based Samplers for MCMC
-Version: 0.0.0.9009
+Version: 0.0.0.9010
 Maintainer: Gavin Cooper <gavin@gavincooper.net>
 Description: Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available at https://arxiv.org/abs/1806.10089, it also contains code for covariance estimation and time varying models.
 Author: Gavin Cooper
