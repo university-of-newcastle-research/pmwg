@@ -160,6 +160,8 @@ pb <- txtProgressBar(
   max = pmwg_args$adapt_maxiter / progress_update,
   style = 3
 )
+pmwg_args$adapted <- FALSE
+pmwg_args$adapt_iter <- pmwg_args$burn_iter + pmwg_args$adapt_maxiter
 
 for (i in 1:pmwg_args$adapt_maxiter) {
   if (i %% progress_update == 0) {
@@ -223,6 +225,7 @@ for (i in 1:pmwg_args$adapt_maxiter) {
 }
 close(pb)
 
+save.image("data/output/PMwG.RData")
 #Create conditional means/variances
 for (s in 1:init$S) {
   cparms <- conditional_parms(init,
