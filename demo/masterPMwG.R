@@ -219,7 +219,7 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   )
   if (pmwg_adapted) {
     pmwg_args$adapted <- TRUE
-    pmwg_args$adapt_iter <- pwmg_args$burn_iter + i
+    pmwg_args$adapt_iter <- pmwg_args$burn_iter + i
     break
   }
 }
