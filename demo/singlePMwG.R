@@ -5,9 +5,6 @@ library(psamplers)
 rm(list = ls())
 
 # Vars used for controlling the run
-restart <- FALSE
-cpus <- 4
-restart_file <- "data/output/restart.RData"
 progress_update <- 10
 
 pmwg_args <- list(
@@ -74,33 +71,6 @@ for (s in 1:init$S) {
 }
 close(pb)
 
-if (restart) {
-  cat("\nRestarting from saved run.\n")
-  load(restart_file)
-  # Check a couple of things.
-  if ((dim(particles)[1] != init$num_par) || (dim(particles)[2] != init$S)) { # nolint
-    stop("Restart does not match size (subjects).")
-  }
-}
-
-if (cpus > 1) {
-  # nolint start
-  # You need the suggested package for this function
-  library(snowfall)
-
-  sfInit(parallel = TRUE, cpus = cpus)
-  sfClusterSetupRNG()
-  sfLibrary(rtdists)
-  sfLibrary(mvtnorm)
-  sfLibrary(MASS) # For matrix inverse.
-  sfLibrary(MCMCpack) # For the inverse Wishart random numbers.
-
-  sfExportAll(except = c(
-    "init"
-  ))
-  # nolint end
-}
-
 cat("Phase 1: Burn in\n")
 # create progress bar
 pb <- txtProgressBar(
@@ -119,29 +89,16 @@ for (i in 1:pmwg_args$burn_iter) {
   pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
-  if (cpus > 1) {
-    tmp <- sfLapply( # nolint
-      x = 1:init$S,
-      fun = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
-    )
-  } else {
-    tmp <- lapply(
-      X = 1:init$S,
-      FUN = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
-    )
-  }
+  tmp <- lapply(
+    X = 1:init$S,
+    FUN = new_sample,
+    data = data,
+    num_particles = num_particles,
+    mu = ptm,
+    sig2 = pts2,
+    particles = particles,
+    mix_ratio = c(0.5, 0.5, 0.0)
+  )
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
@@ -173,29 +130,16 @@ for (i in 1:pmwg_args$adapt_maxiter) {
   pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
-  if (cpus > 1) {
-    tmp <- sfLapply( # nolint
-      x = 1:init$S,
-      fun = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
-    )
-  } else {
-    tmp <- lapply(
-      X = 1:init$S,
-      FUN = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      mix_ratio = c(0.5, 0.5, 0.0)
-    )
-  }
+  tmp <- lapply(
+    X = 1:init$S,
+    FUN = new_sample,
+    data = data,
+    num_particles = num_particles,
+    mu = ptm,
+    sig2 = pts2,
+    particles = particles,
+    mix_ratio = c(0.5, 0.5, 0.0)
+  )
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
@@ -258,33 +202,16 @@ for (i in 1:pmwg_args$sample_iter) {
   pts2 <- single_iter$pts2
 
   # Sample new particles for random effects.
-  if (cpus > 1) {
-    tmp <- sfLapply( # nolint
-      x = 1:init$S,
-      fun = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      efficient_mu = proposal_means,
-      efficient_sig2 = proposal_sigmas,
-      mix_ratio = c(0.1, 0.2, 0.7)
-    )
-  } else {
-    tmp <- lapply(
-      X = 1:init$S,
-      FUN = new_sample,
-      data = data,
-      num_particles = num_particles,
-      mu = ptm,
-      sig2 = pts2,
-      particles = particles,
-      efficient_mu = proposal_means,
-      efficient_sig2 = proposal_sigmas,
-      mix_ratio = c(0.1, 0.2, 0.7)
-    )
-  }
+  tmp <- lapply(
+    X = 1:init$S,
+    FUN = new_sample,
+    data = data,
+    num_particles = num_particles,
+    mu = ptm,
+    sig2 = pts2,
+    particles = particles,
+    mix_ratio = c(0.1, 0.2, 0.7)
+  )
   particles <- array(unlist(tmp), dim = dim(particles))
 
   # Store results.
@@ -294,10 +221,4 @@ for (i in 1:pmwg_args$sample_iter) {
 }
 close(pb)
 
-if (cpus > 1) sfStop() # nolint
-
-save(
-  file = restart_file,
-  list = c("pts2_inv", "particles", "ptm", "pts2")
-)
 save.image("data/output/PMwG.RData")
