@@ -16,7 +16,8 @@
 #' @param particles An array of particles (re proposals for latent variables)
 #' @inheritParams numbers_from_ratio
 #' @inheritParams check_efficient
-#' @param likelihood_func A likelihood function for calculating log likelihood of samples
+#' @param likelihood_func A likelihood function for calculating log likelihood
+#'   of samples
 #'
 #' @return A single sample from the new proposals
 #' @examples

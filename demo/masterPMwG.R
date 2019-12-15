@@ -5,31 +5,15 @@ library(psamplers)
 rm(list = ls())
 
 # Vars used for controlling the run
-restart <- FALSE
 cpus <- 4
-restart_file <- "data/output/restart.RData"
-progress_update <- 10
 
-pmwg_args <- list(
-  "burn_particles" = 1000,
-  "burn_iter" = 500,
-  "adapt_particles" = 100,
-  "adapt_maxiter" = 5000,
-  "sample_particles" = 100,
-  "sample_iter" = 1000,
-  "likelihood_func" = lba_loglike
-)
+sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 
-# Load Forstmann et al.'s data.
-data <- forstmann
 
-init <- init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), data, pmwg_args)
 start_points_mu <- c(.2, .2, .2, .4, .3, 1.3, -2)
 start_points_sig2 <- diag(rep(.01, init$num_par))
 
 # Storing the proposal values for the conditional Monte Carlo
-proposal_means <- array(dim = c(init$num_par, init$S))
-proposal_sigmas <- array(dim = c(init$num_par, init$num_par, init$S))
 
 # Make single-iteration-sized versions, for easier reading of code below.
 ptm <- init$param_theta_mu[, 1]
