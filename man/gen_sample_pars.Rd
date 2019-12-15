@@ -9,12 +9,13 @@ gen_sample_pars(init, pmwg_args, prior, particles)
 \arguments{
 \item{init}{The list of parameter names to be used in the model}
 
-\item{pmwg_args}{A list containing arguments to the PMwG sampling, including number of
-iterations for each stage.}
+\item{pmwg_args}{A list containing arguments to the PMwG sampling, including
+number of iterations for each stage.}
 
 \item{prior}{A list containing priors for variance, means etc.}
 
-\item{particles}{A multidimensional array containing accepted particlesfrom the sampling.}
+\item{particles}{A multidimensional array containing accepted particles from
+the sampling.}
 }
 \value{
 A list of generated variables that can be modified after the fact
@@ -23,15 +24,5 @@ A list of generated variables that can be modified after the fact
 Takes the init list and further sets up individual loop variables
 }
 \examples{
-# Load Forstmann et al.'s data.
-args <- list(
-  "burn_particles" = 1000,
-  "burn_iter" = 500,
-  "adapt_particles" = 100,
-  "adapt_maxiter" = 5000,
-  "sample_particles" = 100,
-  "sample_iter" = 1000,
-  "likelihood_func" = lba_loglike
-)
-psamplers:::init_pmwg(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), forstmann, args)
+sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 }

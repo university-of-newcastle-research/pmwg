@@ -14,8 +14,18 @@ identifiers for each subject.}
 
 \item{parameters}{The list of parameter names to be used in the model}
 
-\item{pmwg_args}{A list containing arguments to the PMwG sampling, including
-number of iterations for each stage.}
+\item{burn}{A vector containing the number of particles and number of
+iterations respectively for the burnin phase.}
+
+\item{adapt}{A vector containing the number of particles and maximum number
+of iterations for the adaptation phase.}
+
+\item{sample}{A vector containing the number of particles and number of
+iterations respectively for the sampling phase.}
+
+\item{llfunc}{A log likelihood function that given a list of parameter values
+and a data.frame containing subject data will return the log likelihood of
+\code{x} given \code{data}. See \code{\link{lba_loglike}} for an example.}
 }
 \value{
 A pmwgs object that can be run, plotted and more
