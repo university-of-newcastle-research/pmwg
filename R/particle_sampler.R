@@ -7,6 +7,8 @@
 #'   to contain at least one column called subject whose elements are unique
 #'   identifiers for each subject.
 #' @param parameters The list of parameter names to be used in the model
+#' @param start_pts The starting values for the mu and sigma2 parameters.
+#' @param prior Specification of the prior distribution for mu and sigma2
 #' @param burn A vector containing the number of particles and number of
 #'   iterations respectively for the burnin phase.
 #' @param adapt A vector containing the number of particles and maximum number
@@ -21,7 +23,8 @@
 #' @examples
 #' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 #' @export
-pmwgs <- function(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
+pmwgs <- function(data, parameters, start_pts = NULL, prior = NULL,
+                  burn = c(1000, 500), adapt = c(1000, 5000),
                   sample = c(100, 1000), llfunc = lba_loglike) {
   n_pars <- length(parameters)
   # Tuning settings for the Gibbs steps
@@ -61,10 +64,27 @@ pmwgs <- function(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
     means = array(dim = c(n_pars, n_subjects)),
     sigmas = array(dim = c(n_pars, n_pars, n_subjects))
   )
+  if (is.null(start_pts)) {
+    start_pts <- list(
+      mu = rep(0, n_pars),
+      sig2 = diag(rep(0.01, n_pars))
+    )
+  }
+  if (is.null(prior)) {
+    prior <- list(
+      mu_mean = rep(0, n_pars),
+      mu_sig2 = diag(rep(1, n_pars))
+    )
+  }
+  # Things I save rather than re-compute inside the loops.
+  prior$mu_sig2_inv <- MASS::ginv(prior$mu_sig2)
+
   sampler <- list(
     par_names = parameters,
     n_pars = n_pars,
     n_subjects = n_subjects,
+    start_pts = start_pts,
+    prior = prior,
     theta = theta,
     hyper = hyper,
     a_half = a_half,

@@ -4,8 +4,9 @@
 \alias{pmwgs}
 \title{Initialise a PMwG sampler and return a pmwgs object}
 \usage{
-pmwgs(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
-  sample = c(100, 1000), llfunc = lba_loglike)
+pmwgs(data, parameters, start_pts = NULL, prior = NULL,
+  burn = c(1000, 500), adapt = c(1000, 5000), sample = c(100, 1000),
+  llfunc = lba_loglike)
 }
 \arguments{
 \item{data}{The data.frame containing empirical data to be modelled. Assumed
@@ -13,6 +14,10 @@ to contain at least one column called subject whose elements are unique
 identifiers for each subject.}
 
 \item{parameters}{The list of parameter names to be used in the model}
+
+\item{start_pts}{The starting values for the mu and sigma2 parameters.}
+
+\item{prior}{Specification of the prior distribution for mu and sigma2}
 
 \item{burn}{A vector containing the number of particles and number of
 iterations respectively for the burnin phase.}

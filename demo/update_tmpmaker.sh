@@ -18,9 +18,4 @@ cd $dest_dir
 echo "Installing psamplers"
 Rscript -e "devtools::install_local('$test_scripts/..', force=TRUE)"
 cp -a $test_scripts/* .
-cd $test_scripts
-echo "Copying parallel and single core demo files"
-git show parallelDemo:demo/parallelPMwG.R > $dest_dir/parallelPMwG.R
-git show singleDemo:demo/singlePMwG.R > $dest_dir/singlePMwG.R
-cd $dest_dir
 echo "Try running Rscript <master|single|parallel>PMwG.R from $dest_dir directory now..."

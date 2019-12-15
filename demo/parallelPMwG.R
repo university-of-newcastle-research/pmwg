@@ -11,34 +11,22 @@ sfLibrary(MASS) # For matrix inverse.
 sfLibrary(MCMCpack) # For the inverse Wishart random numbers.
 sfLibrary(psamplers)
 
-sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
-
-
-start_points_mu <- c(.2, .2, .2, .4, .3, 1.3, -2)
-start_points_sig2 <- diag(rep(.01, init$num_par))
-
-# Storing the proposal values for the conditional Monte Carlo
-
-# Make single-iteration-sized versions, for easier reading of code below.
-ptm <- init$param_theta_mu[, 1]
-pts2 <- init$param_theta_sigma2[, , 1] # nolint
-
-# Start points for the population-level parameters only. Hard coded here, just
-# for convenience.
-# Weird subscripts maintains the naming.
-# GC: Check the start points are correct?
-ptm[1:init$num_par] <- start_points_mu
-pts2 <- start_points_sig2 # Who knows??
-# Because this is calculated near the end of the main loop, needs initialising for iter=1.
-pts2_inv <- ginv(pts2)
-
-# Priors.
-prior <- list(
+pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
+start_points <- list(
+  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
+  sig2 = diag(rep(.01, length(pars)))
+)
+priors <- list(
   mu_mean = rep(0, init$num_par),
   mu_sigma2 = diag(rep(1, init$num_par))
 )
-# Things I save rather than re-compute inside the loops.
-prior$mu_sigma2_inv <- ginv(prior$mu_sigma2)
+
+sampler <- pmwgs(
+  data = forstmann,
+  parameters = pars,
+  start_pts = start_points,
+  prior = priors
+)
 
 # Sample the initial values for the random effects. Algorithm is same
 # as for the main resampling down below.
