@@ -2,6 +2,6 @@
 
 export(conditional_parms)
 export(gen_sample_pars)
-export(init_pmwg)
 export(lba_loglike)
 export(new_sample)
+export(pmwgs)

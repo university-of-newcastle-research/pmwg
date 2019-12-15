@@ -12,17 +12,7 @@
 #'
 #' @return A pmwgs object that can be run, plotted and more
 #' @examples
-#' # Load Forstmann et al.'s data.
-#' args <- list(
-#'   "burn_particles" = 1000,
-#'   "burn_iter" = 500,
-#'   "adapt_particles" = 100,
-#'   "adapt_maxiter" = 5000,
-#'   "sample_particles" = 100,
-#'   "sample_iter" = 1000,
-#'   "likelihood_func" = lba_loglike
-#' )
-#' pmwgs(c("b1", "b2", "b3", "A", "v1", "v2", "t0"), forstmann)
+#' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 #' @export
 pmwgs <- function(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
                   sample = c(100, 1000), llfunc = lba_loglike) {
@@ -36,20 +26,27 @@ pmwgs <- function(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
   # Storage for the samples.
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
-  max_iter <- burn[2] + adapt[2] + sample[2]
 
-  latent_theta_mu <- array(
-    NA,
-    dim = c(n_pars, n_subjects, max_iter),
-    dimnames = list(parameters, NULL, NULL)
+  theta <- list(
+    latent_mu = array(
+      NA,
+      dim = c(n_pars, n_subjects, 0),
+      dimnames = list(parameters, NULL, NULL)
+    ),
+    param_mu = array(
+      NA,
+      dim = c(n_pars, 1, 0),
+      dimnames = list(parameters, NULL, NULL)
+    ),
+    param_sigma2 <- array(
+      NA,
+      dim = c(n_pars, n_pars, 0),
+      dimnames = list(parameters, parameters, NULL)
+    )
   )
-  param_theta_mu <- latent_theta_mu[, 1, ]
-  param_theta_sigma2 <- array(
-    NA,
-    dim = c(n_pars, n_pars, max_iter),
-    dimnames = list(parameters, parameters, NULL)
-  )
+  # k_alpha from Algorithm 3, 2(b)
   k_half <- hyper$dof + n_pars - 1 + n_subjects
+  # IG (inverse gamma) shape parameter, Algorithm 3, 2(c)
   v_shape <- (hyper$dof + n_pars) / 2
   # Sample the mixture variables' initial values.
   a_half <- 1 / stats::rgamma(n = n_pars, shape = 0.5, scale = 1)
@@ -59,11 +56,9 @@ pmwgs <- function(data, parameters, burn = c(1000, 500), adapt = c(1000, 5000),
   )
   sampler <- list(
     par_names = parameters,
-    num_par = num_par,
+    n_pars = n_pars,
     n_subjects = n_subjects,
-    param_theta_mu = param_theta_mu,
-    param_theta_sigma2 = param_theta_sigma2,
-    latent_theta_mu = latent_theta_mu,
+    theta = theta,
     hyper = hyper,
     a_half = a_half,
     k_half = k_half,

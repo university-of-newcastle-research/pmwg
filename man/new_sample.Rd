@@ -33,7 +33,8 @@ three methods.}
 of particles to generate from the population level parameters, the individual random
 effects and the conditional parameters repectively}
 
-\item{likelihood_func}{A likelihood function for calculating log likelihood of samples}
+\item{likelihood_func}{A likelihood function for calculating log likelihood
+of samples}
 }
 \value{
 A single sample from the new proposals
