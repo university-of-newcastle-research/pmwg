@@ -22,7 +22,7 @@
 lba_loglike <- function(x, data, sample = FALSE) {
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
-    return(-Inf)
+    return(-1e10)
   }
   # This is faster than "paste".
   bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition]
