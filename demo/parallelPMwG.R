@@ -17,8 +17,8 @@ start_points <- list(
   sig2 = diag(rep(.01, length(pars)))
 )
 priors <- list(
-  mu_mean = rep(0, init$num_par),
-  mu_sigma2 = diag(rep(1, init$num_par))
+  mu_mean = rep(0, length(pars)),
+  mu_sig2 = diag(rep(1, length(pars)))
 )
 
 sampler <- pmwgs(

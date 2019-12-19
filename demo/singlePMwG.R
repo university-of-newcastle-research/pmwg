@@ -6,13 +6,9 @@ rm(list = ls())
 
 # Vars used for controlling the run
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
-start_points <- list(
-  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
-  sig2 = diag(rep(.01, length(pars)))
-)
 priors <- list(
-  mu_mean = rep(0, init$num_par),
-  mu_sigma2 = diag(rep(1, init$num_par))
+  mu_mean = rep(0, length(pars)),
+  mu_sig2 = diag(rep(1, length(pars)))
 )
 
 sampler <- pmwgs(
@@ -22,64 +18,20 @@ sampler <- pmwgs(
   prior = priors
 )
 
-# Sample the initial values for the random effects. Algorithm is same
-# as for the main resampling down below.
-particles <- array(dim = c(length(ptm), init$S))
-num_particles <- pmwg_args$burn_particles
-cat("Sampling Initial values for random effects\n")
-pb <- txtProgressBar(min = 0, max = init$S, style = 3)
-for (s in 1:init$S) {
-  setTxtProgressBar(pb, s)
-  proposals <- rmvnorm(num_particles, ptm, pts2)
-  lw <- apply(
-    proposals,
-    1,
-    pmwg_args$likelihood_func,
-    data = data[data$subject == s, ]
-  )
-  weight <- exp(lw - max(lw))
-  particles[, s] <- proposals[
-    sample(x = num_particles, size = 1, prob = weight),
-  ]
-}
-close(pb)
-
-cat("Phase 1: Burn in\n")
-# create progress bar
-pb <- txtProgressBar(
-  min = 0,
-  max = pmwg_args$burn_iter / progress_update,
-  style = 3
+start_points <- list(
+  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
+  sig2 = diag(rep(.01, length(pars)))
 )
 
-for (i in 1:pmwg_args$burn_iter) {
-  if (i %% progress_update == 0) {
-    setTxtProgressBar(pb, i %/% progress_update)
-  }
+sampler <- init(sampler, group_mean = start_points$mu,
+                group_var = start_points$sig2)
 
-  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
-  ptm <- single_iter$ptm
-  pts2 <- single_iter$pts2
+burned <- run_stage(sampler, stage = 'burn')
 
-  # Sample new particles for random effects.
-  tmp <- lapply(
-    X = 1:init$S,
-    FUN = new_sample,
-    data = data,
-    num_particles = num_particles,
-    mu = ptm,
-    sig2 = pts2,
-    particles = particles,
-    mix_ratio = c(0.5, 0.5, 0.0)
-  )
-  particles <- array(unlist(tmp), dim = dim(particles))
+adapted <- run_stage(burned, stage = 'adapt')
 
-  # Store results.
-  init$latent_theta_mu[, , i] <- particles # nolint
-  init$param_theta_sigma2[, , i] <- pts2 # nolint
-  init$param_theta_mu[, i] <- ptm
-}
-close(pb)
+sampled <- run_stage(adapted, stage = 'sample')
+
 
 # Adaptation Phase
 num_particles <- pmwg_args$adapt_particles
