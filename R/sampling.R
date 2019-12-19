@@ -1,3 +1,51 @@
+#' Run a stage of the PMwG sampler
+#'
+#' Run one of burnin, adaptation of sampling phase from the PMwG
+#' sampler. Each stage involves slightly different processes, so for the
+#' full PMwG we need to run this three times.
+#'
+#' @param x A pmwgs object that has been initialised
+#' @param stage The sampling stage to run. Must be one of 'burn', 'adapt' or
+#'   'sample'. If not provided assumes that the stage should be 'burn'
+#' @param iter The number of iterations to run for the sampler. For 'burn' and
+#'   'sample' all iteration will run. However for 'adapt' if all subjects have
+#'   enough unique samples to create the conditional distribution then it will
+#'   finish early.
+#' @param particles The default here is 1000 particles to be generated for each
+#'   iteration, however during the sample phase this should be reduced.
+#' @param display_progress Display a progress bar during sampling.
+#' @param ... Further arguments passed to or from other methods.
+#'
+#' @return A pmwgs object with the newly generated samples in place.
+#' @examples
+#' # No example yet
+#' @export
+run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
+                            display_progress = TRUE, ...) {
+  # Test stage argument
+  stage <- match.arg(stage, c("burn", "adapt", "sample"))
+  # Test pmwgs object initialised
+  try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
+
+  # Display stage to screen
+  msgs <- list(burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
+               sample = "Phase 3: Sampling\n")
+  cat(msgs[[stage]])
+
+  # Build new sample storage
+  stage_samples <- sample_store(x$par_names, x$n_subject, iters = iter)
+  # Get single iter versions, gm = group_mean, gv = group_var, sm = subject_mean
+  gm <- x$sample$group_mean[, ncol(x$samples$group_mean)]
+  gv <- x$samples$group_var[, , dim(x$samples$group_var)[3]]
+  sm <- x$samples$subject_mean[, , dim(x$samples$subject_mean)[3]]
+  # create progress bar
+  if (display_progress) pb <- txtProgressBar(min = 0, max = iter, style = 3)
+
+  for (i in 1:iter) {
+  }
+  close(pb)
+}
+
 #' Generate a new particle
 #'
 #' Generate samples from either the initial proposal or from the last
