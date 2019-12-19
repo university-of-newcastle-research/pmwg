@@ -50,8 +50,6 @@ for (s in 1:init$S) {
 }
 close(pb)
 
-
-
 cat("Phase 1: Burn in\n")
 # create progress bar
 pb <- txtProgressBar(

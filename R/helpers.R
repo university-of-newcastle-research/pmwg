@@ -26,7 +26,7 @@ unwind <- function(var_matrix, ...) {
 #' @keywords internal
 wind <- function(var_vector, ...) {
   n <- sqrt(2 * length(var_vector) + 0.25) - 0.5 ## Dim of matrix.
-  if ( (n * n + n) != (2 * length(var_vector)) ) stop("Wrong sizes in unwind.")
+  if ((n * n + n) != (2 * length(var_vector))) stop("Wrong sizes in unwind.")
   out <- array(0, dim = c(n, n))
   out[lower.tri(out, diag = TRUE)] <- var_vector
   diag(out) <- exp(diag(out))
@@ -134,21 +134,24 @@ particle_draws <- function(n, mu, covar) {
 #' # No example yet
 #' @export
 conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
-
-  pts2_unwound <- apply(init$param_theta_sigma2[, , start_idx:end_idx],
-                        3,
-                        unwind)
-  all_samples <- rbind(init$latent_theta_mu[, s, start_idx:end_idx],
-                       init$param_theta_mu[, start_idx:end_idx],
-                       pts2_unwound
+  pts2_unwound <- apply(
+    init$param_theta_sigma2[, , start_idx:end_idx],
+    3,
+    unwind
+  )
+  all_samples <- rbind(
+    init$latent_theta_mu[, s, start_idx:end_idx],
+    init$param_theta_mu[, start_idx:end_idx],
+    pts2_unwound
   )
   mu_tilde <- apply(all_samples, 1, mean)
   sigma_tilde <- stats::var(t(all_samples))
-  condmvn <- condMVNorm::condMVN(mean = mu_tilde,
-                     sigma = sigma_tilde,
-                     dependent.ind = 1:length(ptm),
-                     given.ind = (length(ptm) + 1):length(mu_tilde),
-                     X.given = c(ptm, unwind(pts2))
+  condmvn <- condMVNorm::condMVN(
+    mean = mu_tilde,
+    sigma = sigma_tilde,
+    dependent.ind = 1:length(ptm),
+    given.ind = (length(ptm) + 1):length(mu_tilde),
+    X.given = c(ptm, unwind(pts2))
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }

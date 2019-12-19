@@ -8,6 +8,7 @@ external.packages:
 	knitr
 	testthat
 	roxygen2
+	nvimcom
 local.repos: 
 load.external.packages.on.startup: TRUE
 ignored.packages: 
