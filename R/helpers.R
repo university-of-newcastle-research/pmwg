@@ -155,3 +155,35 @@ conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }
+
+
+#' Create a new list for storage samples in the pmwgs object
+#'
+#' @param par_names The names of each parameter as a character vector
+#' @param n_subjects The number of subjects for the subject mean storage.
+#' @param iters The number of iterations to be pre-allocated
+#'
+#' @return A list containing the conditional mean and variances for this subject
+#' @examples
+#' # No example yet
+#' @export
+sample_store <- function(par_names, n_subjects, iters = 1) {
+  n_pars <- length(par_names)
+  list(
+    subject_mean = array(
+      NA,
+      dim = c(n_pars, n_subjects, iters),
+      dimnames = list(par_names, NULL, NULL)
+    ),
+    group_mean = array(
+      NA,
+      dim = c(n_pars, iters),
+      dimnames = list(par_names, NULL)
+    ),
+    group_var = array(
+      NA,
+      dim = c(n_pars, n_pars, iters),
+      dimnames = list(par_names, par_names, NULL)
+    )
+  )
+}
