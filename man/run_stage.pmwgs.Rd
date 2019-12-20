@@ -5,12 +5,12 @@
 \title{Run a stage of the PMwG sampler}
 \usage{
 \method{run_stage}{pmwgs}(x, stage, iter = 1000, particles = 1000,
-  display_progress = TRUE)
+  display_progress = TRUE, ...)
 }
 \arguments{
 \item{x}{A pmwgs object that has been initialised}
 
-\item{stage}{The sampling stage to run. Must be one of 'burn', 'adapt' or 
+\item{stage}{The sampling stage to run. Must be one of 'burn', 'adapt' or
 'sample'. If not provided assumes that the stage should be 'burn'}
 
 \item{iter}{The number of iterations to run for the sampler. For 'burn' and
@@ -20,6 +20,10 @@ finish early.}
 
 \item{particles}{The default here is 1000 particles to be generated for each
 iteration, however during the sample phase this should be reduced.}
+
+\item{display_progress}{Display a progress bar during sampling.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 A pmwgs object with the newly generated samples in place.

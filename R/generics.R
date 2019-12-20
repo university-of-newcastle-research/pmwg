@@ -14,10 +14,11 @@
 #' @export
 run_stage <- function(x, ...) {
   if (is.null(attr(x, "class"))) {
-    print("No object to run to")
+    print("No object to run a stage on")
   }
   else UseMethod("run_stage")
 }
+
 
 #' Initialise a sampler with starting points
 #'

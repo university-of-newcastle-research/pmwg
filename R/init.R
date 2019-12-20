@@ -67,43 +67,38 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 #'
 #' Takes the pmwgs object and sets up sampling loop variables
 #'
-#' @param init The list of parameter names to be used in the model
-#' @param pmwg_args A list containing arguments to the PMwG sampling, including
-#'   number of iterations for each stage.
-#' @param prior A list containing priors for variance, means etc.
-#' @param particles A multidimensional array containing accepted particles from
-#'   the sampling.
+#' @param sampler The pmwgs object from which to generate the new group
+#'   parameters.
 #'
 #' @return A list of generated variables that can be modified after the fact
 #' @examples
 #' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 #' @export
-gen_sample_pars <- function(init, pmwg_args, prior, particles) {
-  # Sample population-level parameters.
-  var_mu <- MASS::ginv(init$S * pts2_inv + prior$mu_sigma2_inv)
+new_group_pars <- function(sampler) {
+  # Get single iter versions, gm = group_mean, gv = group_var
+
+  # Here mu is group mean, so we are getting mean and variance
+  var_mu <- MASS::ginv(sampler$n_subjects * gv_inv + prior$group_var_inv)
   mean_mu <- as.vector(
-    var_mu %*% (pts2_inv %*% apply(particles, 1, sum))
+    var_mu %*% (gv_inv %*% apply(sm, 1, sum))
   )
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
-  ptm <- mvtnorm::rmvnorm(
-    1,
-    mean_mu,
-    chol_var_mu %*% t(chol_var_mu)
-  )[1, ]
-  names(ptm) <- init$par_names
+  gm <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
+  names(gm) <- sampler$par_names
 
-  theta_temp <- particles - ptm
+  # New values for group var
+  theta_temp <- sm - gm
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * init$v_half * diag(1 / init$a_half) + cov_temp
-  pts2 <- MCMCpack::riwish(init$k_half, B_half) # New sample for sigma.
-  pts2_inv <- MASS::ginv(pts2)
+  B_half <- 2 * sampler$hyper$dof * diag(1 / sampler$a_half) + cov_temp
+  gv <- MCMCpack::riwish(sampler$k_half, B_half) # New sample for group variance
+  gv_inv <- MASS::ginv(gv)
 
   # Sample new mixing weights.
-  init$a_half <- 1 / stats::rgamma(
-    n = init$num_par,
-    shape = init$v_shape,
-    scale = 1 / (init$v_half + diag(pts2_inv) + init$A_half)
+  sampler$a_half <- 1 / stats::rgamma(
+    n = sampler$num_par,
+    shape = sampler$v_shape,
+    scale = 1 / (sampler$hyper$dof + diag(gv_inv) + sampler$hyper$scale)
   )
   list(ptm = ptm, pts2 = pts2, pts2_inv = pts2_inv)
 }

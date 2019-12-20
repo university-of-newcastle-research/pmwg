@@ -187,3 +187,32 @@ sample_store <- function(par_names, n_subjects, iters = 1) {
     )
   )
 }
+
+
+#' Create a list with the last samples in the pmwgs object
+#'
+#' @param store The list containing samples from t=which to grab the last.
+#'
+#' @return A list containing the last sample of group mean and variance and
+#'   subject means.
+#' @examples
+#' # No example yet
+#' @export
+last_sample <- function(store) {
+  if (anyNA(store$group_mean)) {
+    last_ind <- which(
+      apply(store$group_mean, 2, is.na),
+      arr.ind = TRUE
+    )[1, "col"]
+  }
+  else {
+    last_ind <- ncol(store$group_mean)
+  }
+
+  list(
+    gm = store$group_mean[, last_ind],
+    gv = store$group_var[, , last_ind],
+    sm = store$subject_mean[, , last_ind],
+    gvi = store$last_group_var_inverse
+  )
+}
