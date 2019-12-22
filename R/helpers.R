@@ -171,17 +171,17 @@ sample_store <- function(par_names, n_subjects, iters = 1) {
   n_pars <- length(par_names)
   list(
     subject_mean = array(
-      NA,
+      NA_real_,
       dim = c(n_pars, n_subjects, iters),
       dimnames = list(par_names, NULL, NULL)
     ),
     group_mean = array(
-      NA,
+      NA_real_,
       dim = c(n_pars, iters),
       dimnames = list(par_names, NULL)
     ),
     group_var = array(
-      NA,
+      NA_real_,
       dim = c(n_pars, n_pars, iters),
       dimnames = list(par_names, par_names, NULL)
     )
@@ -199,20 +199,37 @@ sample_store <- function(par_names, n_subjects, iters = 1) {
 #' # No example yet
 #' @export
 last_sample <- function(store) {
-  if (anyNA(store$group_mean)) {
-    last_ind <- which(
-      apply(store$group_mean, 2, is.na),
-      arr.ind = TRUE
-    )[1, "col"]
-  }
-  else {
-    last_ind <- ncol(store$group_mean)
-  }
-
   list(
-    gm = store$group_mean[, last_ind],
-    gv = store$group_var[, , last_ind],
-    sm = store$subject_mean[, , last_ind],
-    gvi = store$last_group_var_inverse
+    gm = store$group_mean[, store$idx],
+    gv = store$group_var[, , store$idx],
+    sm = store$subject_mean[, , store$idx],
+    gvi = store$last_group_var_inv
   )
+}
+
+
+#' Update the main data store with the results of the last stage
+#'
+#' @param sampler The pmwgs object that we are adding the new samples to
+#' @param store The sample storage stage just run
+#'
+#' @return The pmwgs object with the new samples concatenated to the old
+#' @examples
+#' # No example yet
+#' @export
+update_sampler <- function(sampler, store) {
+  old_gm <- sampler$samples$group_mean
+  old_gv <- sampler$samples$group_var
+  old_sm <- sampler$samples$subject_mean
+  li <- store$idx
+
+  sampler$samples$group_mean <- array(c(old_gm, store$group_mean[, li]),
+                                      dim = dim(old_gm) + c(0, li))
+  sampler$samples$group_var <- array(c(old_gv, store$group_var[, , li]),
+                                     dim = dim(old_gv) + c(0, 0, li))
+  sampler$samples$subject_mean <- array(c(old_sm, store$subject_mean[, , li]),
+                                        dim = dim(old_sm) + c(0, 0, li))
+  sampler$samples$idx <- ncol(sampler$samples$group_mean)
+  sampler$samples$last_group_var_inv <- store$last_group_var_inv
+  sampler
 }

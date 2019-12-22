@@ -59,6 +59,8 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
   x$samples$group_mean[, 1] <- group_mean
   x$samples$group_var[, , 1] <- group_var
   x$samples$subject_mean[, , 1] <- subject_mean
+  x$samples$last_group_var_inverse <- MASS::ginv(group_var)
+  x$samples$idx <- 1
   x
 }
 
@@ -67,6 +69,8 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 #'
 #' Takes the pmwgs object and sets up sampling loop variables
 #'
+#' @param samples The list containing the samples from the current run, or from
+#'   the master storage in the sampler
 #' @param sampler The pmwgs object from which to generate the new group
 #'   parameters.
 #'
@@ -74,31 +78,32 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 #' @examples
 #' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
 #' @export
-new_group_pars <- function(sampler) {
+new_group_pars <- function(samples, sampler) {
   # Get single iter versions, gm = group_mean, gv = group_var
+  last <- last_sample(samples)
 
   # Here mu is group mean, so we are getting mean and variance
-  var_mu <- MASS::ginv(sampler$n_subjects * gv_inv + prior$group_var_inv)
-  mean_mu <- as.vector(
-    var_mu %*% (gv_inv %*% apply(sm, 1, sum))
+  var_mu <- MASS::ginv(
+    sampler$n_subjects * last$gvi + sampler$prior$group_var_inv
   )
+  mean_mu <- as.vector(var_mu %*% (last$gvi %*% apply(last$sm, 1, sum)))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   gm <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
   names(gm) <- sampler$par_names
 
   # New values for group var
-  theta_temp <- sm - gm
+  theta_temp <- last$sm - gm
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * sampler$hyper$dof * diag(1 / sampler$a_half) + cov_temp
+  B_half <- 2 * sampler$hyper$dof * diag(1 / sampler$a_half) + cov_temp  # nolint
   gv <- MCMCpack::riwish(sampler$k_half, B_half) # New sample for group variance
-  gv_inv <- MASS::ginv(gv)
+  gvi <- MASS::ginv(gv)
 
   # Sample new mixing weights.
-  sampler$a_half <- 1 / stats::rgamma(
-    n = sampler$num_par,
+  a_half <- 1 / stats::rgamma(
+    n = sampler$n_pars,
     shape = sampler$v_shape,
-    scale = 1 / (sampler$hyper$dof + diag(gv_inv) + sampler$hyper$scale)
+    scale = 1 / (sampler$hyper$dof + diag(gvi) + sampler$hyper$scale)
   )
-  list(ptm = ptm, pts2 = pts2, pts2_inv = pts2_inv)
+  list(gm = gm, gv = gv, gvi = gvi, a_half = a_half, sm = last$sm)
 }

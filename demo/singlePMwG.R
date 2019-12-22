@@ -7,14 +7,13 @@ rm(list = ls())
 # Vars used for controlling the run
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 priors <- list(
-  mu_mean = rep(0, length(pars)),
-  mu_sig2 = diag(rep(1, length(pars)))
+  group_mean = rep(0, length(pars)),
+  group_var = diag(rep(1, length(pars)))
 )
 
 sampler <- pmwgs(
   data = forstmann,
   parameters = pars,
-  start_pts = start_points,
   prior = priors
 )
 

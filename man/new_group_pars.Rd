@@ -4,9 +4,12 @@
 \alias{new_group_pars}
 \title{Initialise variables needed for individual loops within PMwG}
 \usage{
-new_group_pars(sampler)
+new_group_pars(samples, sampler)
 }
 \arguments{
+\item{samples}{The list containing the samples from the current run, or from
+the master storage in the sampler}
+
 \item{sampler}{The pmwgs object from which to generate the new group
 parameters.}
 }

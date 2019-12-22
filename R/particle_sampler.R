@@ -20,8 +20,8 @@ pmwgs <- function(data, parameters, prior = NULL, llfunc = lba_loglike) {
   n_pars <- length(parameters)
   # Tuning settings for the Gibbs steps
   hyper <- list(
-    dof <- 2,  # hyperparameter on prior (Half-t degrees of freedom)
-    scale <- 1 # hyperparameter on prior (Half-t scale)
+    dof = 2,  # hyperparameter on prior (Half-t degrees of freedom)
+    scale = 1 # hyperparameter on prior (Half-t scale)
   )
   n_subjects <- length(unique(data$subject))
   # Storage for the samples.

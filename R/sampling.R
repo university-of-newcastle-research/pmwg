@@ -34,17 +34,42 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 
   # Build new sample storage
   stage_samples <- sample_store(x$par_names, x$n_subject, iters = iter)
-  # Get single iter versions, gm = group_mean, gv = group_var, sm = subject_mean
-  gm <- x$sample$group_mean[, ncol(x$samples$group_mean)]
-  gv <- x$samples$group_var[, , dim(x$samples$group_var)[3]]
-  sm <- x$samples$subject_mean[, , dim(x$samples$subject_mean)[3]]
   # create progress bar
-  if (display_progress) pb <- txtProgressBar(min = 0, max = iter, style = 3)
+  if (display_progress) {
+    pb <- utils::txtProgressBar(min = 0, max = iter, style = 3)
+  }
 
   for (i in 1:iter) {
+    
+    if (display_progress) utils::setTxtProgressBar(pb, i)
+
+    if (i == 1) store <- x$samples else store <- stage_samples
+    pars <- new_group_pars(store, x)
+
+    # Sample new particles for random effects.
+    tmp <- lapply(
+      X = 1:x$n_subjects,
+      FUN = new_sample,
+      data = x$data,
+      num_particles = particles,
+      mu = pars$gm,
+      sig2 = pars$gv,
+      particles = pars$sm,
+      mix_ratio = c(0.5, 0.5, 0.0)
+    )
+    sm <- array(unlist(tmp), dim = dim(pars$sm))
+
+    # Store results.
+    stage_samples$group_mean[, i] <- pars$gm
+    stage_samples$group_var[, , i] <- pars$gv
+    stage_samples$last_group_var_inv <- pars$gvi
+    stage_samples$subject_mean[, , i] <- sm
+    stage_samples$idx <- i
   }
-  close(pb)
+  if (display_progress) close(pb)
+  update_sampler(x, stage_samples)
 }
+
 
 #' Generate a new particle
 #'
@@ -115,8 +140,7 @@ new_sample <- function(s, data, num_particles,
       mean = e_mu,
       sigma = e_sig2
     )
-  }
-  else {
+  } else {
     eff_density <- 0
   }
 
