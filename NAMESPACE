@@ -2,6 +2,7 @@
 
 S3method(init,pmwgs)
 S3method(run_stage,pmwgs)
+export(check_adapted)
 export(conditional_parms)
 export(init)
 export(last_sample)

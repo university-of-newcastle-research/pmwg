@@ -233,3 +233,22 @@ update_sampler <- function(sampler, store) {
   sampler$samples$last_group_var_inv <- store$last_group_var_inv
   sampler
 }
+
+
+#' Check whether the adaptation phase has successfully completed
+#'
+#' @param samples The subject mean samples with which we are working
+#' @param unq_vals The number of unique values for each subject
+#'
+#' @return A boolean TRUE or FALSE depending on the result of the test
+#' @examples
+#' # No example yet
+#' @export
+check_adapted <- function(samples, unq_vals = 20) {
+  all(
+    lapply(
+      apply(samples, 1, unique),
+      length
+    ) > unq_vals
+  )
+}

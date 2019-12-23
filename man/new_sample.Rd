@@ -4,9 +4,9 @@
 \alias{new_sample}
 \title{Generate a new particle}
 \usage{
-new_sample(s, data, num_particles, mu, sig2, particles,
-  efficient_mu = NULL, efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5,
-  0), likelihood_func = lba_loglike)
+new_sample(s, data, num_particles, parameters, efficient_mu = NULL,
+  efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5, 0),
+  likelihood_func = lba_loglike)
 }
 \arguments{
 \item{s}{A number - the subject ID, also selects particles}
@@ -19,11 +19,11 @@ contains the data against which the particles are assessed}
 \item{num_particles}{The total number of particles to generate using a combination of the
 three methods.}
 
-\item{mu}{A vector of means for the multivariate normal}
-
-\item{sig2}{A covariate matrix for the multivariate normal}
-
-\item{particles}{An array of particles (re proposals for latent variables)}
+\item{parameters}{A list containing:
+* the vector of means for the multivariate normal (gm),
+* A covariate matrix for the multivariate normal (gv)
+* An array of individual subject means (re proposals for latent
+  variables) (sm)}
 
 \item{efficient_mu}{The mu value for the efficient proposals}
 

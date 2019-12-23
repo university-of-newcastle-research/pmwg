@@ -24,6 +24,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
                             display_progress = TRUE, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
+  if (stage == "sample") mix <- c(0.1, 0.2, 0.7) else mix <- c(0.5, 0.5, 0.0)
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
 
@@ -40,7 +41,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
   }
 
   for (i in 1:iter) {
-    
+
     if (display_progress) utils::setTxtProgressBar(pb, i)
 
     if (i == 1) store <- x$samples else store <- stage_samples
@@ -52,9 +53,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       FUN = new_sample,
       data = x$data,
       num_particles = particles,
-      mu = pars$gm,
-      sig2 = pars$gv,
-      particles = pars$sm,
+      parameters = pars,
       mix_ratio = c(0.5, 0.5, 0.0)
     )
     sm <- array(unlist(tmp), dim = dim(pars$sm))
@@ -65,6 +64,13 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     stage_samples$last_group_var_inv <- pars$gvi
     stage_samples$subject_mean[, , i] <- sm
     stage_samples$idx <- i
+
+    if (stage == "adapt") {
+      if (check_adapted(stage_samples$subject_mean[1, , ])) {
+        print("Adapted - stopping early")
+        break
+      }
+    }
   }
   if (display_progress) close(pb)
   update_sampler(x, stage_samples)
@@ -84,9 +90,11 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
-#' @param mu A vector of means for the multivariate normal
-#' @param sig2 A covariate matrix for the multivariate normal
-#' @param particles An array of particles (re proposals for latent variables)
+#' @param parameters A list containing:
+#'          * the vector of means for the multivariate normal (gm),
+#'          * A covariate matrix for the multivariate normal (gv)
+#'          * An array of individual subject means (re proposals for latent
+#'            variables) (sm)
 #' @inheritParams numbers_from_ratio
 #' @inheritParams check_efficient
 #' @param likelihood_func A likelihood function for calculating log likelihood
@@ -96,8 +104,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 #' @examples
 #' # No example yet
 #' @export
-new_sample <- function(s, data, num_particles,
-                       mu, sig2, particles,
+new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0),
                        likelihood_func = lba_loglike) {
@@ -105,18 +112,19 @@ new_sample <- function(s, data, num_particles,
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   e_mu <- efficient_mu[, s]
   e_sig2 <- efficient_sig2[, , s]
+  mu <- parameters$gm
+  sig2 <- parameters$gv
+  subj_mu <- parameters$sm[, s]
+
   # Create proposals for new particles
   proposals <- gen_particles(
-    num_particles,
-    mu,
-    sig2,
-    particles[, s],
+    num_particles, mu, sig2, subj_mu,
     mix_ratio = mix_ratio,
-    proposal_means = e_mu,
-    proposal_sigmas = e_sig2
+    prop_mu = e_mu,
+    prop_sig2 = e_sig2
   )
   # Put the current particle in slot 1.
-  proposals[1, ] <- particles[, s]
+  proposals[1, ] <- subj_mu
 
   # Density of data given random effects proposal.
   lw <- apply(
@@ -128,11 +136,7 @@ new_sample <- function(s, data, num_particles,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(
-    x = proposals,
-    mean = particles[, s],
-    sigma = sig2
-  )
+  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = subj_mu, sigma = sig2)
   # Density of efficient proposals
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
@@ -156,15 +160,20 @@ new_sample <- function(s, data, num_particles,
 
 #' Generate proposal particles.
 #'
-#' Generate particles for a particular subject from a mix of population level (hierarchical)
-#' distribution, from the particles (containing individual level distribution) and/or from
-#' The conditional on accepted individual level particles, a more efficient prposal method.
-#' This function is used in burnin, adaptation and sampling using various combinations of the arguments
+#' Generate particles for a particular subject from a mix of population level
+#' (hierarchical) distribution, from the particles (containing individual level
+#' distribution) and/or from the conditional on accepted individual level
+#' particles, a more efficient prposal method.
+#'
+#' This function is used in burnin, adaptation and sampling using various
+#' combinations of the arguments.
 #'
 #' @param mu A vector of means for the multivariate normal
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particle A particle (re proposals for latent variables)
 #' @inheritParams numbers_from_ratio
+#' @param epsilon Reduce the variance for the individual level samples by this
+#'   factor
 #'
 #' @return The new proposals
 #' @examples
@@ -176,14 +185,15 @@ gen_particles <- function(num_particles,
                           particle,
                           ...,
                           mix_ratio = c(0.5, 0.5, 0.0),
-                          proposal_means = NULL,
-                          proposal_sigmas = NULL) {
+                          prop_mu = NULL,
+                          prop_sig2 = NULL,
+                          epsilon = 1) {
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
-  population_particles <- particle_draws(particle_numbers[1], mu, sig2)
-  randeffect_particles <- particle_draws(particle_numbers[2], particle, sig2)
-  proposal_particles <- particle_draws(particle_numbers[3], proposal_means, proposal_sigmas)
-  particles <- rbind(population_particles, randeffect_particles, proposal_particles)
+  pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
+  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 / epsilon)
+  eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
+  particles <- rbind(pop_particles, ind_particles, eff_particles)
   colnames(particles) <- names(mu) # stripped otherwise.
   particles
 }

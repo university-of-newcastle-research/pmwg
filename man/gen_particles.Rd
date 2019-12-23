@@ -5,7 +5,7 @@
 \title{Generate proposal particles.}
 \usage{
 gen_particles(num_particles, mu, sig2, particle, ..., mix_ratio = c(0.5,
-  0.5, 0), proposal_means = NULL, proposal_sigmas = NULL)
+  0.5, 0), prop_mu = NULL, prop_sig2 = NULL, epsilon = 1)
 }
 \arguments{
 \item{num_particles}{The total number of particles to generate using a combination of the
@@ -20,15 +20,22 @@ three methods.}
 \item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
 of particles to generate from the population level parameters, the individual random
 effects and the conditional parameters repectively}
+
+\item{epsilon}{Reduce the variance for the individual level samples by this
+factor}
 }
 \value{
 The new proposals
 }
 \description{
-Generate particles for a particular subject from a mix of population level (hierarchical)
-distribution, from the particles (containing individual level distribution) and/or from
-The conditional on accepted individual level particles, a more efficient prposal method.
-This function is used in burnin, adaptation and sampling using various combinations of the arguments
+Generate particles for a particular subject from a mix of population level
+(hierarchical) distribution, from the particles (containing individual level
+distribution) and/or from the conditional on accepted individual level
+particles, a more efficient prposal method.
+}
+\details{
+This function is used in burnin, adaptation and sampling using various
+combinations of the arguments.
 }
 \examples{
 psamplers:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
