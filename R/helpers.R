@@ -223,11 +223,11 @@ update_sampler <- function(sampler, store) {
   old_sm <- sampler$samples$subject_mean
   li <- store$idx
 
-  sampler$samples$group_mean <- array(c(old_gm, store$group_mean[, li]),
+  sampler$samples$group_mean <- array(c(old_gm, store$group_mean[, 1:li]),
                                       dim = dim(old_gm) + c(0, li))
-  sampler$samples$group_var <- array(c(old_gv, store$group_var[, , li]),
+  sampler$samples$group_var <- array(c(old_gv, store$group_var[, , 1:li]),
                                      dim = dim(old_gv) + c(0, 0, li))
-  sampler$samples$subject_mean <- array(c(old_sm, store$subject_mean[, , li]),
+  sampler$samples$subject_mean <- array(c(old_sm, store$subject_mean[, , 1:li]),
                                         dim = dim(old_sm) + c(0, 0, li))
   sampler$samples$idx <- ncol(sampler$samples$group_mean)
   sampler$samples$last_group_var_inv <- store$last_group_var_inv
