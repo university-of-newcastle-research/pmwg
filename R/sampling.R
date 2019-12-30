@@ -24,7 +24,13 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
                             display_progress = TRUE, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
-  if (stage == "sample") mix <- c(0.1, 0.2, 0.7) else mix <- c(0.5, 0.5, 0.0)
+  if (stage == "sample") {
+    mix <- c(0.1, 0.2, 0.7)
+    epsilon <- 1
+  } else {
+    mix <- c(0.5, 0.5, 0.0)
+    epsilon <- 3
+  }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
 
@@ -54,7 +60,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       data = x$data,
       num_particles = particles,
       parameters = pars,
-      mix_ratio = c(0.5, 0.5, 0.0)
+      mix_ratio = mix,
+      epsilon = epsilon
     )
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
@@ -99,6 +106,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 #' @inheritParams check_efficient
 #' @param likelihood_func A likelihood function for calculating log likelihood
 #'   of samples
+#' @param epsilon A scaling factor to reduce the variance on individual level
+#'   parameter samples
 #'
 #' @return A single sample from the new proposals
 #' @examples
@@ -107,7 +116,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0),
-                       likelihood_func = lba_loglike) {
+                       likelihood_func = lba_loglike,
+                       epsilon = 1) {
   # Check for efficient proposal values if necessary
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   e_mu <- efficient_mu[, s]
@@ -121,7 +131,8 @@ new_sample <- function(s, data, num_particles, parameters,
     num_particles, mu, sig2, subj_mu,
     mix_ratio = mix_ratio,
     prop_mu = e_mu,
-    prop_sig2 = e_sig2
+    prop_sig2 = e_sig2,
+    epsilon = epsilon
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- subj_mu

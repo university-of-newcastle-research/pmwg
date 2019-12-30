@@ -245,9 +245,11 @@ update_sampler <- function(sampler, store) {
 #' # No example yet
 #' @export
 check_adapted <- function(samples, unq_vals = 20) {
+  # Only need to check uniqueness for one parameter
+  first_par <- samples[1, , ]
   all(
     lapply(
-      apply(samples, 1, unique),
+      apply(first_par, 1, unique),
       length
     ) > unq_vals
   )

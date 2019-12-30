@@ -25,124 +25,63 @@ start_points <- list(
 sampler <- init(sampler, group_mean = start_points$mu,
                 group_var = start_points$sig2)
 
-burned <- run_stage(sampler, stage = 'burn')
+burned <- run_stage(sampler, stage = "burn")
 
-adapted <- run_stage(burned, stage = 'adapt')
+adapted <- run_stage(burned, stage = "adapt")
 
-sampled <- run_stage(adapted, stage = 'sample')
+sampled <- run_stage(adapted, stage = "sample")
 
-
-# Adaptation Phase
-num_particles <- pmwg_args$adapt_particles
-cat("Phase 2: Adaptation\n")
-# create progress bar
-pb <- txtProgressBar(
-  min = 0,
-  max = pmwg_args$adapt_maxiter / progress_update,
-  style = 3
-)
-pmwg_args$adapted <- FALSE
-pmwg_args$adapt_iter <- pmwg_args$burn_iter + pmwg_args$adapt_maxiter
-
-for (i in 1:pmwg_args$adapt_maxiter) {
-  if (i %% progress_update == 0) {
-    setTxtProgressBar(pb, i %/% progress_update)
-  }
-
-  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
-  ptm <- single_iter$ptm
-  pts2 <- single_iter$pts2
-
-  # Sample new particles for random effects.
-  tmp <- lapply(
-    X = 1:init$S,
-    FUN = new_sample,
-    data = data,
-    num_particles = num_particles,
-    mu = ptm,
-    sig2 = pts2,
-    particles = particles,
-    mix_ratio = c(0.5, 0.5, 0.0)
-  )
-  particles <- array(unlist(tmp), dim = dim(particles))
-
-  # Store results.
-  init$latent_theta_mu[, , pmwg_args$burn_iter + i] <- particles # nolint
-  init$param_theta_sigma2[, , pmwg_args$burn_iter + i] <- pts2 # nolint
-  init$param_theta_mu[, pmwg_args$burn_iter + i] <- ptm
-
-  # Check adaptive phase ended
-  # Check the number of unique 'A' values since the end of the burnin
-  # Get the length of each vector of unique values
-  # Test the if every length is greater than 20
-  pmwg_adapted <- all(
-    lapply(
-      apply(
-        init$latent_theta_mu["A", , pmwg_args$burn_iter:(pmwg_args$burn_iter + i)],
-        1,
-        unique
-      ),
-      length
-    ) > 20
-  )
-  if (pmwg_adapted) {
-    pmwg_args$adapted <- TRUE
-    pmwg_args$adapt_iter <- pmwg_args$burn_iter + i
-    break
-  }
-}
-close(pb)
-
-save.image("data/output/PMwG.RData")
-#Create conditional means/variances
-for (s in 1:init$S) {
-  cparms <- conditional_parms(init,
-                              ptm,
-                              pts2,
-                              s,
-                              pmwg_args$burn_iter + 1,
-                              pmwg_args$burn_iter + pmwg_args$adapt_iter)
-  proposal_means[, s] <- cparms$cmeans
-  proposal_sigmas[, , s] <- cparms$cvars
-}
-
-# Sampling Phase
-num_particles <- pmwg_args$sample_particles
-cat("Phase 3: Sampling\n")
-# create progress bar
-pb <- txtProgressBar(
-  min = 0,
-  max = pmwg_args$sample_iter / progress_update,
-  style = 3
-)
-
-for (i in 1:pmwg_args$sample_iter) {
-  if (i %% progress_update == 0) {
-    setTxtProgressBar(pb, i %/% progress_update)
-  }
-
-  single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
-  ptm <- single_iter$ptm
-  pts2 <- single_iter$pts2
-
-  # Sample new particles for random effects.
-  tmp <- lapply(
-    X = 1:init$S,
-    FUN = new_sample,
-    data = data,
-    num_particles = num_particles,
-    mu = ptm,
-    sig2 = pts2,
-    particles = particles,
-    mix_ratio = c(0.1, 0.2, 0.7)
-  )
-  particles <- array(unlist(tmp), dim = dim(particles))
-
-  # Store results.
-  init$latent_theta_mu[, , pmwg_args$adapt_iter + i] <- particles # nolint
-  init$param_theta_sigma2[, , pmwg_args$adapt_iter + i] <- pts2 # nolint
-  init$param_theta_mu[, pmwg_args$adapt_iter + i] <- ptm
-}
-close(pb)
+# # Create conditional means/variances
+# for (s in 1:init$S) {
+#   cparms <- conditional_parms(
+#     init,
+#     ptm,
+#     pts2,
+#     s,
+#     pmwg_args$burn_iter + 1,
+#     pmwg_args$burn_iter + pmwg_args$adapt_iter
+#   )
+#   proposal_means[, s] <- cparms$cmeans
+#   proposal_sigmas[, , s] <- cparms$cvars
+# }
+# 
+# # Sampling Phase
+# num_particles <- pmwg_args$sample_particles
+# cat("Phase 3: Sampling\n")
+# # create progress bar
+# pb <- txtProgressBar(
+#   min = 0,
+#   max = pmwg_args$sample_iter / progress_update,
+#   style = 3
+# )
+# 
+# for (i in 1:pmwg_args$sample_iter) {
+#   if (i %% progress_update == 0) {
+#     setTxtProgressBar(pb, i %/% progress_update)
+#   }
+# 
+#   single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
+#   ptm <- single_iter$ptm
+#   pts2 <- single_iter$pts2
+# 
+#   # Sample new particles for random effects.
+#   tmp <- lapply(
+#     X = 1:init$S,
+#     FUN = new_sample,
+#     data = data,
+#     num_particles = num_particles,
+#     mu = ptm,
+#     sig2 = pts2,
+#     particles = particles,
+#     mix_ratio = c(0.1, 0.2, 0.7)
+#   )
+#   particles <- array(unlist(tmp), dim = dim(particles))
+# 
+#   # Store results.
+#   init$latent_theta_mu[, , pmwg_args$adapt_iter + i] <- particles # nolint
+#   init$param_theta_sigma2[, , pmwg_args$adapt_iter + i] <- pts2 # nolint
+#   init$param_theta_mu[, pmwg_args$adapt_iter + i] <- ptm
+# }
+# close(pb)
 
 save.image("data/output/PMwG.RData")
