@@ -6,7 +6,7 @@
 \usage{
 new_sample(s, data, num_particles, parameters, efficient_mu = NULL,
   efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5, 0),
-  likelihood_func = lba_loglike)
+  likelihood_func = lba_loglike, epsilon = 1)
 }
 \arguments{
 \item{s}{A number - the subject ID, also selects particles}
@@ -35,6 +35,9 @@ effects and the conditional parameters repectively}
 
 \item{likelihood_func}{A likelihood function for calculating log likelihood
 of samples}
+
+\item{epsilon}{A scaling factor to reduce the variance on individual level
+parameter samples}
 }
 \value{
 A single sample from the new proposals
