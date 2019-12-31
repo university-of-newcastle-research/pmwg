@@ -73,7 +73,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     stage_samples$idx <- i
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$subject_mean[1, , ])) {
+      if (check_adapted(stage_samples$subject_mean)) {
         print("Adapted - stopping early")
         break
       }
