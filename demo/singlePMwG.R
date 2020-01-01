@@ -32,18 +32,6 @@ adapted <- run_stage(burned, stage = "adapt")
 sampled <- run_stage(adapted, stage = "sample")
 
 # # Create conditional means/variances
-# for (s in 1:init$S) {
-#   cparms <- conditional_parms(
-#     init,
-#     ptm,
-#     pts2,
-#     s,
-#     pmwg_args$burn_iter + 1,
-#     pmwg_args$burn_iter + pmwg_args$adapt_iter
-#   )
-#   proposal_means[, s] <- cparms$cmeans
-#   proposal_sigmas[, , s] <- cparms$cvars
-# }
 # 
 # # Sampling Phase
 # num_particles <- pmwg_args$sample_particles

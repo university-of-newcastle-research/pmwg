@@ -25,11 +25,19 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
   if (stage == "sample") {
+    eff <- try(create_efficient(x))
+    if (class(eff) == "try-error") {
+      cat("ERR01: An error was detected creating efficient dist\n")
+      save.image("data/output/PMwG-error.RData")
+      stop("Data saved in output directory under PMwG-error")
+    }
     mix <- c(0.1, 0.2, 0.7)
     epsilon <- 1
+
   } else {
     mix <- c(0.5, 0.5, 0.0)
     epsilon <- 3
+    eff <- list(prop_mean = NULL, prop_var = NULL)
   }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
@@ -61,7 +69,9 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       num_particles = particles,
       parameters = pars,
       mix_ratio = mix,
-      epsilon = epsilon
+      epsilon = epsilon,
+      efficient_mu = eff$prop_mean,
+      efficient_sig2 = eff$prop_var
     )
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 

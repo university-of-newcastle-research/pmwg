@@ -97,6 +97,35 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 }
 
 
+#' Create distribution parameters for efficient proposals
+#'
+#' From the existing samples, create a proposal distribution for drawing
+#' efficient samples from.
+#'
+#' @param x The current pmwgs object
+#'
+#' @return A list containing the mu and sigma for the proposal distribution.            
+#' @examples
+#' # No example yet
+#' @keywords internal
+create_efficient <- function(x) {
+  proposal_means <- array(dim = c(x$n_pars, x$n_subjects))
+  proposal_sigmas <- array(dim = c(x$n_pars, x$n_pars, x$n_subjects))
+  for (s in 1:x$n_subjects) {
+    cparms <- conditional_parms(
+      x,
+      s
+    )
+    proposal_means[, s] <- cparms$cmeans
+    proposal_sigmas[, , s] <- cparms$cvars
+  }
+  list(
+    prop_mean = proposal_means,
+    prop_var = proposal_sigmas
+  )
+}
+
+
 #' Generate a cloud of particles from a multivariate normal distribution
 #'
 #' Takes the mean and variance for a multivariate normal distribution, as well as the number of
@@ -122,26 +151,25 @@ particle_draws <- function(n, mu, covar) {
 
 #' Obtain the efficent mu and sigma from the adaptation phase draws
 #'
-#' @param init list containing previous samples and more
-#' @param ptm a single iteration version of the param_theta_mu variable
-#' @param pts2 a single iter version of the param_theta_sigma2 variable
+#' @param samples A list containing previous samples
 #' @param s current subject number
-#' @param start_idx index specifying the starting sample to draw conditional distribution from
-#' @param end_idx index specifying the end sample to draw coditional distribution from
 #'
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
 #' @export
-conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
+conditional_parms <- function(samples, s) {
+  gmdim <- dim(samples$group_mean)
+  n_par <- gmdim[1]
+  n_iter <- gmdim[2]
   pts2_unwound <- apply(
-    init$param_theta_sigma2[, , start_idx:end_idx],
+    samples$group_var,
     3,
     unwind
   )
   all_samples <- rbind(
-    init$latent_theta_mu[, s, start_idx:end_idx],
-    init$param_theta_mu[, start_idx:end_idx],
+    samples$subject_mean[, s, ],
+    samples$group_mean[, ],
     pts2_unwound
   )
   mu_tilde <- apply(all_samples, 1, mean)
@@ -149,9 +177,11 @@ conditional_parms <- function(init, ptm, pts2, s, start_idx, end_idx) {
   condmvn <- condMVNorm::condMVN(
     mean = mu_tilde,
     sigma = sigma_tilde,
-    dependent.ind = 1:length(ptm),
-    given.ind = (length(ptm) + 1):length(mu_tilde),
-    X.given = c(ptm, unwind(pts2))
+    dependent.ind = 1:n_par,
+    given.ind = (n_par + 1):length(mu_tilde),
+    # GC: Note, not sure what is happening here:v (Was ptm/pts2 now last sample)
+    X.given = c(samples$group_mean[, n_iter],
+                unwind(samples$group_var[, , n_iter]))
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }

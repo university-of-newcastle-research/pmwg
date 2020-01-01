@@ -4,20 +4,12 @@
 \alias{conditional_parms}
 \title{Obtain the efficent mu and sigma from the adaptation phase draws}
 \usage{
-conditional_parms(init, ptm, pts2, s, start_idx, end_idx)
+conditional_parms(samples, s)
 }
 \arguments{
-\item{init}{list containing previous samples and more}
-
-\item{ptm}{a single iteration version of the param_theta_mu variable}
-
-\item{pts2}{a single iter version of the param_theta_sigma2 variable}
+\item{samples}{A list containing previous samples}
 
 \item{s}{current subject number}
-
-\item{start_idx}{index specifying the starting sample to draw conditional distribution from}
-
-\item{end_idx}{index specifying the end sample to draw coditional distribution from}
 }
 \value{
 A list containing the conditional mean and variances for this subject
