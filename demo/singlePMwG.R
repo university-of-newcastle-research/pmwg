@@ -31,45 +31,4 @@ adapted <- run_stage(burned, stage = "adapt")
 
 sampled <- run_stage(adapted, stage = "sample")
 
-# # Create conditional means/variances
-# 
-# # Sampling Phase
-# num_particles <- pmwg_args$sample_particles
-# cat("Phase 3: Sampling\n")
-# # create progress bar
-# pb <- txtProgressBar(
-#   min = 0,
-#   max = pmwg_args$sample_iter / progress_update,
-#   style = 3
-# )
-# 
-# for (i in 1:pmwg_args$sample_iter) {
-#   if (i %% progress_update == 0) {
-#     setTxtProgressBar(pb, i %/% progress_update)
-#   }
-# 
-#   single_iter <- gen_sample_pars(init, pmwg_args, prior, particles)
-#   ptm <- single_iter$ptm
-#   pts2 <- single_iter$pts2
-# 
-#   # Sample new particles for random effects.
-#   tmp <- lapply(
-#     X = 1:init$S,
-#     FUN = new_sample,
-#     data = data,
-#     num_particles = num_particles,
-#     mu = ptm,
-#     sig2 = pts2,
-#     particles = particles,
-#     mix_ratio = c(0.1, 0.2, 0.7)
-#   )
-#   particles <- array(unlist(tmp), dim = dim(particles))
-# 
-#   # Store results.
-#   init$latent_theta_mu[, , pmwg_args$adapt_iter + i] <- particles # nolint
-#   init$param_theta_sigma2[, , pmwg_args$adapt_iter + i] <- pts2 # nolint
-#   init$param_theta_mu[, pmwg_args$adapt_iter + i] <- ptm
-# }
-# close(pb)
-
 save.image("data/output/PMwG.RData")
