@@ -98,6 +98,7 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 new_group_pars <- function(samples, sampler) {
   # Get single iter versions, gm = group_mean, gv = group_var
   last <- last_sample(samples)
+  hyper <- attributes(sampler)
 
   # Here mu is group mean, so we are getting mean and variance
   var_mu <- MASS::ginv(
@@ -112,15 +113,15 @@ new_group_pars <- function(samples, sampler) {
   # New values for group var
   theta_temp <- last$sm - gm
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * sampler$hyper$dof * diag(1 / sampler$a_half) + cov_temp  # nolint
-  gv <- MCMCpack::riwish(sampler$k_half, B_half) # New sample for group variance
+  B_half <- 2 * hyper$v_half * diag(1 / hyper$a_half) + cov_temp #nolint
+  gv <- MCMCpack::riwish(hyper$k_half, B_half) # New sample for group variance
   gvi <- MASS::ginv(gv)
 
   # Sample new mixing weights.
   a_half <- 1 / stats::rgamma(
     n = sampler$n_pars,
-    shape = sampler$v_shape,
-    scale = 1 / (sampler$hyper$dof + diag(gvi) + sampler$hyper$scale)
+    shape = hyper$v_shape,
+    scale = 1 / (hyper$v_half + diag(gvi) + hyper$A_half)
   )
   list(gm = gm, gv = gv, gvi = gvi, a_half = a_half, sm = last$sm)
 }

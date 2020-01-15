@@ -4,20 +4,22 @@
 \alias{pmwgs}
 \title{Initialise a PMwG sampler and return a pmwgs object}
 \usage{
-pmwgs(data, parameters, llfunc, prior = NULL)
+pmwgs(data, pars, ll_func, prior = NULL, ...)
 }
 \arguments{
 \item{data}{The data.frame containing empirical data to be modelled. Assumed
 to contain at least one column called subject whose elements are unique
 identifiers for each subject.}
 
-\item{parameters}{The list of parameter names to be used in the model}
+\item{pars}{The list of parameter names to be used in the model}
 
-\item{llfunc}{A log likelihood function that given a list of parameter values
-and a data.frame (or other data store) containing subject data will return
-the log likelihood of \code{x} given \code{data}.}
+\item{ll_func}{A log likelihood function that given a list of parameter
+values and a data.frame (or other data store) containing subject data will
+return the log likelihood of \code{x} given \code{data}.}
 
 \item{prior}{Specification of the prior distribution for mu and sigma2}
+
+\item{...}{Other tuning parameters that you want to specify for the}
 }
 \value{
 A pmwgs object that can be run, plotted and more
