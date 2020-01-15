@@ -6,7 +6,7 @@
 \usage{
 new_sample(s, data, num_particles, parameters, efficient_mu = NULL,
   efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5, 0),
-  likelihood_func = lba_loglike, epsilon = 1)
+  likelihood_func = NULL, epsilon = 1)
 }
 \arguments{
 \item{s}{A number - the subject ID, also selects particles}

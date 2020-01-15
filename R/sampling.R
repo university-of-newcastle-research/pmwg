@@ -69,6 +69,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       num_particles = particles,
       parameters = pars,
       mix_ratio = mix,
+      likelihood_func = x$llfunc,
       epsilon = epsilon,
       efficient_mu = eff$prop_mean,
       efficient_sig2 = eff$prop_var
@@ -126,7 +127,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0),
-                       likelihood_func = lba_loglike,
+                       likelihood_func = NULL,
                        epsilon = 1) {
   # Check for efficient proposal values if necessary
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
@@ -135,6 +136,7 @@ new_sample <- function(s, data, num_particles, parameters,
   mu <- parameters$gm
   sig2 <- parameters$gv
   subj_mu <- parameters$sm[, s]
+  if (is.null(likelihood_func)) stop("likelihood_func is a required argument")
 
   # Create proposals for new particles
   proposals <- gen_particles(

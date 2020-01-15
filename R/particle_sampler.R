@@ -7,16 +7,15 @@
 #'   to contain at least one column called subject whose elements are unique
 #'   identifiers for each subject.
 #' @param parameters The list of parameter names to be used in the model
-#' @param prior Specification of the prior distribution for mu and sigma2
 #' @param llfunc A log likelihood function that given a list of parameter values
-#'   and a data.frame containing subject data will return the log likelihood of
-#'   \code{x} given \code{data}. See \code{\link{lba_loglike}} for an example.
+#'   and a data.frame (or other data store) containing subject data will return
+#'   the log likelihood of \code{x} given \code{data}.
+#' @param prior Specification of the prior distribution for mu and sigma2
 #'
 #' @return A pmwgs object that can be run, plotted and more
-#' @examples
-#' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+#' @example examples/pmwgs.R
 #' @export
-pmwgs <- function(data, parameters, prior = NULL, llfunc = lba_loglike) {
+pmwgs <- function(data, parameters, llfunc, prior = NULL) {
   n_pars <- length(parameters)
   # Tuning settings for the Gibbs steps
   hyper <- list(

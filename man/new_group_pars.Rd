@@ -20,5 +20,5 @@ A list of generated variables that can be modified after the fact
 Takes the pmwgs object and sets up sampling loop variables
 }
 \examples{
-sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+# No example yet
 }

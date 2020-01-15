@@ -38,7 +38,24 @@ level values, or for subject level means they will be sampled from the
 multivariate normal using the group level means and variance.
 }
 \examples{
-sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+llfunc <- function(x, data) {
+  sum(
+    log(
+      rtdists::dLBA(rt = data$rt,
+                    response = data$correct,
+                    A = x["A"],
+                    b = bs,
+                    t0 = x["t0"],
+                    mean_v = x[c("v1", "v2")],
+                    sd_v = c(1, 1),
+                    silent = TRUE)
+    )
+  )
+}
+sampler <- pmwgs(forstmann,
+                 c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
+                 llfunc
+           )
 sampler <- init(sampler, group_mean=rnorm(7), group_var=diag(rep(0.01, 7)),
                 subject_mean=matrix(rnorm(7*19), ncol=19))
 }

@@ -21,6 +21,5 @@ level parameters, in preparation for further iterations,
 whether they be burn-in or sampling.
 }
 \examples{
-sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
-sampler <- init(sampler)
+# No example yet
 }

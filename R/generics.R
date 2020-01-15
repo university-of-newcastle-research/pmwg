@@ -32,8 +32,7 @@ run_stage <- function(x, ...) {
 #' @return The sampler object but with initial values set for all parameter
 #'   types
 #' @examples
-#' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
-#' sampler <- init(sampler)
+#' # No example yet
 #' @export
 init <- function(x, ...) {
   if (is.null(attr(x, "class"))) {

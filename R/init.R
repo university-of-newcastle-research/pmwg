@@ -21,7 +21,24 @@
 #'
 #' @return The sampler object but with initial values set for latent_theta_mu
 #' @examples
-#' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+#' llfunc <- function(x, data) {
+#'   sum(
+#'     log(
+#'       rtdists::dLBA(rt = data$rt,
+#'                     response = data$correct,
+#'                     A = x["A"],
+#'                     b = bs,
+#'                     t0 = x["t0"],
+#'                     mean_v = x[c("v1", "v2")],
+#'                     sd_v = c(1, 1),
+#'                     silent = TRUE)
+#'     )
+#'   )
+#' }
+#' sampler <- pmwgs(forstmann,
+#'                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
+#'                  llfunc
+#'            )
 #' sampler <- init(sampler, group_mean=rnorm(7), group_var=diag(rep(0.01, 7)),
 #'                 subject_mean=matrix(rnorm(7*19), ncol=19))
 #' @export
@@ -76,7 +93,7 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 #'
 #' @return A list of generated variables that can be modified after the fact
 #' @examples
-#' sampler <- pmwgs(forstmann, c("b1", "b2", "b3", "A", "v1", "v2", "t0"))
+#' # No example yet
 #' @export
 new_group_pars <- function(samples, sampler) {
   # Get single iter versions, gm = group_mean, gv = group_var
