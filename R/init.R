@@ -108,7 +108,6 @@ new_group_pars <- function(samples, sampler) {
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   gm <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
-  names(gm) <- sampler$par_names
 
   # New values for group var
   theta_temp <- last$sm - gm
