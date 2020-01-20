@@ -63,7 +63,7 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
         particles,
         1,
         x$llfunc,
-        data = x$data[x$data$subject == s, ]
+        data = x$data[x$data$subject == x$subjects[s], ]
       )
       weight <- exp(lw - max(lw))
       subject_mean[, s] <- particles[

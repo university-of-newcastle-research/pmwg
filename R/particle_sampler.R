@@ -22,7 +22,8 @@ pmwgs <- function(data, parameters, llfunc, prior = NULL) {
     dof = 2,  # hyperparameter on prior (Half-t degrees of freedom)
     scale = 1 # hyperparameter on prior (Half-t scale)
   )
-  n_subjects <- length(unique(data$subject))
+  subjects <- unique(data$subject)
+  n_subjects <- length(subjects)
   # Storage for the samples.
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
@@ -50,6 +51,7 @@ pmwgs <- function(data, parameters, llfunc, prior = NULL) {
     par_names = parameters,
     n_pars = n_pars,
     n_subjects = n_subjects,
+    subjects = subjects,
     prior = prior,
     llfunc = llfunc,
     samples = samples,

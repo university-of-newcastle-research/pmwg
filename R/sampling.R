@@ -62,6 +62,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     pars <- new_group_pars(store, x)
 
     # Sample new particles for random effects.
+    # Send new_sample the "index" of the subject id - not subject id itself.
     tmp <- lapply(
       X = 1:x$n_subjects,
       FUN = new_sample,
@@ -72,7 +73,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       likelihood_func = x$llfunc,
       epsilon = epsilon,
       efficient_mu = eff$prop_mean,
-      efficient_sig2 = eff$prop_var
+      efficient_sig2 = eff$prop_var,
+      subjects = x$subjects
     )
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
@@ -103,7 +105,9 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 #' This uses the simplest, and slowest, proposals: a mixture of the
 #' the population distribution and Gaussian around current random effect.
 #'
-#' @param s A number - the subject ID, also selects particles
+#' @param s A number - the index of the subject, also selects particles. For
+#'   `s == 1` The first subject ID from the `data` subject column will be
+#'   selected. For `s == 2` the second unique value for subject id will be used.
 #' @param data A data.frame containing variables for
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
@@ -119,6 +123,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
 #'   of samples
 #' @param epsilon A scaling factor to reduce the variance on individual level
 #'   parameter samples
+#' @param subjects A list of unique subject ids in the order they appear in
+#'   the data.frame
 #'
 #' @return A single sample from the new proposals
 #' @examples
@@ -128,7 +134,7 @@ new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_ratio = c(0.5, 0.5, 0.0),
                        likelihood_func = NULL,
-                       epsilon = 1) {
+                       epsilon = 1, subjects = NULL) {
   # Check for efficient proposal values if necessary
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   e_mu <- efficient_mu[, s]
@@ -154,7 +160,7 @@ new_sample <- function(s, data, num_particles, parameters,
     proposals,
     1,
     likelihood_func,
-    data = data[data$subject == s, ]
+    data = data[data$subject == subjects[s], ]
   )
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)

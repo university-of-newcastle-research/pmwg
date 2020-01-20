@@ -6,10 +6,12 @@
 \usage{
 new_sample(s, data, num_particles, parameters, efficient_mu = NULL,
   efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5, 0),
-  likelihood_func = NULL, epsilon = 1)
+  likelihood_func = NULL, epsilon = 1, subjects = NULL)
 }
 \arguments{
-\item{s}{A number - the subject ID, also selects particles}
+\item{s}{A number - the index of the subject, also selects particles. For
+`s == 1` The first subject ID from the `data` subject column will be
+selected. For `s == 2` the second unique value for subject id will be used.}
 
 \item{data}{A data.frame containing variables for
 response time (\code{rt}), trial condition (\code{condition}),
@@ -38,6 +40,9 @@ of samples}
 
 \item{epsilon}{A scaling factor to reduce the variance on individual level
 parameter samples}
+
+\item{subjects}{A list of unique subject ids in the order they appear in
+the data.frame}
 }
 \value{
 A single sample from the new proposals
