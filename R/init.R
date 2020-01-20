@@ -21,7 +21,7 @@
 #'
 #' @return The sampler object but with initial values set for latent_theta_mu
 #' @examples
-#' llfunc <- function(x, data) {
+#' lba_ll <- function(x, data) {
 #'   sum(
 #'     log(
 #'       rtdists::dLBA(rt = data$rt,
@@ -37,7 +37,7 @@
 #' }
 #' sampler <- pmwgs(forstmann,
 #'                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
-#'                  llfunc
+#'                  lba_ll
 #'            )
 #' sampler <- init(sampler, group_mean=rnorm(7), group_var=diag(rep(0.01, 7)),
 #'                 subject_mean=matrix(rnorm(7*19), ncol=19))
@@ -62,7 +62,7 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
       lw <- apply(
         particles,
         1,
-        x$llfunc,
+        x$ll_func,
         data = x$data[x$data$subject == s, ]
       )
       weight <- exp(lw - max(lw))
@@ -108,6 +108,7 @@ new_group_pars <- function(samples, sampler) {
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   gm <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
+  names(gm) <- sampler$par_names
 
   # New values for group var
   theta_temp <- last$sm - gm

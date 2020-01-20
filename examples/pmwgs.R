@@ -32,7 +32,7 @@ priors <- list(
 # Create the Particle Metropolis within Gibbs sampler object
 sampler <- pmwgs(
   data = forstmann,
-  parameters = pars,
-  llfunc = lba_loglike,
+  pars = pars,
+  ll_func = lba_loglike,
   prior = priors
 )

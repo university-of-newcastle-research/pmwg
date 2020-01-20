@@ -69,7 +69,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       num_particles = particles,
       parameters = pars,
       mix_ratio = mix,
-      likelihood_func = x$llfunc,
+      likelihood_func = x$ll_func,
       epsilon = epsilon,
       efficient_mu = eff$prop_mean,
       efficient_sig2 = eff$prop_var

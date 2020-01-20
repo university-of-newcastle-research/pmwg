@@ -19,7 +19,7 @@ return the log likelihood of \code{x} given \code{data}.}
 
 \item{prior}{Specification of the prior distribution for mu and sigma2}
 
-\item{...}{Other tuning parameters that you want to specify for the}
+\item{...}{Other tuning parameters that you want to specify for the sampler.}
 }
 \value{
 A pmwgs object that can be run, plotted and more
@@ -63,8 +63,8 @@ priors <- list(
 # Create the Particle Metropolis within Gibbs sampler object
 sampler <- pmwgs(
   data = forstmann,
-  parameters = pars,
-  llfunc = lba_loglike,
+  pars = pars,
+  ll_func = lba_loglike,
   prior = priors
 )
 }
