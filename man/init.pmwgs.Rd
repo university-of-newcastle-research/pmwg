@@ -4,17 +4,17 @@
 \alias{init.pmwgs}
 \title{Initialise values for the random effects}
 \usage{
-\method{init}{pmwgs}(x, group_mean = NULL, group_var = NULL,
-  subject_mean = NULL, display_progress = TRUE, ...)
+\method{init}{pmwgs}(x, theta_mu = NULL, theta_sig = NULL,
+  alpha = NULL, display_progress = TRUE, ...)
 }
 \arguments{
 \item{x}{The sampler object that provides the parameters.}
 
-\item{group_mean}{An array of starting values for the group means}
+\item{theta_mu}{An array of starting values for the group means}
 
-\item{group_var}{An array of starting values for the group variance}
+\item{theta_sig}{An array of starting values for the group covariance matrix}
 
-\item{subject_mean}{An array of starting values for the subject means.}
+\item{alpha}{An array of starting values for the subject means.}
 
 \item{display_progress}{Display a progress bar during sampling}
 
@@ -56,6 +56,6 @@ sampler <- pmwgs(forstmann,
                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
                  lba_ll
            )
-sampler <- init(sampler, group_mean=rnorm(7), group_var=diag(rep(0.01, 7)),
-                subject_mean=matrix(rnorm(7*19), ncol=19))
+sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)),
+                alpha=matrix(rnorm(7*19), ncol=19))
 }

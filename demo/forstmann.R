@@ -55,7 +55,8 @@ priors <- list(
 
 sampler <- pmwgs(
   data = forstmann,
-  parameters = pars,
+  pars = pars,
+  ll_func = lba_loglike,
   prior = priors
 )
 
