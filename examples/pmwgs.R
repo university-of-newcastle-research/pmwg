@@ -25,14 +25,14 @@ lba_loglike <- function(x, data) {
 # Specify parameter names and priors
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 priors <- list(
-  group_mean = rep(0, length(pars)),
-  group_var = diag(rep(1, length(pars)))
+  theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
 )
 
 # Create the Particle Metropolis within Gibbs sampler object
 sampler <- pmwgs(
   data = forstmann,
-  parameters = pars,
-  llfunc = lba_loglike,
+  pars = pars,
+  ll_func = lba_loglike,
   prior = priors
 )

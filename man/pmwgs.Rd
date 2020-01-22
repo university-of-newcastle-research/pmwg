@@ -4,20 +4,22 @@
 \alias{pmwgs}
 \title{Initialise a PMwG sampler and return a pmwgs object}
 \usage{
-pmwgs(data, parameters, llfunc, prior = NULL)
+pmwgs(data, pars, ll_func, prior = NULL, ...)
 }
 \arguments{
 \item{data}{The data.frame containing empirical data to be modelled. Assumed
 to contain at least one column called subject whose elements are unique
 identifiers for each subject.}
 
-\item{parameters}{The list of parameter names to be used in the model}
+\item{pars}{The list of parameter names to be used in the model}
 
-\item{llfunc}{A log likelihood function that given a list of parameter values
-and a data.frame (or other data store) containing subject data will return
-the log likelihood of \code{x} given \code{data}.}
+\item{ll_func}{A log likelihood function that given a list of parameter
+values and a data.frame (or other data store) containing subject data will
+return the log likelihood of \code{x} given \code{data}.}
 
 \item{prior}{Specification of the prior distribution for mu and sigma2}
+
+\item{...}{Other tuning parameters that you want to specify for the sampler.}
 }
 \value{
 A pmwgs object that can be run, plotted and more
@@ -54,15 +56,15 @@ lba_loglike <- function(x, data) {
 # Specify parameter names and priors
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 priors <- list(
-  group_mean = rep(0, length(pars)),
-  group_var = diag(rep(1, length(pars)))
+  theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
 )
 
 # Create the Particle Metropolis within Gibbs sampler object
 sampler <- pmwgs(
   data = forstmann,
-  parameters = pars,
-  llfunc = lba_loglike,
+  pars = pars,
+  ll_func = lba_loglike,
   prior = priors
 )
 }

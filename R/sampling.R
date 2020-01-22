@@ -70,7 +70,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
       num_particles = particles,
       parameters = pars,
       mix_ratio = mix,
-      likelihood_func = x$llfunc,
+      likelihood_func = x$ll_func,
       epsilon = epsilon,
       efficient_mu = eff$prop_mean,
       efficient_sig2 = eff$prop_var,
@@ -79,14 +79,14 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results.
-    stage_samples$group_mean[, i] <- pars$gm
-    stage_samples$group_var[, , i] <- pars$gv
-    stage_samples$last_group_var_inv <- pars$gvi
-    stage_samples$subject_mean[, , i] <- sm
+    stage_samples$theta_mu[, i] <- pars$gm
+    stage_samples$theta_sig[, , i] <- pars$gv
+    stage_samples$last_theta_sig_inv <- pars$gvi
+    stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$subject_mean)) {
+      if (check_adapted(stage_samples$alpha)) {
         print("Adapted - stopping early")
         break
       }
