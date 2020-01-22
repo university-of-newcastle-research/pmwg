@@ -159,17 +159,17 @@ particle_draws <- function(n, mu, covar) {
 #' # No example yet
 #' @export
 conditional_parms <- function(samples, s) {
-  gmdim <- dim(samples$group_mean)
+  gmdim <- dim(samples$theta_mu)
   n_par <- gmdim[1]
   n_iter <- gmdim[2]
   pts2_unwound <- apply(
-    samples$group_var,
+    samples$theta_sig,
     3,
     unwind
   )
   all_samples <- rbind(
-    samples$subject_mean[, s, ],
-    samples$group_mean[, ],
+    samples$alpha[, s, ],
+    samples$theta_mu[, ],
     pts2_unwound
   )
   mu_tilde <- apply(all_samples, 1, mean)
@@ -180,8 +180,8 @@ conditional_parms <- function(samples, s) {
     dependent.ind = 1:n_par,
     given.ind = (n_par + 1):length(mu_tilde),
     # GC: Note, not sure what is happening here:v (Was ptm/pts2 now last sample)
-    X.given = c(samples$group_mean[, n_iter],
-                unwind(samples$group_var[, , n_iter]))
+    X.given = c(samples$theta_mu[, n_iter],
+                unwind(samples$theta_sig[, , n_iter]))
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }
@@ -200,17 +200,17 @@ conditional_parms <- function(samples, s) {
 sample_store <- function(par_names, n_subjects, iters = 1) {
   n_pars <- length(par_names)
   list(
-    subject_mean = array(
+    alpha = array(
       NA_real_,
       dim = c(n_pars, n_subjects, iters),
       dimnames = list(par_names, NULL, NULL)
     ),
-    group_mean = array(
+    theta_mu = array(
       NA_real_,
       dim = c(n_pars, iters),
       dimnames = list(par_names, NULL)
     ),
-    group_var = array(
+    theta_sig = array(
       NA_real_,
       dim = c(n_pars, n_pars, iters),
       dimnames = list(par_names, par_names, NULL)
@@ -230,10 +230,10 @@ sample_store <- function(par_names, n_subjects, iters = 1) {
 #' @export
 last_sample <- function(store) {
   list(
-    gm = store$group_mean[, store$idx],
-    gv = store$group_var[, , store$idx],
-    sm = store$subject_mean[, , store$idx],
-    gvi = store$last_group_var_inv
+    gm = store$theta_mu[, store$idx],
+    gv = store$theta_sig[, , store$idx],
+    sm = store$alpha[, , store$idx],
+    gvi = store$last_theta_sig_inv
   )
 }
 
@@ -248,19 +248,19 @@ last_sample <- function(store) {
 #' # No example yet
 #' @export
 update_sampler <- function(sampler, store) {
-  old_gm <- sampler$samples$group_mean
-  old_gv <- sampler$samples$group_var
-  old_sm <- sampler$samples$subject_mean
+  old_gm <- sampler$samples$theta_mu
+  old_gv <- sampler$samples$theta_sig
+  old_sm <- sampler$samples$alpha
   li <- store$idx
 
-  sampler$samples$group_mean <- array(c(old_gm, store$group_mean[, 1:li]),
+  sampler$samples$theta_mu <- array(c(old_gm, store$theta_mu[, 1:li]),
                                       dim = dim(old_gm) + c(0, li))
-  sampler$samples$group_var <- array(c(old_gv, store$group_var[, , 1:li]),
+  sampler$samples$theta_sig <- array(c(old_gv, store$theta_sig[, , 1:li]),
                                      dim = dim(old_gv) + c(0, 0, li))
-  sampler$samples$subject_mean <- array(c(old_sm, store$subject_mean[, , 1:li]),
+  sampler$samples$alpha <- array(c(old_sm, store$alpha[, , 1:li]),
                                         dim = dim(old_sm) + c(0, 0, li))
-  sampler$samples$idx <- ncol(sampler$samples$group_mean)
-  sampler$samples$last_group_var_inv <- store$last_group_var_inv
+  sampler$samples$idx <- ncol(sampler$samples$theta_mu)
+  sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
   sampler
 }
 

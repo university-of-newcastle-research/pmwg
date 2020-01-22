@@ -47,8 +47,8 @@ lba_loglike <- function(x, data, sample = FALSE) {
 # Vars used for controlling the run
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 priors <- list(
-  group_mean = rep(0, length(pars)),
-  group_var = diag(rep(1, length(pars)))
+  theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
 )
 
 # Create the Particle Metropolis within Gibbs sampler object ------------------
@@ -64,8 +64,8 @@ start_points <- list(
   sig2 = diag(rep(.01, length(pars)))
 )
 
-sampler <- init(sampler, group_mean = start_points$mu,
-                group_var = start_points$sig2)
+sampler <- init(sampler, theta_mu = start_points$mu,
+                theta_sig = start_points$sig2)
 
 burned <- run_stage(sampler, stage = "burn")
 

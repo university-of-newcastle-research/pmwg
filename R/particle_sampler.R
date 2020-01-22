@@ -40,10 +40,10 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
     sigmas = array(dim = c(n_pars, n_pars, n_subjects))
   )
   if (is.null(prior)) {
-    prior <- list(group_mean = rep(0, n_pars), group_var = diag(rep(1, n_pars)))
+    prior <- list(theta_mu = rep(0, n_pars), theta_sig = diag(rep(1, n_pars)))
   }
   # Things I save rather than re-compute inside the loops.
-  prior$group_var_inv <- MASS::ginv(prior$group_var)
+  prior$theta_sig_inv <- MASS::ginv(prior$theta_sig)
 
   sampler <- list(
     data = data,

@@ -77,14 +77,14 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results.
-    stage_samples$group_mean[, i] <- pars$gm
-    stage_samples$group_var[, , i] <- pars$gv
-    stage_samples$last_group_var_inv <- pars$gvi
-    stage_samples$subject_mean[, , i] <- sm
+    stage_samples$theta_mu[, i] <- pars$gm
+    stage_samples$theta_sig[, , i] <- pars$gv
+    stage_samples$last_theta_sig_inv <- pars$gvi
+    stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$subject_mean)) {
+      if (check_adapted(stage_samples$alpha)) {
         print("Adapted - stopping early")
         break
       }

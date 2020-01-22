@@ -13,9 +13,9 @@
 #' multivariate normal using the group level means and variance.
 #'
 #' @param x The sampler object that provides the parameters.
-#' @param group_mean An array of starting values for the group means
-#' @param group_var An array of starting values for the group variance
-#' @param subject_mean An array of starting values for the subject means.
+#' @param theta_mu An array of starting values for the group means
+#' @param theta_sig An array of starting values for the group covariance matrix
+#' @param alpha An array of starting values for the subject means.
 #' @param display_progress Display a progress bar during sampling
 #' @param ... Further arguments passed to or from other methods.
 #'
@@ -39,26 +39,26 @@
 #'                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
 #'                  lba_ll
 #'            )
-#' sampler <- init(sampler, group_mean=rnorm(7), group_var=diag(rep(0.01, 7)),
-#'                 subject_mean=matrix(rnorm(7*19), ncol=19))
+#' sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)),
+#'                 alpha=matrix(rnorm(7*19), ncol=19))
 #' @export
-init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
-                       subject_mean=NULL, display_progress=TRUE, ...) {
+init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
+                       alpha=NULL, display_progress=TRUE, ...) {
   # If no starting point for group mean just use zeros
-  if (is.null(group_mean)) group_mean <- stats::rnorm(x$n_pars, sd = 5)
+  if (is.null(theta_mu)) theta_mu <- stats::rnorm(x$n_pars, sd = 5)
   # If no starting point for group var just sample from inverse wishart
-  if (is.null(group_var)) group_var <- MCMCpack::riwish(20, diag(x$n_pars))
-  if (is.null(subject_mean)) {
+  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(20, diag(x$n_pars))
+  if (is.null(alpha)) {
     n_particles <- 1000  #GC: Fixed val here
-    subject_mean <- array(NA, dim = c(x$n_pars, x$n_subjects))
+    alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
     if (display_progress) {
       cat("Sampling Initial values for random effects\n")
       pb <- utils::txtProgressBar(min = 0, max = x$n_subjects, style = 3)
     }
     for (s in 1:x$n_subjects) {
       if (display_progress) utils::setTxtProgressBar(pb, s)
-      particles <- mvtnorm::rmvnorm(n_particles, group_mean, group_var)
-      colnames(particles) <- rownames(x$samples$group_mean) # preserve par names
+      particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
+      colnames(particles) <- rownames(x$samples$theta_mu) # preserve par names
       lw <- apply(
         particles,
         1,
@@ -66,17 +66,17 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
         data = x$data[x$data$subject == s, ]
       )
       weight <- exp(lw - max(lw))
-      subject_mean[, s] <- particles[
+      alpha[, s] <- particles[
         sample(x = n_particles, size = 1, prob = weight),
       ]
     }
     if (display_progress) close(pb)
   }
   x$init <- TRUE
-  x$samples$group_mean[, 1] <- group_mean
-  x$samples$group_var[, , 1] <- group_var
-  x$samples$subject_mean[, , 1] <- subject_mean
-  x$samples$last_group_var_inverse <- MASS::ginv(group_var)
+  x$samples$theta_mu[, 1] <- theta_mu
+  x$samples$theta_sig[, , 1] <- theta_sig
+  x$samples$alpha[, , 1] <- alpha
+  x$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
   x$samples$idx <- 1
   x
 }
@@ -96,13 +96,13 @@ init.pmwgs <- function(x, group_mean=NULL, group_var=NULL,
 #' # No example yet
 #' @export
 new_group_pars <- function(samples, sampler) {
-  # Get single iter versions, gm = group_mean, gv = group_var
+  # Get single iter versions, gm = theta_mu, gv = theta_sig
   last <- last_sample(samples)
   hyper <- attributes(sampler)
 
   # Here mu is group mean, so we are getting mean and variance
   var_mu <- MASS::ginv(
-    sampler$n_subjects * last$gvi + sampler$prior$group_var_inv
+    sampler$n_subjects * last$gvi + sampler$prior$theta_sig_inv
   )
   mean_mu <- as.vector(var_mu %*% (last$gvi %*% apply(last$sm, 1, sum)))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
