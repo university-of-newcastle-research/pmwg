@@ -7,9 +7,9 @@ Author: Gavin Cooper
 Depends: R (>= 3.0.0)
 Imports:
   stats,
-  mvtnorm,
+  mvtnorm (>= 1.0-0),
   MASS,
-  MCMCpack,
+  MCMCpack (>= 1.4-0),
   condMVNorm,
 Suggests:
   snowfall,
