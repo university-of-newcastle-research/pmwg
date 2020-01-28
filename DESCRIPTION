@@ -4,7 +4,7 @@ Version: 0.0.0.9017
 Maintainer: Gavin Cooper <gavin@gavincooper.net>
 Description: Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available at https://arxiv.org/abs/1806.10089, it also contains code for covariance estimation and time varying models.
 Author: Gavin Cooper
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.0.0)
 Imports:
   stats,
   mvtnorm,
