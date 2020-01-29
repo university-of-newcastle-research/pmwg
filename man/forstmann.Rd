@@ -4,7 +4,7 @@
 \name{forstmann}
 \alias{forstmann}
 \title{Forstmann et al.'s data.}
-\format{A data frame with 2502 rows and 4 variables:
+\format{A data frame with 15818 rows and 4 variables:
 \describe{
   \item{subject}{subject, integer ID for each subject}
   \item{rt}{rt, reaction time for each trial as a double}
