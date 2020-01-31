@@ -97,6 +97,27 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 }
 
 
+#' Extract relevant samples from the list for conditional dist calc
+#'
+#' From the existing samples, extract relevant samples for the creation of
+#' the proposal distribution.
+#'
+#' @param samples The samples list containing all samples from the pmwgs object
+#'
+#' @return A list containing only appopriate samples (non init/burnin samples)
+#' @examples
+#' # No example yet
+#' @keywords internal
+extract_samples <- function(samples) {
+  sample_filter <- samples$stage %in% c("adapt", "sample")
+  list(
+    theta_mu = samples$theta_mu[, sample_filter],
+    theta_sig = samples$theta_sig[, , sample_filter],
+    alpha = samples$alpha[, , sample_filter]
+  )
+}
+
+
 #' Create distribution parameters for efficient proposals
 #'
 #' From the existing samples, create a proposal distribution for drawing
@@ -113,7 +134,7 @@ create_efficient <- function(x) {
   proposal_sigmas <- array(dim = c(x$n_pars, x$n_pars, x$n_subjects))
   for (s in 1:x$n_subjects) {
     cparms <- conditional_parms(
-      x$samples,
+      extract_samples(x$samples),
       s
     )
     proposal_means[, s] <- cparms$cmeans
@@ -197,7 +218,7 @@ conditional_parms <- function(samples, s) {
 #' @examples
 #' # No example yet
 #' @export
-sample_store <- function(par_names, n_subjects, iters = 1) {
+sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
   n_pars <- length(par_names)
   list(
     alpha = array(
@@ -214,7 +235,8 @@ sample_store <- function(par_names, n_subjects, iters = 1) {
       NA_real_,
       dim = c(n_pars, n_pars, iters),
       dimnames = list(par_names, par_names, NULL)
-    )
+    ),
+    stage = array(stage, iters)
   )
 }
 
@@ -251,6 +273,7 @@ update_sampler <- function(sampler, store) {
   old_gm <- sampler$samples$theta_mu
   old_gv <- sampler$samples$theta_sig
   old_sm <- sampler$samples$alpha
+  old_stage <- sampler$samples$stage
   li <- store$idx
 
   sampler$samples$theta_mu <- array(c(old_gm, store$theta_mu[, 1:li]),
@@ -261,6 +284,7 @@ update_sampler <- function(sampler, store) {
                                         dim = dim(old_sm) + c(0, 0, li))
   sampler$samples$idx <- ncol(sampler$samples$theta_mu)
   sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
+  sampler$samples$stage <- c(old_stage, store$stage)
   sampler
 }
 
