@@ -284,7 +284,7 @@ update_sampler <- function(sampler, store) {
                                         dim = dim(old_sm) + c(0, 0, li))
   sampler$samples$idx <- ncol(sampler$samples$theta_mu)
   sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
-  sampler$samples$stage <- c(old_stage, store$stage)
+  sampler$samples$stage <- c(old_stage, store$stage[1:li])
   sampler
 }
 
