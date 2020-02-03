@@ -141,8 +141,8 @@ create_efficient <- function(x) {
     proposal_sigmas[, , s] <- cparms$cvars
   }
   list(
-    prop_mean = proposal_means,
-    prop_var = proposal_sigmas
+    efficient_mu = proposal_means,
+    efficient_sig2 = proposal_sigmas
   )
 }
 

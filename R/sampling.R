@@ -14,6 +14,7 @@
 #' @param particles The default here is 1000 particles to be generated for each
 #'   iteration, however during the sample phase this should be reduced.
 #' @param display_progress Display a progress bar during sampling.
+#' @param n_cores Set to > 1 to use mclapply
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @return A pmwgs object with the newly generated samples in place.
@@ -21,12 +22,12 @@
 #' # No example yet
 #' @export
 run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
-                            display_progress = TRUE, ...) {
+                            display_progress = TRUE, n_cores = 1, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
   if (stage == "sample") {
-    eff <- try(create_efficient(x))
-    if (class(eff) == "try-error") {
+    prop_args <- try(create_efficient(x))
+    if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
       save.image("data/output/PMwG-error.RData")
       stop("Data saved in output directory under PMwG-error")
@@ -36,10 +37,19 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   } else {
     mix <- c(0.5, 0.5, 0.0)
     epsilon <- 3
-    eff <- list(prop_mean = NULL, prop_var = NULL)
+    prop_args <- list()
   }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
+  apply_fn <- lapply
+  apply_args <- list()
+  if (n_cores > 1){
+    if (Sys.info()[["sysname"]] == "Windows") {
+      stop("n_cores cannot be greater than 1 on Windows systems.")
+    }
+    apply_fn <- parallel::mclapply
+    apply_args <- list(mc.cores=n_cores)
+  }
 
   # Display stage to screen
   msgs <- list(
@@ -66,7 +76,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
 
     # Sample new particles for random effects.
     # Send new_sample the "index" of the subject id - not subject id itself.
-    tmp <- lapply(
+    pmwgs_args <- list(
       X = 1:x$n_subjects,
       FUN = new_sample,
       data = x$data,
@@ -75,10 +85,11 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
       mix_ratio = mix,
       likelihood_func = x$ll_func,
       epsilon = epsilon,
-      efficient_mu = eff$prop_mean,
-      efficient_sig2 = eff$prop_var,
       subjects = x$subjects
     )
+    fn_args <- c(pmwgs_args, apply_args, prop_args)
+    tmp <- do.call(apply_fn, fn_args)
+
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results.
