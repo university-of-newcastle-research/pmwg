@@ -20,7 +20,7 @@
 #' @examples
 #' # No example yet
 #' @export
-run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
+run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
                             display_progress = TRUE, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
@@ -33,7 +33,6 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
     }
     mix <- c(0.1, 0.2, 0.7)
     epsilon <- 1
-
   } else {
     mix <- c(0.5, 0.5, 0.0)
     epsilon <- 3
@@ -43,19 +42,23 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000,  #nolint
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
 
   # Display stage to screen
-  msgs <- list(burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
-               sample = "Phase 3: Sampling\n")
+  msgs <- list(
+    burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
+    sample = "Phase 3: Sampling\n"
+  )
   cat(msgs[[stage]])
 
   # Build new sample storage
-  stage_samples <- sample_store(x$par_names, x$n_subject, iters = iter)
+  stage_samples <- sample_store(
+    x$par_names, x$n_subject,
+    iters = iter, stage = stage
+  )
   # create progress bar
   if (display_progress) {
     pb <- utils::txtProgressBar(min = 0, max = iter, style = 3)
   }
 
   for (i in 1:iter) {
-
     if (display_progress) utils::setTxtProgressBar(pb, i)
 
     if (i == 1) store <- x$samples else store <- stage_samples

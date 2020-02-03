@@ -35,7 +35,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
   # Generate a list of sample storage arrays of size 1 (for start points)
-  samples <- sample_store(pars, n_subjects, 1)
+  samples <- sample_store(pars, n_subjects)
   proposal <- list(
     means = array(dim = c(n_pars, n_subjects)),
     sigmas = array(dim = c(n_pars, n_pars, n_subjects))
