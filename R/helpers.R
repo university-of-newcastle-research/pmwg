@@ -141,8 +141,8 @@ create_efficient <- function(x) {
     proposal_sigmas[, , s] <- cparms$cvars
   }
   list(
-    prop_mean = proposal_means,
-    prop_var = proposal_sigmas
+    efficient_mu = proposal_means,
+    efficient_sig2 = proposal_sigmas
   )
 }
 
@@ -213,6 +213,8 @@ conditional_parms <- function(samples, s) {
 #' @param par_names The names of each parameter as a character vector
 #' @param n_subjects The number of subjects for the subject mean storage.
 #' @param iters The number of iterations to be pre-allocated
+#' @param stage The stage for which the samples will be created. Should be one
+#'   of `c("init", "burn", "adapt", "sample")`
 #'
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
