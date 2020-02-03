@@ -4,7 +4,7 @@
 \alias{sample_store}
 \title{Create a new list for storage samples in the pmwgs object}
 \usage{
-sample_store(par_names, n_subjects, iters = 1)
+sample_store(par_names, n_subjects, iters = 1, stage = "init")
 }
 \arguments{
 \item{par_names}{The names of each parameter as a character vector}
@@ -12,6 +12,9 @@ sample_store(par_names, n_subjects, iters = 1)
 \item{n_subjects}{The number of subjects for the subject mean storage.}
 
 \item{iters}{The number of iterations to be pre-allocated}
+
+\item{stage}{The stage for which the samples will be created. Should be one
+of `c("init", "burn", "adapt", "sample")`}
 }
 \value{
 A list containing the conditional mean and variances for this subject
