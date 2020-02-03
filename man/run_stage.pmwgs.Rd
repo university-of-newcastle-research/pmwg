@@ -5,7 +5,7 @@
 \title{Run a stage of the PMwG sampler}
 \usage{
 \method{run_stage}{pmwgs}(x, stage, iter = 1000, particles = 1000,
-  display_progress = TRUE, ...)
+  display_progress = TRUE, n_cores = 1, ...)
 }
 \arguments{
 \item{x}{A pmwgs object that has been initialised}
@@ -22,6 +22,8 @@ finish early.}
 iteration, however during the sample phase this should be reduced.}
 
 \item{display_progress}{Display a progress bar during sampling.}
+
+\item{n_cores}{Set to > 1 to use mclapply}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
