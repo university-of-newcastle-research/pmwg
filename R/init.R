@@ -77,6 +77,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
   x$samples$theta_sig[, , 1] <- theta_sig
   x$samples$alpha[, , 1] <- alpha
   x$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
+  x$samples$stage
   x$samples$idx <- 1
   x
 }
