@@ -172,14 +172,14 @@ particle_draws <- function(n, mu, covar) {
 
 #' Obtain the efficent mu and sigma from the adaptation phase draws
 #'
-#' @param samples A list containing previous samples
 #' @param s current subject number
+#' @param samples A list containing previous samples
 #'
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
 #' @export
-conditional_parms <- function(samples, s) {
+conditional_parms <- function(s, samples) {
   gmdim <- dim(samples$theta_mu)
   n_par <- gmdim[1]
   n_iter <- gmdim[2]
