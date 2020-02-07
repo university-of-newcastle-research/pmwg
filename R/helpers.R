@@ -134,8 +134,8 @@ create_efficient <- function(x) {
   proposal_sigmas <- array(dim = c(x$n_pars, x$n_pars, x$n_subjects))
   for (s in 1:x$n_subjects) {
     cparms <- conditional_parms(
-      extract_samples(x$samples),
-      s
+      s,
+      extract_samples(x$samples)
     )
     proposal_means[, s] <- cparms$cmeans
     proposal_sigmas[, , s] <- cparms$cvars

@@ -4,12 +4,12 @@
 \alias{conditional_parms}
 \title{Obtain the efficent mu and sigma from the adaptation phase draws}
 \usage{
-conditional_parms(samples, s)
+conditional_parms(s, samples)
 }
 \arguments{
-\item{samples}{A list containing previous samples}
-
 \item{s}{current subject number}
+
+\item{samples}{A list containing previous samples}
 }
 \value{
 A list containing the conditional mean and variances for this subject
