@@ -73,7 +73,22 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     if (display_progress) utils::setTxtProgressBar(pb, i)
 
     if (i == 1) store <- x$samples else store <- stage_samples
-    pars <- new_group_pars(store, x)
+    tryCatch(
+      pars <- new_group_pars(store, x),
+      error = function(err_cond) {
+        store_tmp <- tempfile(pattern = "pmwg_stage_samples_",
+                              tmpdir = ".",
+                              fileext = ".RDS")
+        sampler_tmp <- tempfile(pattern = "pmwg_obj_",
+                                tmpdir = ".",
+                                fileext = ".RDS")
+        message("Problem generating new group level parameters")
+        message("Saving current state of pmwgs object: ", sampler_tmp)
+        saveRDS(x, file = sampler_tmp)
+        message("Saving current state of stage sample storage", store_tmp)
+        saveRDS(store, file = store_tmp)
+      }
+    )
 
     # Sample new particles for random effects.
     # Send new_sample the "index" of the subject id - not subject id itself.
