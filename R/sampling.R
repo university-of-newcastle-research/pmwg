@@ -87,6 +87,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
         saveRDS(x, file = sampler_tmp)
         message("Saving current state of stage sample storage", store_tmp)
         saveRDS(store, file = store_tmp)
+        stop("Stopping execution")
       }
     )
 
