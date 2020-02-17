@@ -232,7 +232,10 @@ new_sample <- function(s, data, num_particles, parameters,
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
-  proposals[sample(x = num_particles, size = 1, prob = weights), ]
+  idx <- sample(x = num_particles, size = 1, prob = weights)
+  winner <- proposals[idx,]
+  attr(winner, "ll") <- weights[idx]
+  winner
 }
 
 
