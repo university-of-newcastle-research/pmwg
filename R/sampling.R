@@ -38,6 +38,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     mix <- c(0.5, 0.5, 0.0)
     epsilon <- 3
     prop_args <- list()
+    unique_check <- 20
   }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
@@ -72,7 +73,23 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     if (display_progress) utils::setTxtProgressBar(pb, i)
 
     if (i == 1) store <- x$samples else store <- stage_samples
-    pars <- new_group_pars(store, x)
+    tryCatch(
+      pars <- new_group_pars(store, x),
+      error = function(err_cond) {
+        store_tmp <- tempfile(pattern = "pmwg_stage_samples_",
+                              tmpdir = ".",
+                              fileext = ".RDS")
+        sampler_tmp <- tempfile(pattern = "pmwg_obj_",
+                                tmpdir = ".",
+                                fileext = ".RDS")
+        message("Problem generating new group level parameters")
+        message("Saving current state of pmwgs object: ", sampler_tmp)
+        saveRDS(x, file = sampler_tmp)
+        message("Saving current state of stage sample storage", store_tmp)
+        saveRDS(store, file = store_tmp)
+        stop("Stopping execution")
+      }
+    )
 
     # Sample new particles for random effects.
     # Send new_sample the "index" of the subject id - not subject id itself.
@@ -98,11 +115,29 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     stage_samples$last_theta_sig_inv <- pars$gvi
     stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
+    attr(x, "a_half") <- pars$a_half
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$alpha)) {
-        print("Adapted - stopping early")
-        break
+      if (check_adapted(stage_samples$alpha, unq_vals = unique_check)) {
+        message("Enough unique values detected: ", unique_check)
+        message("Testing proposal distribution creation")
+        attempt <- try({
+          tmp_sampler <- update_sampler(x, stage_samples)
+          lapply(
+            X = 1:tmp_sampler$n_subjects,
+            FUN = conditional_parms,
+            samples = extract_samples(tmp_sampler$samples)
+          )
+        })
+        if (class(attempt) == "try-error") {
+          warning("An error was encountered creating proposal distribution")
+          warning("Increasing required unique values")
+          unique_check <- unique_check * 2
+        }
+        else {
+          message("Adapted after ", i, "iterations - stopping early")
+          break
+        }
       }
     }
   }

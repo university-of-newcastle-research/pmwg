@@ -134,8 +134,8 @@ create_efficient <- function(x) {
   proposal_sigmas <- array(dim = c(x$n_pars, x$n_pars, x$n_subjects))
   for (s in 1:x$n_subjects) {
     cparms <- conditional_parms(
-      extract_samples(x$samples),
-      s
+      s,
+      extract_samples(x$samples)
     )
     proposal_means[, s] <- cparms$cmeans
     proposal_sigmas[, , s] <- cparms$cvars
@@ -172,14 +172,14 @@ particle_draws <- function(n, mu, covar) {
 
 #' Obtain the efficent mu and sigma from the adaptation phase draws
 #'
-#' @param samples A list containing previous samples
 #' @param s current subject number
+#' @param samples A list containing previous samples
 #'
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
 #' @export
-conditional_parms <- function(samples, s) {
+conditional_parms <- function(s, samples) {
   gmdim <- dim(samples$theta_mu)
   n_par <- gmdim[1]
   n_iter <- gmdim[2]
