@@ -107,6 +107,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     fn_args <- c(pmwgs_args, apply_args, prop_args)
     tmp <- do.call(apply_fn, fn_args)
 
+    ll <- unlist(lapply(tmp, attr, 'll'))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results.
@@ -115,6 +116,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     stage_samples$last_theta_sig_inv <- pars$gvi
     stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
+    stage_samples$subj_ll[, i] <- ll
     attr(x, "a_half") <- pars$a_half
 
     if (stage == "adapt") {
