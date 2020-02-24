@@ -15,7 +15,6 @@
 #' @param x The sampler object that provides the parameters.
 #' @param theta_mu An array of starting values for the group means
 #' @param theta_sig An array of starting values for the group covariance matrix
-#' @param alpha An array of starting values for the subject means.
 #' @param display_progress Display a progress bar during sampling
 #' @param ... Further arguments passed to or from other methods.
 #'
@@ -39,40 +38,37 @@
 #'                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
 #'                  lba_ll
 #'            )
-#' sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)),
-#'                 alpha=matrix(rnorm(7*19), ncol=19))
+#' sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)))
 #' @export
 init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
-                       alpha=NULL, display_progress=TRUE, ...) {
+                       display_progress=TRUE, ...) {
   # If no starting point for group mean just use zeros
-  if (is.null(theta_mu)) theta_mu <- stats::rnorm(x$n_pars, sd = 5)
+  if (is.null(theta_mu)) theta_mu <- stats::rnorm(x$n_pars, sd = 1)
   # If no starting point for group var just sample from inverse wishart
   if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(20, diag(x$n_pars))
-  if (is.null(alpha)) {
-    n_particles <- 1000  #GC: Fixed val here
-    alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
-    if (display_progress) {
-      cat("Sampling Initial values for random effects\n")
-      pb <- utils::txtProgressBar(min = 0, max = x$n_subjects, style = 3)
-    }
-    likelihoods <- array(NA_real_, dim = c(x$n_subjects))
-    for (s in 1:x$n_subjects) {
-      if (display_progress) utils::setTxtProgressBar(pb, s)
-      particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
-      colnames(particles) <- rownames(x$samples$theta_mu) # preserve par names
-      lw <- apply(
-        particles,
-        1,
-        x$ll_func,
-        data = x$data[x$data$subject == x$subjects[s], ]
-      )
-      weight <- exp(lw - max(lw))
-      idx <- sample(x = n_particles, size = 1, prob = weight)
-      alpha[, s] <- particles[idx, ]
-      likelihoods[s] <- lw[idx]
-    }
-    if (display_progress) close(pb)
+  n_particles <- 1000  #GC: Fixed val here
+  alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
+  if (display_progress) {
+    cat("Sampling Initial values for random effects\n")
+    pb <- utils::txtProgressBar(min = 0, max = x$n_subjects, style = 3)
   }
+  likelihoods <- array(NA_real_, dim = c(x$n_subjects))
+  for (s in 1:x$n_subjects) {
+    if (display_progress) utils::setTxtProgressBar(pb, s)
+    particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
+    colnames(particles) <- rownames(x$samples$theta_mu) # preserve par names
+    lw <- apply(
+      particles,
+      1,
+      x$ll_func,
+      data = x$data[x$data$subject == x$subjects[s], ]
+    )
+    weight <- exp(lw - max(lw))
+    idx <- sample(x = n_particles, size = 1, prob = weight)
+    alpha[, s] <- particles[idx, ]
+    likelihoods[s] <- lw[idx]
+  }
+  if (display_progress) close(pb)
   x$init <- TRUE
   x$samples$theta_mu[, 1] <- theta_mu
   x$samples$theta_sig[, , 1] <- theta_sig
