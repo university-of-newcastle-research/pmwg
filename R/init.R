@@ -55,6 +55,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
       cat("Sampling Initial values for random effects\n")
       pb <- utils::txtProgressBar(min = 0, max = x$n_subjects, style = 3)
     }
+    likelihoods <- array(NA_real_, dim = c(x$n_subjects))
     for (s in 1:x$n_subjects) {
       if (display_progress) utils::setTxtProgressBar(pb, s)
       particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
@@ -66,9 +67,9 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
         data = x$data[x$data$subject == x$subjects[s], ]
       )
       weight <- exp(lw - max(lw))
-      alpha[, s] <- particles[
-        sample(x = n_particles, size = 1, prob = weight),
-      ]
+      idx <- sample(x = n_particles, size = 1, prob = weight)
+      alpha[, s] <- particles[idx, ]
+      likelihoods[s] <- lw[idx]
     }
     if (display_progress) close(pb)
   }
@@ -77,7 +78,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
   x$samples$theta_sig[, , 1] <- theta_sig
   x$samples$alpha[, , 1] <- alpha
   x$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
-  x$samples$stage
+  x$samples$subj_ll[, 1] <- likelihoods
   x$samples$idx <- 1
   x
 }

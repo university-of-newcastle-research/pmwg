@@ -235,8 +235,8 @@ new_sample <- function(s, data, num_particles, parameters,
   l <- lw + lp - lm
   weights <- exp(l - max(l))
   idx <- sample(x = num_particles, size = 1, prob = weights)
-  winner <- proposals[idx,]
-  attr(winner, "ll") <- weights[idx]
+  winner <- proposals[idx, ]
+  attr(winner, "ll") <- l[idx]
   winner
 }
 
