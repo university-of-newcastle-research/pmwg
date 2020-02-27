@@ -66,11 +66,12 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   )
   # create progress bar
   if (display_progress) {
-    pb <- utils::txtProgressBar(min = 0, max = iter, style = 3)
+    pb <- acceptProgressBar(min = 0, max = iter)
   }
 
   for (i in 1:iter) {
-    if (display_progress) utils::setTxtProgressBar(pb, i)
+    if (display_progress)
+      setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
 
     if (i == 1) store <- x$samples else store <- stage_samples
     tryCatch(

@@ -320,65 +320,91 @@ check_adapted <- function(samples, unq_vals = 20) {
 }
 
 
-#' An altered version of the txtProgressBar from utils that shows added info
+#' Return the acceptance rate for all subjects
 #'
-#' @param samples The subject mean samples with which we are working
-#' @param unq_vals The number of unique values for each subject
+#' @param store The samples store (containing random effects) with which we are
+#'   working
+#'
+#' @return A vector with the acceptance rate for each subject
+#' @examples
+#' # No example yet
+#' @export
+accept_rate <- function(store) {
+  if (is.null(store$idx) || store$idx < 3) return(array(0, dim(store$alpha)[2]))
+  vals <- store$alpha[1, , 1:store$idx]
+  apply(
+    apply(vals, 1, diff) != 0,  # If diff != 0
+    2,
+    mean
+  )
+}
+
+
+#' An altered version of the utils:txtProgressBar that shows acceptance rate
+#'
+#' @param min The minimum of the value being updated for the progress bar
+#' @param max The maximum of the value being updated for the progress bar
+#' @param initial The starting value for the progress bar
+#' @param char The character to use as the indicator of progress
+#' @param width The overall width of the progress bar
 #'
 #' @return A boolean TRUE or FALSE depending on the result of the test
 #' @examples
 #' # No example yet
 #' @export
-acceptProgressBar <-
-    function(min = 0, max = 1, initial = 0, char = "=",
-             width = NA, title, label)
-{
-    .val <- initial
-    .killed <- FALSE
-    .nb <- 0L
-    .pc <- -1L # This ensures the initial value is displayed
-    nw <- nchar(char, "w")
-    if(is.na(width)) {
-        width <- getOption("width")
-        width <- width - 20L
-        width <- trunc(width/nw)
-    }
-    if (max <= min) stop("must have 'max' > 'min'")
+acceptProgressBar <- function(min = 0,
+                              max = 1,
+                              initial = 0,
+                              char = "=",
+                              width = NA) {
+  .val <- initial
+  .killed <- FALSE
+  .nb <- 0L
+  .pc <- -1L # This ensures the initial value is displayed
+  .ex <- 0
+  nw <- nchar(char, "w")
+  if (is.na(width)) {
+      width <- getOption("width")
+      width <- width - 22L
+      width <- trunc(width / nw)
+  }
+  if (max <= min) stop("must have 'max' > 'min'")
 
-    up <- function(value, extra=0) {
-        if(!is.finite(value) || value < min || value > max) return()
-        .val <<- value
-        nb <- round(width*(value - min)/(max - min))
-        pc <- round(100*(value - min)/(max - min))
-        if(nb == .nb && pc == .pc && .ex == extra) return()
-        cat(paste0("\r  |", strrep(" ", nw*width+6)))
-        cat(paste(c("\r  |",
-                    rep.int(char, nb),
-                    rep.int(" ", nw*(width-nb)),
-                    sprintf("| %3d%%", pc),
-										sprintf(" | Acc(%3d%%)", extra)
-                    ), collapse=""))
-        flush.console()
-        .nb <<- nb
-        .pc <<- pc
-        .ex <<- extra
-    }
+  up <- function(value, extra=0) {
+      if (!is.finite(value) || value < min || value > max) return()
+      .val <<- value
+      nb <- round(width * (value - min) / (max - min))
+      pc <- round(100 * (value - min) / (max - min))
+      extra <- round(100 * extra)
+      if (nb == .nb && pc == .pc && .ex == extra) return()
+      cat(paste0("\r  |", strrep(" ", nw * width + 6)))
+      cat(paste(c("\r  |",
+                  rep.int(char, nb),
+                  rep.int(" ", nw * (width - nb)),
+                  sprintf("| %3d%%", pc),
+                  sprintf(" | Acc(%3d%%)", extra)
+                  ), collapse = ""))
+      utils::flush.console()
+      .nb <<- nb
+      .pc <<- pc
+      .ex <<- extra
+  }
 
-    getVal <- function() .val
-    kill <- function()
-        if(!.killed) {
-            cat("\n")
-            flush.console()
-            .killed <<- TRUE
-        }
-    up(initial) # will check if in range
-    structure(list(getVal=getVal, up=up, kill=kill),
-              class = c("accProgressBar", "txtProgressBar"))
+  getVal <- function() .val
+  kill <- function()
+      if (!.killed) {
+          cat("\n")
+          utils::flush.console()
+          .killed <<- TRUE
+      }
+  up(initial) # will check if in range
+  
+  structure(list(getVal = getVal, up = up, kill = kill),
+            class = c("acceptProgressBar", "txtProgressBar"))
 }
  
-setAcceptProgressBar <- function(pb, value, extra = 0)
-{
-    if(!inherits(pb, "txtProgressBar"))
+setAcceptProgressBar <- function(pb, value, extra = 0) {
+    if (!inherits(pb, "txtProgressBar"))
         stop(gettextf("'pb' is not from class %s",
                       dQuote("txtProgressBar")),
              domain = NA)
@@ -386,4 +412,3 @@ setAcceptProgressBar <- function(pb, value, extra = 0)
     pb$up(value, extra)
     invisible(oldval)
 }
-
