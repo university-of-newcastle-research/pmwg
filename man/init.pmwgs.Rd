@@ -5,7 +5,7 @@
 \title{Initialise values for the random effects}
 \usage{
 \method{init}{pmwgs}(x, theta_mu = NULL, theta_sig = NULL,
-  alpha = NULL, display_progress = TRUE, ...)
+  display_progress = TRUE, ...)
 }
 \arguments{
 \item{x}{The sampler object that provides the parameters.}
@@ -13,8 +13,6 @@
 \item{theta_mu}{An array of starting values for the group means}
 
 \item{theta_sig}{An array of starting values for the group covariance matrix}
-
-\item{alpha}{An array of starting values for the subject means.}
 
 \item{display_progress}{Display a progress bar during sampling}
 
@@ -39,12 +37,16 @@ multivariate normal using the group level means and variance.
 }
 \examples{
 lba_ll <- function(x, data) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
   sum(
     log(
       rtdists::dLBA(rt = data$rt,
                     response = data$correct,
                     A = x["A"],
-                    b = bs,
+                    b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
                     t0 = x["t0"],
                     mean_v = x[c("v1", "v2")],
                     sd_v = c(1, 1),
@@ -56,6 +58,5 @@ sampler <- pmwgs(forstmann,
                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
                  lba_ll
            )
-sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)),
-                alpha=matrix(rnorm(7*19), ncol=19))
+sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)))
 }
