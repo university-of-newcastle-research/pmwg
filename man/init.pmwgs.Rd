@@ -5,7 +5,7 @@
 \title{Initialise values for the random effects}
 \usage{
 \method{init}{pmwgs}(x, theta_mu = NULL, theta_sig = NULL,
-  alpha = NULL, display_progress = TRUE, ...)
+  display_progress = TRUE, ...)
 }
 \arguments{
 \item{x}{The sampler object that provides the parameters.}
@@ -13,8 +13,6 @@
 \item{theta_mu}{An array of starting values for the group means}
 
 \item{theta_sig}{An array of starting values for the group covariance matrix}
-
-\item{alpha}{An array of starting values for the subject means.}
 
 \item{display_progress}{Display a progress bar during sampling}
 
