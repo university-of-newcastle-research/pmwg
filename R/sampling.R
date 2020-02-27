@@ -66,11 +66,12 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   )
   # create progress bar
   if (display_progress) {
-    pb <- utils::txtProgressBar(min = 0, max = iter, style = 3)
+    pb <- acceptProgressBar(min = 0, max = iter)
   }
 
   for (i in 1:iter) {
-    if (display_progress) utils::setTxtProgressBar(pb, i)
+    if (display_progress)
+      setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
 
     if (i == 1) store <- x$samples else store <- stage_samples
     tryCatch(
@@ -107,6 +108,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     fn_args <- c(pmwgs_args, apply_args, prop_args)
     tmp <- do.call(apply_fn, fn_args)
 
+    ll <- unlist(lapply(tmp, attr, 'll'))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results.
@@ -115,6 +117,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     stage_samples$last_theta_sig_inv <- pars$gvi
     stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
+    stage_samples$subj_ll[, i] <- ll
     attr(x, "a_half") <- pars$a_half
 
     if (stage == "adapt") {
@@ -232,7 +235,10 @@ new_sample <- function(s, data, num_particles, parameters,
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
-  proposals[sample(x = num_particles, size = 1, prob = weights), ]
+  idx <- sample(x = num_particles, size = 1, prob = weights)
+  winner <- proposals[idx, ]
+  attr(winner, "ll") <- lw[idx]
+  winner
 }
 
 
