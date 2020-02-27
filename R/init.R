@@ -21,12 +21,16 @@
 #' @return The sampler object but with initial values set for latent_theta_mu
 #' @examples
 #' lba_ll <- function(x, data) {
+#'   x <- exp(x)
+#'   if (any(data$rt < x["t0"])) {
+#'     return(-1e10)
+#'   }
 #'   sum(
 #'     log(
 #'       rtdists::dLBA(rt = data$rt,
 #'                     response = data$correct,
 #'                     A = x["A"],
-#'                     b = bs,
+#'                     b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
 #'                     t0 = x["t0"],
 #'                     mean_v = x[c("v1", "v2")],
 #'                     sd_v = c(1, 1),
