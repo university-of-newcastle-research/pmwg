@@ -103,13 +103,14 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 #' the proposal distribution.
 #'
 #' @param samples The samples list containing all samples from the pmwgs object
+#' @param stage The stage, or list of stages from which you want the samples
 #'
 #' @return A list containing only appopriate samples (non init/burnin samples)
 #' @examples
 #' # No example yet
 #' @keywords internal
-extract_samples <- function(samples) {
-  sample_filter <- samples$stage %in% c("adapt", "sample")
+extract_samples <- function(samples, stage = c("adapt", "sample")) {
+  sample_filter <- samples$stage %in% stage
   list(
     theta_mu = samples$theta_mu[, sample_filter],
     theta_sig = samples$theta_sig[, , sample_filter],
