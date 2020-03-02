@@ -130,7 +130,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
           lapply(
             X = 1:tmp_sampler$n_subjects,
             FUN = conditional_parms,
-            samples = extract_samples(tmp_sampler$samples)
+            samples = extract_samples(tmp_sampler)
           )
         })
         if (class(attempt) == "try-error") {

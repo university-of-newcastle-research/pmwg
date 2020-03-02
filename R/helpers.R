@@ -99,7 +99,7 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 
 #' Extract relevant samples from the list for conditional dist calc
 #'
-#' From the existing samples, extract relevant samples for the creation of
+#' From the sampler, extract relevant samples for the creation of
 #' the proposal distribution.
 #'
 #' @param samples The samples list containing all samples from the pmwgs object
@@ -109,7 +109,8 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 #' @examples
 #' # No example yet
 #' @keywords internal
-extract_samples <- function(samples, stage = c("adapt", "sample")) {
+extract_samples <- function(sampler, stage = c("adapt", "sample")) {
+  samples <- samplers$samples
   sample_filter <- samples$stage %in% stage
   list(
     theta_mu = samples$theta_mu[, sample_filter],
@@ -136,7 +137,7 @@ create_efficient <- function(x) {
   for (s in 1:x$n_subjects) {
     cparms <- conditional_parms(
       s,
-      extract_samples(x$samples)
+      extract_samples(x)
     )
     proposal_means[, s] <- cparms$cmeans
     proposal_sigmas[, , s] <- cparms$cvars
