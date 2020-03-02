@@ -29,8 +29,9 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     prop_args <- try(create_efficient(x))
     if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
-      save.image("data/output/PMwG-error.RData")
-      stop("Data saved in output directory under PMwG-error")
+      outfile <- tempfile(pattern = "PMwG_err_", tmpdir = ".", fileext = ".RData")
+      cat("Saving current state of environment in file: ", outfile, "\n")
+      save.image(outfile)
     }
     mix <- c(0.1, 0.2, 0.7)
     epsilon <- 1
