@@ -25,6 +25,12 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
                             display_progress = TRUE, n_cores = 1, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
+  # Expand the dots
+  extra_args <- list(...)
+  # Extract n_unique argument
+  if (is.null(extra_args$n_unique))
+    .n_unique <- 20  else
+    .n_unique <- extra_args$n_unique
   if (stage == "sample") {
     prop_args <- try(create_efficient(x))
     if (class(prop_args) == "try-error") {
@@ -39,7 +45,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     mix <- c(0.5, 0.5, 0.0)
     epsilon <- 3
     prop_args <- list()
-    unique_check <- 20
+    n_unique <- .n_unique
   }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
@@ -122,8 +128,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     attr(x, "a_half") <- pars$a_half
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$alpha, unq_vals = unique_check)) {
-        message("Enough unique values detected: ", unique_check)
+      if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
+        message("Enough unique values detected: ", n_unique)
         message("Testing proposal distribution creation")
         attempt <- try({
           tmp_sampler <- update_sampler(x, stage_samples)
@@ -136,7 +142,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
         if (class(attempt) == "try-error") {
           warning("An error was encountered creating proposal distribution")
           warning("Increasing required unique values")
-          unique_check <- unique_check * 2
+          n_unique <- n_unique + .n_unique
         }
         else {
           message("Adapted after ", i, "iterations - stopping early")
