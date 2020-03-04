@@ -309,7 +309,7 @@ update_sampler <- function(sampler, store) {
 #' @return A boolean TRUE or FALSE depending on the result of the test
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 check_adapted <- function(samples, unq_vals = 20) {
   # Only need to check uniqueness for one parameter
   first_par <- samples[1, , ]

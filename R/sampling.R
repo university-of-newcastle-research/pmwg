@@ -112,7 +112,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     ll <- unlist(lapply(tmp, attr, 'll'))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
-    # Store results.
+    # Store results locally.
     stage_samples$theta_mu[, i] <- pars$gm
     stage_samples$theta_sig[, , i] <- pars$gv
     stage_samples$last_theta_sig_inv <- pars$gvi
