@@ -11,10 +11,10 @@ Imports:
   MASS,
   MCMCpack,
   condMVNorm,
+  coda
 Suggests:
-  snowfall,
   rtdists,
-  knitr
+  knitr,
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8

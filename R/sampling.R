@@ -31,6 +31,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   if (is.null(extra_args$n_unique))
     .n_unique <- 20  else
     .n_unique <- extra_args$n_unique
+    
   if (stage == "sample") {
     prop_args <- try(create_efficient(x))
     if (class(prop_args) == "try-error") {
@@ -40,10 +41,8 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
       save.image(outfile)
     }
     mix <- c(0.1, 0.2, 0.7)
-    epsilon <- 1
   } else {
     mix <- c(0.5, 0.5, 0.0)
-    epsilon <- 3
     prop_args <- list()
     n_unique <- .n_unique
   }
@@ -109,10 +108,9 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
       parameters = pars,
       mix_ratio = mix,
       likelihood_func = x$ll_func,
-      epsilon = epsilon,
       subjects = x$subjects
     )
-    fn_args <- c(pmwgs_args, apply_args, prop_args)
+    fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, 'll'))
@@ -282,7 +280,7 @@ gen_particles <- function(num_particles,
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
   pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
-  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 / epsilon)
+  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon)
   eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
   particles <- rbind(pop_particles, ind_particles, eff_particles)
   colnames(particles) <- names(mu) # stripped otherwise.
