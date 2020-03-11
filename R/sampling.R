@@ -118,7 +118,8 @@ run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
     fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
     tmp <- do.call(apply_fn, fn_args)
 
-    ll <- unlist(lapply(tmp, attr, "ll"))
+    ll <- unlist(lapply(tmp, attr, 'll'))
+    weight <- unlist(lapply(tmp, attr, 'weight'))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results locally.
@@ -129,6 +130,7 @@ run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
     stage_samples$idx <- i
     stage_samples$subj_ll[, i] <- ll
     stage_samples$a_half[, i] <- pars$a_half
+    stage_samples$subj_weight[, i] <- weight
 
     if (stage == "adapt") {
       if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
@@ -250,6 +252,7 @@ new_sample <- function(s, data, num_particles, parameters,
   idx <- sample(x = num_particles, size = 1, prob = weights)
   winner <- proposals[idx, ]
   attr(winner, "ll") <- lw[idx]
+  attr(winner, "weight") <- mean(weights)
   winner
 }
 

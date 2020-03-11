@@ -64,6 +64,7 @@ init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
     pb <- utils::txtProgressBar(min = 0, max = pmwgs$n_subjects, style = 3)
   }
   likelihoods <- array(NA_real_, dim = c(pmwgs$n_subjects))
+  weights <- array(NA_real_, dim = c(x$n_subjects))
   for (s in 1:pmwgs$n_subjects) {
     if (display_progress) utils::setTxtProgressBar(pb, s)
     particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
@@ -78,6 +79,7 @@ init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
     idx <- sample(x = n_particles, size = 1, prob = weight)
     alpha[, s] <- particles[idx, ]
     likelihoods[s] <- lw[idx]
+    weights[s] <- mean(weight)
   }
   if (display_progress) close(pb)
   pmwgs$init <- TRUE
@@ -86,6 +88,7 @@ init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
   pmwgs$samples$alpha[, , 1] <- alpha
   pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
   pmwgs$samples$subj_ll[, 1] <- likelihoods
+  pmwgs$samples$subj_weight[, 1] <- weights
   pmwgs$samples$a_half[, 1] <- a_half
   pmwgs$samples$idx <- 1
   pmwgs
