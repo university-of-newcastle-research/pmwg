@@ -123,7 +123,7 @@ new_sample <- function(s, data, num_particles, parameters,
 }
 # Create proposals for new particles --------------------------------------
   proposals <- gen_particles(num_particles, mu, sig2, subj_mu, mix_ratio = mix_ratio, prop_mu = e_mu, prop_sig2 = e_sig2, epsilon = epsilon )
-  # Except here:
+  # Excerpt here:
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
   ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon)
@@ -142,7 +142,7 @@ new_sample <- function(s, data, num_particles, parameters,
 # Density of random effects proposal given population-level distribution.----
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = subj_mu, sigma = sig2)
+  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = subj_mu, sigma = sig2 * epsilon^2)
   # Density of efficient proposals
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
