@@ -222,7 +222,9 @@ new_sample <- function(s, data, num_particles, parameters,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = subj_mu, sigma = sig2)
+  prop_density <- mvtnorm::dmvnorm(x = proposals,
+                                   mean = subj_mu,
+                                   sigma = sig2 * epsilon^2)
   # Density of efficient proposals
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
