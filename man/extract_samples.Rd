@@ -4,16 +4,18 @@
 \alias{extract_samples}
 \title{Extract relevant samples from the list for conditional dist calc}
 \usage{
-extract_samples(samples)
+extract_samples(sampler, stage = c("adapt", "sample"))
 }
 \arguments{
-\item{samples}{The samples list containing all samples from the pmwgs object}
+\item{sampler}{The pmwgs object containing the samples}
+
+\item{stage}{The stage, or list of stages from which you want the samples}
 }
 \value{
 A list containing only appopriate samples (non init/burnin samples)
 }
 \description{
-From the existing samples, extract relevant samples for the creation of
+From the sampler, extract relevant samples for the creation of
 the proposal distribution.
 }
 \examples{

@@ -4,8 +4,17 @@
 \alias{gen_particles}
 \title{Generate proposal particles.}
 \usage{
-gen_particles(num_particles, mu, sig2, particle, ..., mix_ratio = c(0.5,
-  0.5, 0), prop_mu = NULL, prop_sig2 = NULL, epsilon = 1)
+gen_particles(
+  num_particles,
+  mu,
+  sig2,
+  particle,
+  ...,
+  mix_ratio = c(0.5, 0.5, 0),
+  prop_mu = NULL,
+  prop_sig2 = NULL,
+  epsilon = 1
+)
 }
 \arguments{
 \item{num_particles}{The total number of particles to generate using a combination of the

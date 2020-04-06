@@ -4,8 +4,15 @@
 \alias{run_stage.pmwgs}
 \title{Run a stage of the PMwG sampler}
 \usage{
-\method{run_stage}{pmwgs}(x, stage, iter = 1000, particles = 1000,
-  display_progress = TRUE, n_cores = 1, ...)
+\method{run_stage}{pmwgs}(
+  x,
+  stage,
+  iter = 1000,
+  particles = 1000,
+  display_progress = TRUE,
+  n_cores = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{A pmwgs object that has been initialised}

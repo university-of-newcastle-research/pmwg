@@ -5,7 +5,7 @@
 
 To install the currently recommended method is via devtools.
 
-`devtools::install_github('gjcooper\samplers')`
+`devtools::install_github('gjcooper/samplers')`
 
 ## Installing to an older version of R (< 3.6)
 

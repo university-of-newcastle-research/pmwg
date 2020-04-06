@@ -20,3 +20,4 @@ Check whether the adaptation phase has successfully completed
 \examples{
 # No example yet
 }
+\keyword{internal}

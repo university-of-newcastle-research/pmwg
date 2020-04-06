@@ -25,20 +25,26 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
                             display_progress = TRUE, n_cores = 1, ...) {
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
+  # Expand the dots
+  extra_args <- list(...)
+  # Extract n_unique argument
+  if (is.null(extra_args$n_unique))
+    .n_unique <- 20  else
+    .n_unique <- extra_args$n_unique
+    
   if (stage == "sample") {
     prop_args <- try(create_efficient(x))
     if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
-      save.image("data/output/PMwG-error.RData")
-      stop("Data saved in output directory under PMwG-error")
+      outfile <- tempfile(pattern = "PMwG_err_", tmpdir = ".", fileext = ".RData")
+      cat("Saving current state of environment in file: ", outfile, "\n")
+      save.image(outfile)
     }
     mix <- c(0.1, 0.2, 0.7)
-    epsilon <- 1
   } else {
     mix <- c(0.5, 0.5, 0.0)
-    epsilon <- 3
     prop_args <- list()
-    unique_check <- 20
+    n_unique <- .n_unique
   }
   # Test pmwgs object initialised
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
@@ -102,16 +108,15 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
       parameters = pars,
       mix_ratio = mix,
       likelihood_func = x$ll_func,
-      epsilon = epsilon,
       subjects = x$subjects
     )
-    fn_args <- c(pmwgs_args, apply_args, prop_args)
+    fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, 'll'))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
-    # Store results.
+    # Store results locally.
     stage_samples$theta_mu[, i] <- pars$gm
     stage_samples$theta_sig[, , i] <- pars$gv
     stage_samples$last_theta_sig_inv <- pars$gvi
@@ -121,21 +126,21 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     attr(x, "a_half") <- pars$a_half
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$alpha, unq_vals = unique_check)) {
-        message("Enough unique values detected: ", unique_check)
+      if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
+        message("Enough unique values detected: ", n_unique)
         message("Testing proposal distribution creation")
         attempt <- try({
           tmp_sampler <- update_sampler(x, stage_samples)
           lapply(
             X = 1:tmp_sampler$n_subjects,
             FUN = conditional_parms,
-            samples = extract_samples(tmp_sampler$samples)
+            samples = extract_samples(tmp_sampler)
           )
         })
         if (class(attempt) == "try-error") {
           warning("An error was encountered creating proposal distribution")
           warning("Increasing required unique values")
-          unique_check <- unique_check * 2
+          n_unique <- n_unique + .n_unique
         }
         else {
           message("Adapted after ", i, "iterations - stopping early")
@@ -217,7 +222,9 @@ new_sample <- function(s, data, num_particles, parameters,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = subj_mu, sigma = sig2)
+  prop_density <- mvtnorm::dmvnorm(x = proposals,
+                                   mean = subj_mu,
+                                   sigma = sig2 * (epsilon^2))
   # Density of efficient proposals
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
@@ -275,7 +282,7 @@ gen_particles <- function(num_particles,
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
   pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
-  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 / epsilon)
+  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon)
   eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
   particles <- rbind(pop_particles, ind_particles, eff_particles)
   colnames(particles) <- names(mu) # stripped otherwise.

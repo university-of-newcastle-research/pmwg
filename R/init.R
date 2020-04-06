@@ -49,7 +49,8 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
   # If no starting point for group mean just use zeros
   if (is.null(theta_mu)) theta_mu <- stats::rnorm(x$n_pars, sd = 1)
   # If no starting point for group var just sample from inverse wishart
-  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(20, diag(x$n_pars))
+  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(x$n_pars * 3,
+                                                        diag(x$n_pars))
   n_particles <- 1000  #GC: Fixed val here
   alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
   if (display_progress) {

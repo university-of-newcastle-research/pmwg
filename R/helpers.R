@@ -99,17 +99,19 @@ check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
 
 #' Extract relevant samples from the list for conditional dist calc
 #'
-#' From the existing samples, extract relevant samples for the creation of
+#' From the sampler, extract relevant samples for the creation of
 #' the proposal distribution.
 #'
-#' @param samples The samples list containing all samples from the pmwgs object
+#' @param sampler The pmwgs object containing the samples
+#' @param stage The stage, or list of stages from which you want the samples
 #'
 #' @return A list containing only appopriate samples (non init/burnin samples)
 #' @examples
 #' # No example yet
 #' @keywords internal
-extract_samples <- function(samples) {
-  sample_filter <- samples$stage %in% c("adapt", "sample")
+extract_samples <- function(sampler, stage = c("adapt", "sample")) {
+  samples <- sampler$samples
+  sample_filter <- samples$stage %in% stage
   list(
     theta_mu = samples$theta_mu[, sample_filter],
     theta_sig = samples$theta_sig[, , sample_filter],
@@ -135,7 +137,7 @@ create_efficient <- function(x) {
   for (s in 1:x$n_subjects) {
     cparms <- conditional_parms(
       s,
-      extract_samples(x$samples)
+      extract_samples(x)
     )
     proposal_means[, s] <- cparms$cmeans
     proposal_sigmas[, , s] <- cparms$cvars
@@ -307,7 +309,7 @@ update_sampler <- function(sampler, store) {
 #' @return A boolean TRUE or FALSE depending on the result of the test
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 check_adapted <- function(samples, unq_vals = 20) {
   # Only need to check uniqueness for one parameter
   first_par <- samples[1, , ]
