@@ -1,3 +1,159 @@
+#' Run a stage of the PMwG sampler
+#'
+#' Run one of burnin, adaptation of sampling phase from the PMwG
+#' sampler. Each stage involves slightly different processes, so for the
+#' full PMwG we need to run this three times.
+#'
+#' @param x A pmwgs object that has been initialised
+#' @param stage The sampling stage to run. Must be one of 'burn', 'adapt' or
+#'   'sample'. If not provided assumes that the stage should be 'burn'
+#' @param iter The number of iterations to run for the sampler. For 'burn' and
+#'   'sample' all iteration will run. However for 'adapt' if all subjects have
+#'   enough unique samples to create the conditional distribution then it will
+#'   finish early.
+#' @param particles The default here is 1000 particles to be generated for each
+#'   iteration, however during the sample phase this should be reduced.
+#' @param display_progress Display a progress bar during sampling.
+#' @param n_cores Set to > 1 to use mclapply
+#' @param ... Further arguments passed to or from other methods.
+#'
+#' @return A pmwgs object with the newly generated samples in place.
+#' @examples
+#' # No example yet
+#' @export
+run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
+                            display_progress = TRUE, n_cores = 1, ...) {
+  # Test stage argument
+  stage <- match.arg(stage, c("burn", "adapt", "sample"))
+  # Expand the dots
+  extra_args <- list(...)
+  # Extract n_unique argument
+  if (is.null(extra_args$n_unique))
+    .n_unique <- 20  else
+    .n_unique <- extra_args$n_unique
+    
+  if (stage == "sample") {
+    prop_args <- try(create_efficient(x))
+    if (class(prop_args) == "try-error") {
+      cat("ERR01: An error was detected creating efficient dist\n")
+      outfile <- tempfile(pattern = "PMwG_err_", tmpdir = ".", fileext = ".RData")
+      cat("Saving current state of environment in file: ", outfile, "\n")
+      save.image(outfile)
+    }
+    mix <- c(0.1, 0.2, 0.7)
+  } else {
+    mix <- c(0.5, 0.5, 0.0)
+    prop_args <- list()
+    n_unique <- .n_unique
+  }
+  # Test pmwgs object initialised
+  try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
+  apply_fn <- lapply
+  apply_args <- list()
+  if (n_cores > 1){
+    if (Sys.info()[["sysname"]] == "Windows") {
+      stop("n_cores cannot be greater than 1 on Windows systems.")
+    }
+    apply_fn <- parallel::mclapply
+    apply_args <- list(mc.cores=n_cores)
+  }
+
+  # Display stage to screen
+  msgs <- list(
+    burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
+    sample = "Phase 3: Sampling\n"
+  )
+  cat(msgs[[stage]])
+
+  # Build new sample storage
+  stage_samples <- sample_store(
+    x$par_names, x$n_subject,
+    iters = iter, stage = stage
+  )
+  # create progress bar
+  if (display_progress) {
+    pb <- acceptProgressBar(min = 0, max = iter)
+  }
+
+  for (i in 1:iter) {
+    if (display_progress)
+      setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
+
+    if (i == 1) store <- x$samples else store <- stage_samples
+    tryCatch(
+      pars <- new_group_pars(store, x),
+      error = function(err_cond) {
+        store_tmp <- tempfile(pattern = "pmwg_stage_samples_",
+                              tmpdir = ".",
+                              fileext = ".RDS")
+        sampler_tmp <- tempfile(pattern = "pmwg_obj_",
+                                tmpdir = ".",
+                                fileext = ".RDS")
+        message("Problem generating new group level parameters")
+        message("Saving current state of pmwgs object: ", sampler_tmp)
+        saveRDS(x, file = sampler_tmp)
+        message("Saving current state of stage sample storage", store_tmp)
+        saveRDS(store, file = store_tmp)
+        stop("Stopping execution")
+      }
+    )
+
+    # Sample new particles for random effects.
+    # Send new_sample the "index" of the subject id - not subject id itself.
+    pmwgs_args <- list(
+      X = 1:x$n_subjects,
+      FUN = new_sample,
+      data = x$data,
+      num_particles = particles,
+      parameters = pars,
+      mix_ratio = mix,
+      likelihood_func = x$ll_func,
+      subjects = x$subjects
+    )
+    fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
+    tmp <- do.call(apply_fn, fn_args)
+
+    ll <- unlist(lapply(tmp, attr, 'll'))
+    sm <- array(unlist(tmp), dim = dim(pars$sm))
+
+    # Store results locally.
+    stage_samples$theta_mu[, i] <- pars$gm
+    stage_samples$theta_sig[, , i] <- pars$gv
+    stage_samples$last_theta_sig_inv <- pars$gvi
+    stage_samples$alpha[, , i] <- sm
+    stage_samples$idx <- i
+    stage_samples$subj_ll[, i] <- ll
+    attr(x, "a_half") <- pars$a_half
+
+    if (stage == "adapt") {
+      if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
+        message("Enough unique values detected: ", n_unique)
+        message("Testing proposal distribution creation")
+        attempt <- try({
+          tmp_sampler <- update_sampler(x, stage_samples)
+          lapply(
+            X = 1:tmp_sampler$n_subjects,
+            FUN = conditional_parms,
+            samples = extract_samples(tmp_sampler)
+          )
+        })
+        if (class(attempt) == "try-error") {
+          warning("An error was encountered creating proposal distribution")
+          warning("Increasing required unique values")
+          n_unique <- n_unique + .n_unique
+        }
+        else {
+          message("Adapted after ", i, "iterations - stopping early")
+          break
+        }
+      }
+    }
+  }
+  if (display_progress) close(pb)
+  update_sampler(x, stage_samples)
+}
+
+
 #' Generate a new particle
 #'
 #' Generate samples from either the initial proposal or from the last
@@ -6,80 +162,129 @@
 #' This uses the simplest, and slowest, proposals: a mixture of the
 #' the population distribution and Gaussian around current random effect.
 #'
-#' @param s A number - the subject ID, also selects particles
+#' @param s A number - the index of the subject, also selects particles. For
+#'   `s == 1` The first subject ID from the `data` subject column will be
+#'   selected. For `s == 2` the second unique value for subject id will be used.
 #' @param data A data.frame containing variables for
 #'        response time (\code{rt}), trial condition (\code{condition}),
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
-#' @param num_proposals A number representing the number of proposal particles to generate
-#' @param mu A vector of means for the multivariate normal
-#' @param sig2 A covariate matrix for the multivariate normal
-#' @param particles An array of particles (re proposals for latent variables)
-#' @param mix_ratio A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters
+#' @param parameters A list containing:
+#'          * the vector of means for the multivariate normal (gm),
+#'          * A covariate matrix for the multivariate normal (gv)
+#'          * An array of individual subject means (re proposals for latent
+#'            variables) (sm)
+#' @inheritParams numbers_from_ratio
+#' @inheritParams check_efficient
+#' @param likelihood_func A likelihood function for calculating log likelihood
+#'   of samples
+#' @param epsilon A scaling factor to reduce the variance on individual level
+#'   parameter samples
+#' @param subjects A list of unique subject ids in the order they appear in
+#'   the data.frame
 #'
 #' @return A single sample from the new proposals
 #' @examples
 #' # No example yet
 #' @export
-new_sample <- function(s, data, num_proposals,
-                       mu, sig2, particles, mix_ratio = 0.5) {
+new_sample <- function(s, data, num_particles, parameters,
+                       efficient_mu = NULL, efficient_sig2 = NULL,
+                       mix_ratio = c(0.5, 0.5, 0.0),
+                       likelihood_func = NULL,
+                       epsilon = 1, subjects = NULL) {
+  # Check for efficient proposal values if necessary
+  check_efficient(mix_ratio, efficient_mu, efficient_sig2)
+  e_mu <- efficient_mu[, s]
+  e_sig2 <- efficient_sig2[, , s]
+  mu <- parameters$gm
+  sig2 <- parameters$gv
+  subj_mu <- parameters$sm[, s]
+  if (is.null(likelihood_func)) stop("likelihood_func is a required argument")
+
   # Create proposals for new particles
-  proposals <- gen_proposals(
-    num_proposals,
-    mu,
-    sig2,
-    particles[, s],
-    mix_ratio = mix_ratio
+  proposals <- gen_particles(
+    num_particles, mu, sig2, subj_mu,
+    mix_ratio = mix_ratio,
+    prop_mu = e_mu,
+    prop_sig2 = e_sig2,
+    epsilon = epsilon
   )
   # Put the current particle in slot 1.
-  proposals[1, ] <- particles[, s]
+  proposals[1, ] <- subj_mu
+
   # Density of data given random effects proposal.
   lw <- apply(
     proposals,
     1,
-    lba_loglike,
-    data = data[data$subject == s, ]
+    likelihood_func,
+    data = data[data$subject == subjects[s], ]
   )
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals, mean = particles[, s], sigma = sig2)
-  lm <- log(mix_ratio * exp(lp) + (1 - mix_ratio) * prop_density)
+  prop_density <- mvtnorm::dmvnorm(x = proposals,
+                                   mean = subj_mu,
+                                   sigma = sig2 * (epsilon^2))
+  # Density of efficient proposals
+  if (mix_ratio[3] != 0) {
+    eff_density <- mvtnorm::dmvnorm(
+      x = proposals,
+      mean = e_mu,
+      sigma = e_sig2
+    )
+  } else {
+    eff_density <- 0
+  }
+
+  lm <- log(mix_ratio[1] * exp(lp) +
+    (mix_ratio[2] * prop_density) +
+    (mix_ratio[3] * eff_density))
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
-  proposals[sample(x = num_proposals, size = 1, prob = weights), ]
+  idx <- sample(x = num_particles, size = 1, prob = weights)
+  winner <- proposals[idx, ]
+  attr(winner, "ll") <- lw[idx]
+  winner
 }
+
 
 #' Generate proposal particles.
 #'
-#' Generate particles for a particular subject from a mix of either the
-#' population level (hierarchical) distribution or from the particles
-#' (containing individual level distribution).
+#' Generate particles for a particular subject from a mix of population level
+#' (hierarchical) distribution, from the particles (containing individual level
+#' distribution) and/or from the conditional on accepted individual level
+#' particles, a more efficient prposal method.
 #'
-#' @param num_proposals A number representing the number of proposal particles to generate
+#' This function is used in burnin, adaptation and sampling using various
+#' combinations of the arguments.
+#'
 #' @param mu A vector of means for the multivariate normal
 #' @param sig2 A covariate matrix for the multivariate normal
 #' @param particle A particle (re proposals for latent variables)
-#' @param mix_ratio A float betwen 0 and 1 giving the ratio of particles to generate from the population level parameters vs the individual level parameters
+#' @inheritParams numbers_from_ratio
+#' @param epsilon Reduce the variance for the individual level samples by this
+#'   factor
 #'
 #' @return The new proposals
 #' @examples
-#' gen_proposals(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
+#' psamplers:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
 #' @keywords internal
-gen_proposals <- function(num_proposals, mu, sig2, particle, mix_ratio = 0.5) {
-  num_from_population <- rbinom(n = 1, size = num_proposals, prob = mix_ratio)
-  if (num_from_population < 2) {
-    num_from_population <- 2
-  }
-  if (num_from_population > (num_proposals - 2)) {
-    num_from_population <- num_proposals - 2
-  }
-  num_from_subject <- num_proposals - num_from_population
+gen_particles <- function(num_particles,
+                          mu,
+                          sig2,
+                          particle,
+                          ...,
+                          mix_ratio = c(0.5, 0.5, 0.0),
+                          prop_mu = NULL,
+                          prop_sig2 = NULL,
+                          epsilon = 1) {
+  particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
-  population_proposals <- mvtnorm::rmvnorm(num_from_population, mu, sig2)
-  subject_proposals <- mvtnorm::rmvnorm(num_from_subject, particle, sig2)
-  proposals <- rbind(population_proposals, subject_proposals)
-  colnames(proposals) <- names(mu) # stripped otherwise.
-  proposals
+  pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
+  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon)
+  eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
+  particles <- rbind(pop_particles, ind_particles, eff_particles)
+  colnames(particles) <- names(mu) # stripped otherwise.
+  particles
 }

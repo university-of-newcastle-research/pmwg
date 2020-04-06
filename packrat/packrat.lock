@@ -61,6 +61,12 @@ Source: CRAN
 Version: 0.19-3
 Hash: a6bd401a844d5fc9e5d9589dc0197acb
 
+Package: condMVNorm
+Source: CRAN
+Version: 2015.2-1
+Hash: b60ee14de6073ccedc897371dc07884d
+Requires: mvtnorm
+
 Package: crayon
 Source: CRAN
 Version: 1.3.4
