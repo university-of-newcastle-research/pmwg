@@ -2,13 +2,14 @@ require(dplyr)
 require(ggplot2)
 require(tidyr)
 
-plot.pmwgs <- function(x, type="mu", pars=NULL, subjects=NULL, iters=NULL) {
+plot.pmwgs <- function(x, type="mu", pars=NULL, subjects=NULL, iters=NULL, transform.func=NULL) {
   if (is.null(pars)) pars <- x$par_names
   if (is.null(subjects)) subjects <- x$subjects
   if (is.null(iters)) iters <- 1:x$samples$idx
 
   if (type == "mu") {
     data <- x$samples$theta_mu[, iters]
+    if (!is.null(transform.func)) data <- transform.func(data)
     dimnames(data) <- list(x$par_names, NULL)
     data.frame(t(data)) %>%
       select(pars) %>%
@@ -18,6 +19,7 @@ plot.pmwgs <- function(x, type="mu", pars=NULL, subjects=NULL, iters=NULL) {
       ggplot(mapping = aes(x = iter, y = value, col = parameter)) + geom_line()
   } else if (type == "alpha") {
     data <- x$samples$alpha[, , iters]
+    if (!is.null(transform.func)) data <- transform.func(data)
     dimnames(data) <- list("parameter" = x$par_names,
                            "subject" = unique(x$data$subject),
                            "iter" = 1:dim(data)[3])
@@ -31,6 +33,7 @@ plot.pmwgs <- function(x, type="mu", pars=NULL, subjects=NULL, iters=NULL) {
         facet_wrap(~subject)
   } else if (type == "ll") {
     data <- x$samples$subj_ll[, iters]
+    if (!is.null(transform.func)) data <- transform.func(data)
     data <- t(data)
     dimnames(data) <- list("iter" = 1:dim(data)[1], "subject" = x$subjects)
     data.frame(data, check.names=FALSE) %>%
