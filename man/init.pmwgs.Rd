@@ -4,8 +4,7 @@
 \alias{init.pmwgs}
 \title{Initialise values for the random effects}
 \usage{
-\method{init}{pmwgs}(x, theta_mu = NULL, theta_sig = NULL,
-  display_progress = TRUE, ...)
+\method{init}{pmwgs}(x, theta_mu = NULL, theta_sig = NULL, display_progress = TRUE, ...)
 }
 \arguments{
 \item{x}{The sampler object that provides the parameters.}

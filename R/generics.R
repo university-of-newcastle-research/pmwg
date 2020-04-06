@@ -40,4 +40,3 @@ init <- function(x, ...) {
   }
   else UseMethod("init")
 }
-

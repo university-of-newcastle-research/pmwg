@@ -4,9 +4,18 @@
 \alias{new_sample}
 \title{Generate a new particle}
 \usage{
-new_sample(s, data, num_particles, parameters, efficient_mu = NULL,
-  efficient_sig2 = NULL, mix_ratio = c(0.5, 0.5, 0),
-  likelihood_func = NULL, epsilon = 1, subjects = NULL)
+new_sample(
+  s,
+  data,
+  num_particles,
+  parameters,
+  efficient_mu = NULL,
+  efficient_sig2 = NULL,
+  mix_ratio = c(0.5, 0.5, 0),
+  likelihood_func = NULL,
+  epsilon = 1,
+  subjects = NULL
+)
 }
 \arguments{
 \item{s}{A number - the index of the subject, also selects particles. For

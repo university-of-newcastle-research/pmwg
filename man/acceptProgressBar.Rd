@@ -4,8 +4,7 @@
 \alias{acceptProgressBar}
 \title{An altered version of the utils:txtProgressBar that shows acceptance rate}
 \usage{
-acceptProgressBar(min = 0, max = 1, initial = 0, char = "=",
-  width = NA)
+acceptProgressBar(min = 0, max = 1, initial = 0, char = "=", width = NA)
 }
 \arguments{
 \item{min}{The minimum of the value being updated for the progress bar}
