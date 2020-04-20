@@ -13,8 +13,9 @@ Imports:
   condMVNorm,
   coda
 Suggests:
-  rtdists,
-  knitr,
+    rtdists,
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8

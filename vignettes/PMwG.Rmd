@@ -2,7 +2,7 @@
 title: "Particle Based Samplers for MCMC"
 author: "Gavin Cooper"
 date: \today
-output: pdf_document
+output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{ Particle Based Samplers for MCMC: Forstmann Dataset}
@@ -10,4 +10,221 @@ vignette: >
   %\usepackage[utf8]{inputenc} 
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
+This vignette is taken from the bookdown documentation that can be found at: https://jpcav.github.io/samplerDoc/. In particular this is verbatim from Chapter 3 ([Example 2](https://jpcav.github.io/samplerDoc/example-2-forstmann-et-al-2008-dataset.html)). For more detail on the methods and usecases of the package please refer to the full bookdown resource.
+
+# Example 2 - Forstmann et al. (2008) dataset
+
+We begin with a simple use case of the psamplers package with data from @forstmann2008striatum.
+
+## Description of Forstmann experiment
+
+First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
+```{r getpkg, eval=FALSE}
+# The samplers package will be on CRAN - this step will be removed.
+install_github('newcastlecl\\samplers')
+```
+```{r loadpkg}
+library(psamplers)
+```
+
+Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the psamplers package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
+
+Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Choice and response time data was collected. Choices were coded as correct `(correct = 2)` or incorrect `(correct =  1)` and response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
+
+```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
+kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
+```
+
+## Setting up the sampler
+
+We will use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] to demonstrate how to use the psamplers package. The LBA model parameters are:
+
+* `b` threshold parameter (the evidence required to make a response)
+* `v` is drift rate or average speed of evidence accumulation
+* `A` is the model's start point 
+* `t0` is non-decision time. 
+* <b>Do we need to mention `sv` here? </b>
+
+
+We begin by creating a vector of parameter names for the model. You can name this object as you wish; however, in our example, we will call it `pars`. The parameters you list in the `pars` vector must match the names and number of parameters you include in your likelihood function.
+```{r pars}
+pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
+```
+
+For this dataset, we use three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's likelihood function (see below).
+
+Next we create a `priors` object; a list that contains two components
+
+* `theta_mu` a vector containing the prior for model parameter means
+* `theta_sig` the prior covariance matrix for model parameters.
+
+```{r priors}
+priors <- list(theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
+)
+```
+The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object  differ?</b>
+
+The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:
+```{r loadLL, echo=TRUE, eval=FALSE}
+source(file = "yourLogLikelihoodFile.R")
+```
+Or you can write a log likelihood function as we have done with the LBA log likelihood function below. If you'd like to run through this example, it is best to copy the `lba_loglike` function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.
+```{r lbaLL, attr.source = '.numberLines', eval=FALSE}
+lba_loglike <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+
+  bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition]
+
+  if (sample) {
+    out <- rtdists::rLBA(n = nrow(data),
+                         A = x["A"],
+                         b = bs,
+                         t0 = x["t0"],
+                         mean_v = x[c("v1", "v2")],
+                         sd_v = c(1, 1),
+                         distribution = "norm",
+                         silent = TRUE)
+  } else {
+    out <- rtdists::dLBA(rt = data$rt,
+                         response = data$correct,
+                         A = x["A"],
+                         b = bs,
+                         t0 = x["t0"],
+                         mean_v = x[c("v1", "v2")],
+                         sd_v = c(1, 1),
+                         distribution = "norm",
+                         silent = TRUE)
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+  }
+  out
+}
+```
+
+The `lba_loglike` function takes three arguments: 
+
+* `x` is a named parameter vector (e.g. `pars`)
+* `data` is your data set (e.g.`forstmann`)
+* `sample = ` default is `FALSE` calculates a density function or set to `TRUE` to generate a sample that matches the shape of data. 
+
+The first line in the `lba_loglike` function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
+Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zero those RTs that are faster than non-decision time. 
+```{r lbaLL1, attr.source = '.numberLines', echo=TRUE, eval=FALSE}
+lba_loglike <- function(x, data, sample = FALSE) {
+  x <- exp(x) 
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+```
+
+Next (Line 7) we create a vector containing threshold parameters for each row in the data set that takes into account the condition and adds the start point value. We add the start point parameter `A` value to each threshold parameter so that threshold is greater than the start point value. 
+``` {r lbaLL2, attr.source='.numberLines startFrom="7"', echo=TRUE, eval=FALSE}
+  bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition]
+```
+
+The `if else` statement below (Line 9-32) does one of two things: `if (sample)` calculates the posterior predictive data and the `else` statement calculates the density function. Toward the  end of the `else` statment (line 28) we take all implausible likelihood values, assign them to the `bad` object and set them to zero. The final line in the `else` statement takes the log of all likelihood values, sums them and then assigns the model's log likelihood value to the `out` variable.
+```{r lbaLL3, attr.source='.numberLines startFrom="9"', echo=TRUE, eval=FALSE}
+  if (sample) {
+    out <- rtdists::rLBA(n = nrow(data),
+                         A = x["A"],
+                         b = bs,
+                         t0 = x["t0"],
+                         mean_v = x[c("v1", "v2")],
+                         sd_v = c(1, 1),
+                         distribution = "norm",
+                         silent = TRUE)
+  } else {
+    out <- rtdists::dLBA(rt = data$rt,
+                         response = data$correct,
+                         A = x["A"],
+                         b = bs,
+                         t0 = x["t0"],
+                         mean_v = x[c("v1", "v2")],
+                         sd_v = c(1, 1),
+                         distribution = "norm",
+                         silent = TRUE)
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+  }
+  out
+```
+
+
+Once you've setup your parameters, priors and your log likelihood function, the next step is to initialise the `sampler` object. 
+```{r samplerObject, echo=TRUE, eval=FALSE}
+sampler <- pmwgs(
+  data = forstmann,
+  pars = pars,
+  prior = priors,
+  ll_func = lba_loglike
+)
+```
+
+The `pmwgs` function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.
+
+* `data =` your data - a data frame (e.g.`forstmann`) with a column for participants called <b>`subject`</b>
+* `pars =` the model parameters to be used (e.g.`pars`)
+* `prior =` the priors to be used (e.g.`priors`)
+* `ll_func =` name of log likelihood function you've sourced above (e.g.`lba_loglike`)
+
+### Model start points {#start-points}
+You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
+```{r modStartPoints, echo=TRUE, eval=FALSE}
+start_points <- list(
+  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
+  sig2 = diag(rep(.01, length(pars)))
+)
+```
+
+The `start_points` object contains two vectors:
+
+* `mu` a vector of start points for the mu of each model parameter 
+* `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
+
+
+### Running the sampler {#run-sampler}
+Okay - now we are ready to run the sampler.  
+```{r runSampler, echo=TRUE, eval=FALSE}
+sampler <- init(sampler, theta_mu = start_points$mu,
+                theta_sig = start_points$sig2)
+```
+Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
+
+
+Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:
+
+* `x` the `sampler` object including parameters 
+* `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
+* `iter = ` is the number of iterations for the sampling stage 
+* `particles =` is the number of particles generated on each iteration 
+
+It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
+
+First we run our burn in stage by setting `stage =` to `"burn"`. Here we have set iterations to be 500, which may take some time. 
+```{r burn, echo=TRUE, eval=FALSE}
+burned <- run_stage(sampler, stage = "burn", iter = 500, particles = 1000)
+```
+
+Now we run our adaptation stage by setting `stage = "adapt"` Because we have not specified number of iterations or particles, the sampler will use the default value of 1000 for each of these arguments. N.B. The sampler will quit adaptation stage after 20 unique values have been accepted for each subject. This means adaptation may not use all 1000 iterations.
+```{r adaptation, echo=TRUE, eval=FALSE}
+adapted <- run_stage(burned, stage = "adapt")
+```
+
+
+At the start of the `sampled` stage, the sampler object will create a 'proposal' distribution for each subject's random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.
+```{r sampled, echo=TRUE, eval=FALSE}
+sampled <- run_stage(adapted, stage = "sample", iter = 100, particles = 100)
+```
