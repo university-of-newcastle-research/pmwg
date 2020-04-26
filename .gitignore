@@ -36,3 +36,5 @@ data/output/
 #Ignore TEMP dir (for comparing to Reilly/Scott code
 TEMP/
 inst/doc
+doc
+Meta

@@ -10,3 +10,5 @@
 ^packrat$
 ^\.git$
 ^examples$
+^doc$
+^Meta$
