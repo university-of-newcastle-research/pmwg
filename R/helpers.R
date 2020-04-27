@@ -245,6 +245,11 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
       NA_real_,
       dim = c(n_subjects, iters),
       dimnames = list(NULL, NULL)
+    ),
+    a_half = array(
+      NA_real_,
+      dim = c(n_pars, iters),
+      dimnames = list(par_names, NULL)
     )
   )
 }
@@ -264,7 +269,8 @@ last_sample <- function(store) {
     gm = store$theta_mu[, store$idx],
     gv = store$theta_sig[, , store$idx],
     sm = store$alpha[, , store$idx],
-    gvi = store$last_theta_sig_inv
+    gvi = store$last_theta_sig_inv,
+    a_half = store$a_half[, store$idx]
   )
 }
 
@@ -284,6 +290,7 @@ update_sampler <- function(sampler, store) {
   old_sm <- sampler$samples$alpha
   old_stage <- sampler$samples$stage
   old_sll <- sampler$samples$subj_ll
+  old_a_half <- sampler$samples$a_half
   li <- store$idx
 
   sampler$samples$theta_mu <- array(c(old_gm, store$theta_mu[, 1:li]),
@@ -297,6 +304,8 @@ update_sampler <- function(sampler, store) {
   sampler$samples$stage <- c(old_stage, store$stage[1:li])
   sampler$samples$subj_ll <- array(c(old_sll, store$subj_ll[, 1:li]),
                                    dim = dim(old_sll) + c(0, li))
+  sampler$samples$a_half <- array(c(old_a_half, store$a_half[, 1:li]),
+                                      dim = dim(old_a_half) + c(0, li))
   sampler
 }
 

@@ -31,12 +31,14 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   if (is.null(extra_args$n_unique))
     .n_unique <- 20  else
     .n_unique <- extra_args$n_unique
-    
+
   if (stage == "sample") {
     prop_args <- try(create_efficient(x))
     if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
-      outfile <- tempfile(pattern = "PMwG_err_", tmpdir = ".", fileext = ".RData")
+      outfile <- tempfile(pattern = "PMwG_err_",
+                          tmpdir = ".",
+                          fileext = ".RData")
       cat("Saving current state of environment in file: ", outfile, "\n")
       save.image(outfile)
     }
@@ -50,12 +52,12 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
   apply_fn <- lapply
   apply_args <- list()
-  if (n_cores > 1){
+  if (n_cores > 1) {
     if (Sys.info()[["sysname"]] == "Windows") {
       stop("n_cores cannot be greater than 1 on Windows systems.")
     }
     apply_fn <- parallel::mclapply
-    apply_args <- list(mc.cores=n_cores)
+    apply_args <- list(mc.cores = n_cores)
   }
 
   # Display stage to screen
@@ -113,7 +115,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
     tmp <- do.call(apply_fn, fn_args)
 
-    ll <- unlist(lapply(tmp, attr, 'll'))
+    ll <- unlist(lapply(tmp, attr, "ll"))
     sm <- array(unlist(tmp), dim = dim(pars$sm))
 
     # Store results locally.
@@ -123,7 +125,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     stage_samples$alpha[, , i] <- sm
     stage_samples$idx <- i
     stage_samples$subj_ll[, i] <- ll
-    attr(x, "a_half") <- pars$a_half
+    stage_samples$a_half[, i] <- pars$a_half
 
     if (stage == "adapt") {
       if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
