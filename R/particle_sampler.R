@@ -29,8 +29,6 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
   k_half <- v_half + n_pars - 1 + n_subjects
   # IG (inverse gamma) shape parameter, Algorithm 3, 2(c)
   v_shape <- (v_half + n_pars) / 2
-  # Sample the mixture variables' initial values.
-  a_half <- 1 / stats::rgamma(n = n_pars, shape = 0.5, scale = 1)
   # Storage for the samples.
   # theta is the parameter values, mu is mean of normal distribution and
   # sigma2 is variance
@@ -58,7 +56,6 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
   )
   attr(sampler, "v_half") <- v_half
   attr(sampler, "A_half") <- A_half
-  attr(sampler, "a_half") <- a_half
   attr(sampler, "k_half") <- k_half
   attr(sampler, "v_shape") <- v_shape
   class(sampler) <- "pmwgs"
