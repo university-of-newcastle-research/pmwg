@@ -1,7 +1,6 @@
 pandoc: 1.19.2.4
 pkgdown: 1.5.1
 pkgdown_sha: ~
-articles:
-  PMwG: PMwG.html
-last_built: 2020-05-04T23:04Z
+articles: []
+last_built: 2020-05-04T23:13Z
 
