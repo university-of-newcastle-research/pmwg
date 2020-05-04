@@ -25,7 +25,7 @@ library(knitr)
 library(devtools)
 ```
 
-This vignette is taken from the bookdown documentation that can be found at: https://jpcav.github.io/samplerDoc/. In particular this is verbatim from Chapter 3 ([Example 2](https://jpcav.github.io/samplerDoc/example-2-forstmann-et-al-2008-dataset.html)). For more detail on the methods and usecases of the package please refer to the full bookdown resource.
+This vignette is taken from the bookdown documentation that can be found at: https://newcastlecl.github.io/samplerDoc/. In particular this is verbatim from Chapter 3 ([Example 2](https://newcastlecl.github.io/samplerDoc/example-2-forstmann-et-al-2008-dataset.html)). For more detail on the methods and usecases of the package please refer to the full bookdown resource.
 
 # Example 2 - Forstmann et al. (2008) dataset
 
@@ -36,7 +36,7 @@ We begin with a simple use case of the psamplers package with data from @forstma
 First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
 ```{r getpkg, eval=FALSE}
 # The samplers package will be on CRAN - this step will be removed.
-install_github('newcastlecl\\samplers')
+install_github('newcastlecl\samplers')
 ```
 ```{r loadpkg}
 library(psamplers)
@@ -47,7 +47,7 @@ Forstmann et al looked at neural correlates of decision making under time pressu
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Choice and response time data was collected. Choices were coded as correct `(correct = 2)` or incorrect `(correct =  1)` and response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
 ```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
-knitr::kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
+kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
 ```
 
 ## Setting up the sampler
