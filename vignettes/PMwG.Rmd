@@ -2,10 +2,12 @@
 title: "Particle Based Samplers for MCMC"
 author: "Jon-Paul Cavallaro"
 date: \today
-output: rmarkdown::html_vignette
+output: bookdown::html_document2
+link-citations: yes
+pkgdown:
+  as_is: true
 bibliography: references.bib
 biblio-style: apalike
-link-citations: yes
 description: " Particle Based Sampler for MCMC "
 vignette: >
   %\VignetteIndexEntry{ Particle Based Samplers for MCMC: Forstmann Dataset}
@@ -46,8 +48,8 @@ Forstmann et al looked at neural correlates of decision making under time pressu
 
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Choice and response time data was collected. Choices were coded as correct `(correct = 2)` or incorrect `(correct =  1)` and response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
-```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
-kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
+```{r, forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
+knitr::kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
 ```
 
 ## Setting up the sampler

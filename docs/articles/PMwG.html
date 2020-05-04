@@ -93,19 +93,20 @@
 <p>This vignette is taken from the bookdown documentation that can be found at: <a href="https://newcastlecl.github.io/samplerDoc/" class="uri">https://newcastlecl.github.io/samplerDoc/</a>. In particular this is verbatim from Chapter 3 (<a href="https://newcastlecl.github.io/samplerDoc/example-2-forstmann-et-al-2008-dataset.html">Example 2</a>). For more detail on the methods and usecases of the package please refer to the full bookdown resource.</p>
 <div id="example-2---forstmann-et-al--2008-dataset" class="section level1">
 <h1 class="hasAnchor">
-<a href="#example-2---forstmann-et-al--2008-dataset" class="anchor"></a>Example 2 - Forstmann et al. (2008) dataset</h1>
+<a href="#example-2---forstmann-et-al--2008-dataset" class="anchor"></a><span class="header-section-number">1</span> Example 2 - Forstmann et al. (2008) dataset</h1>
 <p>We begin with a simple use case of the psamplers package with data from <span class="citation">Forstmann et al. (<a href="#ref-forstmann2008striatum">2008</a>)</span>.</p>
 <div id="description-of-forstmann-experiment" class="section level2">
 <h2 class="hasAnchor">
-<a href="#description-of-forstmann-experiment" class="anchor"></a>Description of Forstmann experiment</h2>
+<a href="#description-of-forstmann-experiment" class="anchor"></a><span class="header-section-number">1.1</span> Description of Forstmann experiment</h2>
 <p>First we need to install the psamplers package. We currently recommended installing psamplers via devtools.</p>
 <div class="sourceCode"><html><body><pre class="r"># The samplers package will be on CRAN - this step will be removed.
 install_github('newcastlecl\samplers')</pre></body></html></div>
 <div class="sourceCode"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">psamplers</span>)</pre></body></html></div>
 <p>Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the psamplers package as a data frame object named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
-<p>Table @ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Choice and response time data was collected. Choices were coded as correct <code>(correct = 2)</code> or incorrect <code>(correct =  1)</code> and response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
+<p>Table <a href="#tab:forsthead10">1.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Choice and response time data was collected. Choices were coded as correct <code>(correct = 2)</code> or incorrect <code>(correct =  1)</code> and response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
 <table class="table">
-<caption>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an object/data frame</caption>
+<caption>
+<span id="tab:forsthead10">Table 1.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an object/data frame</caption>
 <thead><tr class="header">
 <th align="right">subject</th>
 <th align="right">rt</th>
@@ -178,7 +179,7 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
 </div>
 <div id="setting-up-the-sampler" class="section level2">
 <h2 class="hasAnchor">
-<a href="#setting-up-the-sampler" class="anchor"></a>Setting up the sampler</h2>
+<a href="#setting-up-the-sampler" class="anchor"></a><span class="header-section-number">1.2</span> Setting up the sampler</h2>
 <p>We will use the Linear Ballistic Accumulator (LBA) <span class="citation">(Brown and Heathcote <a href="#ref-brown2008simplest">2008</a>)</span> to demonstrate how to use the psamplers package. The LBA model parameters are:</p>
 <ul>
 <li>
@@ -359,7 +360,7 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
   out</code></pre></td>
 </tr></table></div>
 <p>Once you’ve setup your parameters, priors and your log likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
-<div class="sourceCode"><html><body><pre class="r"><span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psamplers/man/pmwgs.html">pmwgs</a></span>(
+<div class="sourceCode"><html><body><pre class="r"><span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/pmwgs.html">pmwgs</a></span>(
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">forstmann</span>,
   <span class="kw">pars</span> <span class="kw">=</span> <span class="no">pars</span>,
   <span class="kw">prior</span> <span class="kw">=</span> <span class="no">priors</span>,
@@ -379,7 +380,7 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
 </ul>
 <div id="start-points" class="section level3">
 <h3 class="hasAnchor">
-<a href="#start-points" class="anchor"></a>Model start points</h3>
+<a href="#start-points" class="anchor"></a><span class="header-section-number">1.2.1</span> Model start points</h3>
 <p>You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>
 <div class="sourceCode"><html><body><pre class="r"><span class="no">start_points</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
   <span class="kw">mu</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.2</span>, <span class="fl">.2</span>, <span class="fl">.2</span>, <span class="fl">.4</span>, <span class="fl">.3</span>, <span class="fl">1.3</span>, -<span class="fl">2</span>),
@@ -395,9 +396,9 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
 </div>
 <div id="run-sampler" class="section level3">
 <h3 class="hasAnchor">
-<a href="#run-sampler" class="anchor"></a>Running the sampler</h3>
+<a href="#run-sampler" class="anchor"></a><span class="header-section-number">1.2.2</span> Running the sampler</h3>
 <p>Okay - now we are ready to run the sampler.</p>
-<div class="sourceCode"><html><body><pre class="r"><span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psamplers/man/init.html">init</a></span>(<span class="no">sampler</span>, <span class="kw">theta_mu</span> <span class="kw">=</span> <span class="no">start_points</span>$<span class="no">mu</span>,
+<div class="sourceCode"><html><body><pre class="r"><span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/init.html">init</a></span>(<span class="no">sampler</span>, <span class="kw">theta_mu</span> <span class="kw">=</span> <span class="no">start_points</span>$<span class="no">mu</span>,
                 <span class="kw">theta_sig</span> <span class="kw">=</span> <span class="no">start_points</span>$<span class="no">sig2</span>)</pre></body></html></div>
 <p>Here we are using the <code>init</code> function to generate initial start points for the random effects and storing them in the <code>sampler</code> object. First we pass the <code>sampler</code> object from above that includes our data, parameters, priors and log likelihood function. If we decided to specify our own start points (as above), we would include the <code>theta_mu</code> and <code>theta_sig</code> arguments.</p>
 <p>Now we can run the sampler using the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
@@ -413,11 +414,11 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
 </ul>
 <p>It is optional to include the <code>iter =</code> and <code>particles =</code> arguments. If these are not included, <code>iter</code> and <code>particles</code> default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the ‘real’ posterior space.</p>
 <p>First we run our burn in stage by setting <code>stage =</code> to <code>"burn"</code>. Here we have set iterations to be 500, which may take some time.</p>
-<div class="sourceCode"><html><body><pre class="r"><span class="no">burned</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psamplers/man/run_stage.html">run_stage</a></span>(<span class="no">sampler</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"burn"</span>, <span class="kw">iter</span> <span class="kw">=</span> <span class="fl">500</span>, <span class="kw">particles</span> <span class="kw">=</span> <span class="fl">1000</span>)</pre></body></html></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">burned</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/run_stage.html">run_stage</a></span>(<span class="no">sampler</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"burn"</span>, <span class="kw">iter</span> <span class="kw">=</span> <span class="fl">500</span>, <span class="kw">particles</span> <span class="kw">=</span> <span class="fl">1000</span>)</pre></body></html></div>
 <p>Now we run our adaptation stage by setting <code>stage = "adapt"</code> Because we have not specified number of iterations or particles, the sampler will use the default value of 1000 for each of these arguments. N.B. The sampler will quit adaptation stage after 20 unique values have been accepted for each subject. This means adaptation may not use all 1000 iterations.</p>
-<div class="sourceCode"><html><body><pre class="r"><span class="no">adapted</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psamplers/man/run_stage.html">run_stage</a></span>(<span class="no">burned</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"adapt"</span>)</pre></body></html></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">adapted</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/run_stage.html">run_stage</a></span>(<span class="no">burned</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"adapt"</span>)</pre></body></html></div>
 <p>At the start of the <code>sampled</code> stage, the sampler object will create a ‘proposal’ distribution for each subject’s random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.</p>
-<div class="sourceCode"><html><body><pre class="r"><span class="no">sampled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psamplers/man/run_stage.html">run_stage</a></span>(<span class="no">adapted</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"sample"</span>, <span class="kw">iter</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">particles</span> <span class="kw">=</span> <span class="fl">100</span>)</pre></body></html></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">sampled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/run_stage.html">run_stage</a></span>(<span class="no">adapted</span>, <span class="kw">stage</span> <span class="kw">=</span> <span class="st">"sample"</span>, <span class="kw">iter</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">particles</span> <span class="kw">=</span> <span class="fl">100</span>)</pre></body></html></div>
 </div>
 </div>
 </div>
@@ -437,9 +438,7 @@ install_github('newcastlecl\samplers')</pre></body></html></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 

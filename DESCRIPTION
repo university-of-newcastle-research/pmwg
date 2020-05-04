@@ -16,11 +16,12 @@ Suggests:
     rtdists,
     knitr,
     rmarkdown,
-	devtools
+	devtools,
+	bookdown
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/gjcooper/psamplers
-BugReports: https://github.com/gjcooper/psamplers/issues
+URL: https://github.com/newcastlecl/psamplers
+BugReports: https://github.com/newcastlecl/psamplers/issues
 RoxygenNote: 7.0.2
