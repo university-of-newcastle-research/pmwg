@@ -2,13 +2,7 @@
 
 S3method(init,pmwgs)
 S3method(run_stage,pmwgs)
-export(accept_rate)
-export(conditional_parms)
 export(init)
-export(last_sample)
-export(new_group_pars)
 export(new_sample)
 export(pmwgs)
 export(run_stage)
-export(sample_store)
-export(update_sampler)

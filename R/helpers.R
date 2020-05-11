@@ -180,7 +180,7 @@ particle_draws <- function(n, mu, covar) {
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 conditional_parms <- function(s, samples) {
   gmdim <- dim(samples$theta_mu)
   n_par <- gmdim[1]
@@ -221,7 +221,7 @@ conditional_parms <- function(s, samples) {
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
   n_pars <- length(par_names)
   list(
@@ -263,7 +263,7 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
 #'   subject means.
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 last_sample <- function(store) {
   list(
     gm = store$theta_mu[, store$idx],
@@ -283,7 +283,7 @@ last_sample <- function(store) {
 #' @return The pmwgs object with the new samples concatenated to the old
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 update_sampler <- function(sampler, store) {
   old_gm <- sampler$samples$theta_mu
   old_gv <- sampler$samples$theta_sig
@@ -339,7 +339,7 @@ check_adapted <- function(samples, unq_vals = 20) {
 #' @return A vector with the acceptance rate for each subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 accept_rate <- function(store) {
   if (is.null(store$idx) || store$idx < 3) return(array(0, dim(store$alpha)[2]))
   vals <- store$alpha[1, , 1:store$idx]

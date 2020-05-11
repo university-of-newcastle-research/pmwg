@@ -101,7 +101,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
 #' @return A list of generated variables that can be modified after the fact
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 new_group_pars <- function(samples, sampler) {
   # Get single iter versions, gm = theta_mu, gv = theta_sig
   last <- last_sample(samples)
