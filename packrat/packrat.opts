@@ -10,6 +10,7 @@ external.packages:
     roxygen2
     nvimcom
     microbenchmark
+	pkgdown
 local.repos: 
 load.external.packages.on.startup: TRUE
 ignored.packages: 
