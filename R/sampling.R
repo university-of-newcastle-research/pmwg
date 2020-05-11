@@ -74,7 +74,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
   )
   # create progress bar
   if (display_progress) {
-    pb <- acceptProgressBar(min = 0, max = iter)
+    pb <- accept_progress_bar(min = 0, max = iter)
   }
 
   for (i in 1:iter) {

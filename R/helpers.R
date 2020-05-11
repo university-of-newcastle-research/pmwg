@@ -355,63 +355,54 @@ accept_rate <- function(store) {
 #'
 #' @param min The minimum of the value being updated for the progress bar
 #' @param max The maximum of the value being updated for the progress bar
-#' @param initial The starting value for the progress bar
-#' @param char The character to use as the indicator of progress
-#' @param width The overall width of the progress bar
 #'
-#' @return A boolean TRUE or FALSE depending on the result of the test
+#' @return A structure matching the structure of a txtProgresBar with additional
+#'   info
 #' @examples
 #' # No example yet
-#' @export
-acceptProgressBar <- function(min = 0,
-                              max = 1,
-                              initial = 0,
-                              char = "=",
-                              width = NA) {
-  .val <- initial
+#' @keywords internal
+accept_progress_bar <- function(min = 0, max = 1) {
+  .val <- 0
   .killed <- FALSE
   .nb <- 0L
   .pc <- -1L # This ensures the initial value is displayed
   .ex <- 0
-  nw <- nchar(char, "w")
-  if (is.na(width)) {
-      width <- getOption("width")
-      width <- width - 22L
-      width <- trunc(width / nw)
-  }
+  nw <- nchar("=", "w")
+  width <- trunc(getOption("width") - 22L / nw)
   if (max <= min) stop("must have 'max' > 'min'")
 
   up <- function(value, extra=0) {
-      if (!is.finite(value) || value < min || value > max) return()
-      .val <<- value
-      nb <- round(width * (value - min) / (max - min))
-      pc <- round(100 * (value - min) / (max - min))
-      extra <- round(100 * extra)
-      if (nb == .nb && pc == .pc && .ex == extra) return()
-      cat(paste0("\r  |", strrep(" ", nw * width + 6)))
-      cat(paste(c("\r  |",
-                  rep.int(char, nb),
-                  rep.int(" ", nw * (width - nb)),
-                  sprintf("| %3d%%", pc),
-                  sprintf(" | Acc(%3d%%)", extra)
-                  ), collapse = ""))
-      utils::flush.console()
-      .nb <<- nb
-      .pc <<- pc
-      .ex <<- extra
+    if (!is.finite(value) || value < min || value > max) return()
+    .val <<- value
+    nb <- round(width * (value - min) / (max - min))
+    pc <- round(100 * (value - min) / (max - min))
+    extra <- round(100 * extra)
+    if (nb == .nb && pc == .pc && .ex == extra) return()
+    cat(paste0("\r  |", strrep(" ", nw * width + 6)))
+    cat(paste(c("\r  |",
+                rep.int("=", nb),
+                rep.int(" ", nw * (width - nb)),
+                sprintf("| %3d%%", pc),
+                sprintf(" | Acc(%3d%%)", extra)
+                ), collapse = ""))
+    utils::flush.console()
+    .nb <<- nb
+    .pc <<- pc
+    .ex <<- extra
   }
 
-  getVal <- function() .val
-  kill <- function()
-      if (!.killed) {
-          cat("\n")
-          utils::flush.console()
-          .killed <<- TRUE
-      }
-  up(initial) # will check if in range
-  
-  structure(list(getVal = getVal, up = up, kill = kill),
-            class = c("acceptProgressBar", "txtProgressBar"))
+  get_value <- function() .val
+  kill <- function() {
+    if (!.killed) {
+      cat("\n")
+      utils::flush.console()
+      .killed <<- TRUE
+    }
+  }
+  up(0) # will check if in range
+
+  structure(list(getVal = get_value, up = up, kill = kill),
+            class = c("accept_progress_bar", "txtProgressBar"))
 }
  
 setAcceptProgressBar <- function(pb, value, extra = 0) {
