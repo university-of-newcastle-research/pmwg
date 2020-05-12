@@ -22,3 +22,4 @@ Takes the pmwgs object and sets up sampling loop variables
 \examples{
 # No example yet
 }
+\keyword{internal}

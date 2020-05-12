@@ -19,3 +19,4 @@ Return the acceptance rate for all subjects
 \examples{
 # No example yet
 }
+\keyword{internal}

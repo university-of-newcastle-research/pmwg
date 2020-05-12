@@ -10,3 +10,6 @@
 ^packrat$
 ^\.git$
 ^examples$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

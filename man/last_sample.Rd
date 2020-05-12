@@ -19,3 +19,4 @@ Create a list with the last samples in the pmwgs object
 \examples{
 # No example yet
 }
+\keyword{internal}

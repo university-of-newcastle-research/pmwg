@@ -52,6 +52,9 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
   if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(x$n_pars * 3,
                                                         diag(x$n_pars))
   n_particles <- 1000  #GC: Fixed val here
+  # Sample the mixture variables' initial values.
+  a_half <- 1 / stats::rgamma(n = x$n_pars, shape = 0.5, scale = 1)
+  # Create and fill initial random effects for each subject
   alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
   if (display_progress) {
     cat("Sampling Initial values for random effects\n")
@@ -80,6 +83,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
   x$samples$alpha[, , 1] <- alpha
   x$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
   x$samples$subj_ll[, 1] <- likelihoods
+  x$samples$a_half[, 1] <- a_half
   x$samples$idx <- 1
   x
 }
@@ -97,7 +101,7 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
 #' @return A list of generated variables that can be modified after the fact
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 new_group_pars <- function(samples, sampler) {
   # Get single iter versions, gm = theta_mu, gv = theta_sig
   last <- last_sample(samples)
@@ -116,7 +120,7 @@ new_group_pars <- function(samples, sampler) {
   # New values for group var
   theta_temp <- last$sm - gm
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * hyper$v_half * diag(1 / hyper$a_half) + cov_temp #nolint
+  B_half <- 2 * hyper$v_half * diag(1 / last$a_half) + cov_temp #nolint
   gv <- MCMCpack::riwish(hyper$k_half, B_half) # New sample for group variance
   gvi <- MASS::ginv(gv)
 

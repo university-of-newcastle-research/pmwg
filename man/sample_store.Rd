@@ -25,3 +25,4 @@ Create a new list for storage samples in the pmwgs object
 \examples{
 # No example yet
 }
+\keyword{internal}

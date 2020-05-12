@@ -180,7 +180,7 @@ particle_draws <- function(n, mu, covar) {
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 conditional_parms <- function(s, samples) {
   gmdim <- dim(samples$theta_mu)
   n_par <- gmdim[1]
@@ -221,7 +221,7 @@ conditional_parms <- function(s, samples) {
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
   n_pars <- length(par_names)
   list(
@@ -245,6 +245,11 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
       NA_real_,
       dim = c(n_subjects, iters),
       dimnames = list(NULL, NULL)
+    ),
+    a_half = array(
+      NA_real_,
+      dim = c(n_pars, iters),
+      dimnames = list(par_names, NULL)
     )
   )
 }
@@ -258,13 +263,14 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
 #'   subject means.
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 last_sample <- function(store) {
   list(
     gm = store$theta_mu[, store$idx],
     gv = store$theta_sig[, , store$idx],
     sm = store$alpha[, , store$idx],
-    gvi = store$last_theta_sig_inv
+    gvi = store$last_theta_sig_inv,
+    a_half = store$a_half[, store$idx]
   )
 }
 
@@ -277,13 +283,14 @@ last_sample <- function(store) {
 #' @return The pmwgs object with the new samples concatenated to the old
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 update_sampler <- function(sampler, store) {
   old_gm <- sampler$samples$theta_mu
   old_gv <- sampler$samples$theta_sig
   old_sm <- sampler$samples$alpha
   old_stage <- sampler$samples$stage
   old_sll <- sampler$samples$subj_ll
+  old_a_half <- sampler$samples$a_half
   li <- store$idx
 
   sampler$samples$theta_mu <- array(c(old_gm, store$theta_mu[, 1:li]),
@@ -297,6 +304,8 @@ update_sampler <- function(sampler, store) {
   sampler$samples$stage <- c(old_stage, store$stage[1:li])
   sampler$samples$subj_ll <- array(c(old_sll, store$subj_ll[, 1:li]),
                                    dim = dim(old_sll) + c(0, li))
+  sampler$samples$a_half <- array(c(old_a_half, store$a_half[, 1:li]),
+                                      dim = dim(old_a_half) + c(0, li))
   sampler
 }
 
@@ -330,7 +339,7 @@ check_adapted <- function(samples, unq_vals = 20) {
 #' @return A vector with the acceptance rate for each subject
 #' @examples
 #' # No example yet
-#' @export
+#' @keywords internal
 accept_rate <- function(store) {
   if (is.null(store$idx) || store$idx < 3) return(array(0, dim(store$alpha)[2]))
   vals <- store$alpha[1, , 1:store$idx]
@@ -346,63 +355,54 @@ accept_rate <- function(store) {
 #'
 #' @param min The minimum of the value being updated for the progress bar
 #' @param max The maximum of the value being updated for the progress bar
-#' @param initial The starting value for the progress bar
-#' @param char The character to use as the indicator of progress
-#' @param width The overall width of the progress bar
 #'
-#' @return A boolean TRUE or FALSE depending on the result of the test
+#' @return A structure matching the structure of a txtProgresBar with additional
+#'   info
 #' @examples
 #' # No example yet
-#' @export
-acceptProgressBar <- function(min = 0,
-                              max = 1,
-                              initial = 0,
-                              char = "=",
-                              width = NA) {
-  .val <- initial
+#' @keywords internal
+accept_progress_bar <- function(min = 0, max = 1) {
+  .val <- 0
   .killed <- FALSE
   .nb <- 0L
   .pc <- -1L # This ensures the initial value is displayed
   .ex <- 0
-  nw <- nchar(char, "w")
-  if (is.na(width)) {
-      width <- getOption("width")
-      width <- width - 22L
-      width <- trunc(width / nw)
-  }
+  nw <- nchar("=", "w")
+  width <- trunc(getOption("width") - 22L / nw)
   if (max <= min) stop("must have 'max' > 'min'")
 
   up <- function(value, extra=0) {
-      if (!is.finite(value) || value < min || value > max) return()
-      .val <<- value
-      nb <- round(width * (value - min) / (max - min))
-      pc <- round(100 * (value - min) / (max - min))
-      extra <- round(100 * extra)
-      if (nb == .nb && pc == .pc && .ex == extra) return()
-      cat(paste0("\r  |", strrep(" ", nw * width + 6)))
-      cat(paste(c("\r  |",
-                  rep.int(char, nb),
-                  rep.int(" ", nw * (width - nb)),
-                  sprintf("| %3d%%", pc),
-                  sprintf(" | Acc(%3d%%)", extra)
-                  ), collapse = ""))
-      utils::flush.console()
-      .nb <<- nb
-      .pc <<- pc
-      .ex <<- extra
+    if (!is.finite(value) || value < min || value > max) return()
+    .val <<- value
+    nb <- round(width * (value - min) / (max - min))
+    pc <- round(100 * (value - min) / (max - min))
+    extra <- round(100 * extra)
+    if (nb == .nb && pc == .pc && .ex == extra) return()
+    cat(paste0("\r  |", strrep(" ", nw * width + 6)))
+    cat(paste(c("\r  |",
+                rep.int("=", nb),
+                rep.int(" ", nw * (width - nb)),
+                sprintf("| %3d%%", pc),
+                sprintf(" | Acc(%3d%%)", extra)
+                ), collapse = ""))
+    utils::flush.console()
+    .nb <<- nb
+    .pc <<- pc
+    .ex <<- extra
   }
 
-  getVal <- function() .val
-  kill <- function()
-      if (!.killed) {
-          cat("\n")
-          utils::flush.console()
-          .killed <<- TRUE
-      }
-  up(initial) # will check if in range
-  
-  structure(list(getVal = getVal, up = up, kill = kill),
-            class = c("acceptProgressBar", "txtProgressBar"))
+  get_value <- function() .val
+  kill <- function() {
+    if (!.killed) {
+      cat("\n")
+      utils::flush.console()
+      .killed <<- TRUE
+    }
+  }
+  up(0) # will check if in range
+
+  structure(list(getVal = get_value, up = up, kill = kill),
+            class = c("accept_progress_bar", "txtProgressBar"))
 }
  
 setAcceptProgressBar <- function(pb, value, extra = 0) {
