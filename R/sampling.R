@@ -284,7 +284,7 @@ gen_particles <- function(num_particles,
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
   pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
-  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon)
+  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon^2)
   eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
   particles <- rbind(pop_particles, ind_particles, eff_particles)
   colnames(particles) <- names(mu) # stripped otherwise.
