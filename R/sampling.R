@@ -4,7 +4,7 @@
 #' sampler. Each stage involves slightly different processes, so for the
 #' full PMwG we need to run this three times.
 #'
-#' @param x A pmwgs object that has been initialised
+#' @param pmwgs A pmwgs object that has been initialised
 #' @param stage The sampling stage to run. Must be one of 'burn', 'adapt' or
 #'   'sample'. If not provided assumes that the stage should be 'burn'
 #' @param iter The number of iterations to run for the sampler. For 'burn' and
@@ -21,8 +21,11 @@
 #' @examples
 #' # No example yet
 #' @export
-run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
+run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
                             display_progress = TRUE, n_cores = 1, ...) {
+  if (is.null(attr(pmwgs, "class"))) {
+    stop("No object to run a stage on")
+  }
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
   # Expand the dots
@@ -33,7 +36,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     .n_unique <- extra_args$n_unique
 
   if (stage == "sample") {
-    prop_args <- try(create_efficient(x))
+    prop_args <- try(create_efficient(pmwgs))
     if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
       outfile <- tempfile(pattern = "PMwG_err_",
@@ -49,7 +52,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     n_unique <- .n_unique
   }
   # Test pmwgs object initialised
-  try(if (is.null(x$init)) stop("pmwgs object has not been initialised"))
+  try(if (is.null(pmwgs$init)) stop("pmwgs object has not been initialised"))
   apply_fn <- lapply
   apply_args <- list()
   if (n_cores > 1) {
@@ -69,7 +72,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
 
   # Build new sample storage
   stage_samples <- sample_store(
-    x$par_names, x$n_subject,
+    pmwgs$par_names, pmwgs$n_subject,
     iters = iter, stage = stage
   )
   # create progress bar
@@ -81,9 +84,9 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     if (display_progress)
       setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
 
-    if (i == 1) store <- x$samples else store <- stage_samples
+    if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
-      pars <- new_group_pars(store, x),
+      pars <- new_group_pars(store, pmwgs),
       error = function(err_cond) {
         store_tmp <- tempfile(pattern = "pmwg_stage_samples_",
                               tmpdir = ".",
@@ -93,7 +96,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
                                 fileext = ".RDS")
         message("Problem generating new group level parameters")
         message("Saving current state of pmwgs object: ", sampler_tmp)
-        saveRDS(x, file = sampler_tmp)
+        saveRDS(pmwgs, file = sampler_tmp)
         message("Saving current state of stage sample storage", store_tmp)
         saveRDS(store, file = store_tmp)
         stop("Stopping execution")
@@ -103,14 +106,14 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     # Sample new particles for random effects.
     # Send new_sample the "index" of the subject id - not subject id itself.
     pmwgs_args <- list(
-      X = 1:x$n_subjects,
+      X = 1:pmwgs$n_subjects,
       FUN = new_sample,
-      data = x$data,
+      data = pmwgs$data,
       num_particles = particles,
       parameters = pars,
       mix_ratio = mix,
-      likelihood_func = x$ll_func,
-      subjects = x$subjects
+      likelihood_func = pmwgs$ll_func,
+      subjects = pmwgs$subjects
     )
     fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
     tmp <- do.call(apply_fn, fn_args)
@@ -132,7 +135,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
         message("Enough unique values detected: ", n_unique)
         message("Testing proposal distribution creation")
         attempt <- try({
-          tmp_sampler <- update_sampler(x, stage_samples)
+          tmp_sampler <- update_sampler(pmwgs, stage_samples)
           lapply(
             X = 1:tmp_sampler$n_subjects,
             FUN = conditional_parms,
@@ -152,7 +155,7 @@ run_stage.pmwgs <- function(x, stage, iter = 1000, particles = 1000, # nolint
     }
   }
   if (display_progress) close(pb)
-  update_sampler(x, stage_samples)
+  update_sampler(pmwgs, stage_samples)
 }
 
 
