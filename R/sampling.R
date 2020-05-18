@@ -23,8 +23,8 @@
 #' @export
 run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
                             display_progress = TRUE, n_cores = 1, ...) {
-  if (is.null(attr(pmwgs, "class"))) {
-    stop("No object to run a stage on")
+  if (!is.pmwgs(pmwgs)) {
+    stop("Requires an object of type pmwgs")
   }
   # Test stage argument
   stage <- match.arg(stage, c("burn", "adapt", "sample"))
