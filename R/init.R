@@ -12,7 +12,7 @@
 #' level values, or for subject level means they will be sampled from the
 #' multivariate normal using the group level means and variance.
 #'
-#' @param x The sampler object that provides the parameters.
+#' @param pmwgs The sampler object that provides the parameters.
 #' @param theta_mu An array of starting values for the group means
 #' @param theta_sig An array of starting values for the group covariance matrix
 #' @param display_progress Display a progress bar during sampling
@@ -44,32 +44,35 @@
 #'            )
 #' sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)))
 #' @export
-init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
+init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
                        display_progress=TRUE, ...) {
+  if (is.null(attr(pmwgs, "class"))) {
+    print("No object to add start points to")
+  }
   # If no starting point for group mean just use zeros
-  if (is.null(theta_mu)) theta_mu <- stats::rnorm(x$n_pars, sd = 1)
+  if (is.null(theta_mu)) theta_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
   # If no starting point for group var just sample from inverse wishart
-  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(x$n_pars * 3,
-                                                        diag(x$n_pars))
+  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(pmwgs$n_pars * 3,
+                                                        diag(pmwgs$n_pars))
   n_particles <- 1000  #GC: Fixed val here
   # Sample the mixture variables' initial values.
-  a_half <- 1 / stats::rgamma(n = x$n_pars, shape = 0.5, scale = 1)
+  a_half <- 1 / stats::rgamma(n = pmwgs$n_pars, shape = 0.5, scale = 1)
   # Create and fill initial random effects for each subject
-  alpha <- array(NA, dim = c(x$n_pars, x$n_subjects))
+  alpha <- array(NA, dim = c(pmwgs$n_pars, pmwgs$n_subjects))
   if (display_progress) {
     cat("Sampling Initial values for random effects\n")
-    pb <- utils::txtProgressBar(min = 0, max = x$n_subjects, style = 3)
+    pb <- utils::txtProgressBar(min = 0, max = pmwgs$n_subjects, style = 3)
   }
-  likelihoods <- array(NA_real_, dim = c(x$n_subjects))
-  for (s in 1:x$n_subjects) {
+  likelihoods <- array(NA_real_, dim = c(pmwgs$n_subjects))
+  for (s in 1:pmwgs$n_subjects) {
     if (display_progress) utils::setTxtProgressBar(pb, s)
     particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
-    colnames(particles) <- rownames(x$samples$theta_mu) # preserve par names
+    colnames(particles) <- rownames(pmwgs$samples$theta_mu) # preserve par names
     lw <- apply(
       particles,
       1,
-      x$ll_func,
-      data = x$data[x$data$subject == x$subjects[s], ]
+      pmwgs$ll_func,
+      data = pmwgs$data[pmwgs$data$subject == pmwgs$subjects[s], ]
     )
     weight <- exp(lw - max(lw))
     idx <- sample(x = n_particles, size = 1, prob = weight)
@@ -77,15 +80,15 @@ init.pmwgs <- function(x, theta_mu=NULL, theta_sig=NULL,
     likelihoods[s] <- lw[idx]
   }
   if (display_progress) close(pb)
-  x$init <- TRUE
-  x$samples$theta_mu[, 1] <- theta_mu
-  x$samples$theta_sig[, , 1] <- theta_sig
-  x$samples$alpha[, , 1] <- alpha
-  x$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
-  x$samples$subj_ll[, 1] <- likelihoods
-  x$samples$a_half[, 1] <- a_half
-  x$samples$idx <- 1
-  x
+  pmwgs$init <- TRUE
+  pmwgs$samples$theta_mu[, 1] <- theta_mu
+  pmwgs$samples$theta_sig[, , 1] <- theta_sig
+  pmwgs$samples$alpha[, , 1] <- alpha
+  pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
+  pmwgs$samples$subj_ll[, 1] <- likelihoods
+  pmwgs$samples$a_half[, 1] <- a_half
+  pmwgs$samples$idx <- 1
+  pmwgs
 }
 
 
