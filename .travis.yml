@@ -7,22 +7,33 @@ r:
 
 sudo: required
 
+os:
+  - linux
+  - osx
+
 before_install:
   - rm .Rprofile
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install libgsl-dev;
 
-os:
-    - linux
-    - osx
+addons:
+  homebrew:
+    packages:
+      - gsl
 
 r_github_packages:
-    - jimhester/covr
+  - jimhester/covr
 
 after_success:
-    - Rscript -e 'library(covr);codecov()'
+  - Rscript -e 'library(covr);codecov()'
+
+branches:
+  only:
+    - master
+    - develop
 
 notifications:
-    email:
-      recipients:
-          - gavin@gavincooper.net
-      on_success: change
-      on_failure: always
+  email:
+    recipients:
+      - gavin@gavincooper.net
+    on_success: change
+    on_failure: always
