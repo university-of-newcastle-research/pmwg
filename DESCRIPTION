@@ -14,7 +14,8 @@ Imports:
   coda
 Suggests:
     rtdists,
-    testthat
+    testthat,
+    covr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
