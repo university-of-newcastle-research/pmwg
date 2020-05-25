@@ -13,7 +13,7 @@ os:
 
 before_install:
   - rm .Rprofile
-  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install libgsl-dev;
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install libgsl-dev; fi
 
 addons:
   homebrew:
