@@ -7,12 +7,12 @@ r:
 
 sudo: required
 
+before_install:
+  - rm .Rprofile
+
 os:
     - linux
     - osx
-
-r_packages:
-    - rmarkdown
 
 r_github_packages:
     - jimhester/covr
