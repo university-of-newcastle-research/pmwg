@@ -1,7 +1,7 @@
 # psamplers #
 
 <!-- badges: start -->
-[![Build Status](https://travis-ci.org/newcastlecl/psamplers.svg?branch=master)](https://travis-ci.org/newcastlecl/psamplers)
+[![Travis build status](https://travis-ci.com/NewcastleCL/samplers.svg?branch=master)](https://travis-ci.com/NewcastleCL/samplers)
 [![Codecov test coverage](https://codecov.io/gh/NewcastleCL/samplers/branch/master/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/samplers?branch=master)
 <!-- badges: end -->
 
