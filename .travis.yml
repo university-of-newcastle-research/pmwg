@@ -1,4 +1,6 @@
-language: r
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+language: R
+cache: packages
 
 r:
   - oldrel
@@ -8,21 +10,34 @@ r:
 sudo: required
 
 os:
-    - linux
-    - osx
+  - linux
+  - osx
 
-r_packages:
-    - rmarkdown
+matrix:
+  exclude:
+  - os: osx
+    r: devel
 
-r_github_packages:
-    - jimhester/covr
+before_install:
+  - rm .Rprofile
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt install libgsl-dev; fi
+
+addons:
+  homebrew:
+    packages:
+      - gsl
 
 after_success:
-    - Rscript -e 'library(covr);codecov()'
+  - Rscript -e 'covr::codecov()'
+
+branches:
+  only:
+    - master
+    - develop
 
 notifications:
-    email:
-      recipients:
-          - gavin@gavincooper.net
-      on_success: change
-      on_failure: always
+  email:
+    recipients:
+      - gavin@gavincooper.net
+    on_success: change
+    on_failure: always

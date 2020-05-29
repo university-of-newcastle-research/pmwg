@@ -1,7 +1,10 @@
 # psamplers #
 
-[![Build Status](https://travis-ci.org/newcastlecl/psamplers.svg?branch=master)](https://travis-ci.org/newcastlecl/psamplers)
-[![codecov.io](https://codecov.io/github/newcastlecl/psamplers/coverage.svg?branch=master)](https://codecov.io/github/newcastlecl/psamplers?branch=master)
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/NewcastleCL/samplers.svg?branch=master)](https://travis-ci.com/NewcastleCL/samplers)
+[![Codecov test coverage](https://codecov.io/gh/NewcastleCL/samplers/branch/master/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/samplers?branch=master)
+<!-- badges: end -->
+
 
 To install the currently recommended method is via devtools.
 
