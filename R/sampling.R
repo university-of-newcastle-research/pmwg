@@ -21,8 +21,13 @@
 #' @examples
 #' # No example yet
 #' @export
-run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
-                            display_progress = TRUE, n_cores = 1, ...) {
+run_stage <- function(pmwgs,
+                      stage,
+                      iter = 1000,
+                      particles = 1000,
+                      display_progress = TRUE,
+                      n_cores = 1,
+                      ...) {
   if (!is.pmwgs(pmwgs)) {
     stop("Requires an object of type pmwgs")
   }
@@ -31,17 +36,23 @@ run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
   # Expand the dots
   extra_args <- list(...)
   # Extract n_unique argument
-  if (is.null(extra_args$n_unique))
-    .n_unique <- 20  else
+  if (is.null(extra_args$n_unique)) {
+    .n_unique <- 20
+  } else {
     .n_unique <- extra_args$n_unique
+    extra_args$n_unique <- NULL
+  }
+
 
   if (stage == "sample") {
     prop_args <- try(create_efficient(pmwgs))
     if (class(prop_args) == "try-error") {
       cat("ERR01: An error was detected creating efficient dist\n")
-      outfile <- tempfile(pattern = "PMwG_err_",
-                          tmpdir = ".",
-                          fileext = ".RData")
+      outfile <- tempfile(
+        pattern = "PMwG_err_",
+        tmpdir = ".",
+        fileext = ".RData"
+      )
       cat("Saving current state of environment in file: ", outfile, "\n")
       save.image(outfile)
     }
@@ -81,19 +92,24 @@ run_stage <- function(pmwgs, stage, iter = 1000, particles = 1000, # nolint
   }
 
   for (i in 1:iter) {
-    if (display_progress)
+    if (display_progress) {
       setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
+    }
 
     if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
       pars <- new_group_pars(store, pmwgs),
       error = function(err_cond) {
-        store_tmp <- tempfile(pattern = "pmwg_stage_samples_",
-                              tmpdir = ".",
-                              fileext = ".RDS")
-        sampler_tmp <- tempfile(pattern = "pmwg_obj_",
-                                tmpdir = ".",
-                                fileext = ".RDS")
+        store_tmp <- tempfile(
+          pattern = "pmwg_stage_samples_",
+          tmpdir = ".",
+          fileext = ".RDS"
+        )
+        sampler_tmp <- tempfile(
+          pattern = "pmwg_obj_",
+          tmpdir = ".",
+          fileext = ".RDS"
+        )
         message("Problem generating new group level parameters")
         message("Saving current state of pmwgs object: ", sampler_tmp)
         saveRDS(pmwgs, file = sampler_tmp)
@@ -227,9 +243,11 @@ new_sample <- function(s, data, num_particles, parameters,
   # Density of random effects proposal given population-level distribution.
   lp <- mvtnorm::dmvnorm(x = proposals, mean = mu, sigma = sig2, log = TRUE)
   # Density of proposals given proposal distribution.
-  prop_density <- mvtnorm::dmvnorm(x = proposals,
-                                   mean = subj_mu,
-                                   sigma = sig2 * (epsilon^2))
+  prop_density <- mvtnorm::dmvnorm(
+    x = proposals,
+    mean = subj_mu,
+    sigma = sig2 * (epsilon^2)
+  )
   # Density of efficient proposals
   if (mix_ratio[3] != 0) {
     eff_density <- mvtnorm::dmvnorm(
