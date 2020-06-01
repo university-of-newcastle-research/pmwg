@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a list with the last samples in the pmwgs object — last_sample • psamplers</title>
+<title>Test whether object is pmwgs — is.pmwgs • psamplers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Create a list with the last samples in the pmwgs object — last_sample" />
-<meta property="og:description" content="Create a list with the last samples in the pmwgs object" />
+<meta property="og:title" content="Test whether object is pmwgs — is.pmwgs" />
+<meta property="og:description" content="Checks whether object is a Particle Metrolpolis with Gibbs sampler" />
 
 
 
@@ -108,34 +108,30 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a list with the last samples in the pmwgs object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/helpers.R'><code>R/helpers.R</code></a></small>
-    <div class="hidden name"><code>last_sample.Rd</code></div>
+    <h1>Test whether object is pmwgs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/particle_sampler.R'><code>R/particle_sampler.R</code></a></small>
+    <div class="hidden name"><code>is.pmwgs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create a list with the last samples in the pmwgs object</p>
+    <p>Checks whether object is a Particle Metrolpolis with Gibbs sampler</p>
     </div>
 
-    <pre class="usage"><span class='fu'>last_sample</span>(<span class='no'>store</span>)</pre>
+    <pre class="usage"><span class='fu'>is.pmwgs</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>store</th>
-      <td><p>The list containing samples from t=which to grab the last.</p></td>
+      <th>x</th>
+      <td><p>An object to test</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list containing the last sample of group mean and variance and
-  subject means.</p>
+    <p>logical, whether object inherits from pmwgs</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># No example yet
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Initialise a sampler with starting points — init • psamplers</title>
+<title>Initialise values for the random effects — init • psamplers</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Initialise a sampler with starting points — init" />
-<meta property="og:description" content="Takes the starting values for the individual and possibly group
-level parameters, in preparation for further iterations,
-whether they be burn-in or sampling." />
+<meta property="og:title" content="Initialise values for the random effects — init" />
+<meta property="og:description" content="Takes the starting values for the group mean and variance, and subject level
+means. All arrays must match the appropriate shape." />
 
 
 
@@ -74,7 +73,7 @@ whether they be burn-in or sampling." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9026</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -110,25 +109,36 @@ whether they be burn-in or sampling." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Initialise a sampler with starting points</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/generics.R'><code>R/generics.R</code></a></small>
+    <h1>Initialise values for the random effects</h1>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/init.R'><code>R/init.R</code></a></small>
     <div class="hidden name"><code>init.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Takes the starting values for the individual and possibly group
-level parameters, in preparation for further iterations,
-whether they be burn-in or sampling.</p>
+    <p>Takes the starting values for the group mean and variance, and subject level
+means. All arrays must match the appropriate shape.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>init</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>init</span>(<span class='no'>pmwgs</span>, <span class='kw'>theta_mu</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>theta_sig</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>display_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>The sampling object that provides the parameters.</p></td>
+      <th>pmwgs</th>
+      <td><p>The sampler object that provides the parameters.</p></td>
+    </tr>
+    <tr>
+      <th>theta_mu</th>
+      <td><p>An array of starting values for the group means</p></td>
+    </tr>
+    <tr>
+      <th>theta_sig</th>
+      <td><p>An array of starting values for the group covariance matrix</p></td>
+    </tr>
+    <tr>
+      <th>display_progress</th>
+      <td><p>Display a progress bar during sampling</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -138,12 +148,42 @@ whether they be burn-in or sampling.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The sampler object but with initial values set for all parameter
-  types</p>
+    <p>The sampler object but with initial values set for latent_theta_mu</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>For example, with 5 parameters and 10 subjects, the group means must be a
+vector of length 5, the group variance must be an array of 5 x 5, and the
+subject means must be 5 x 10.</p>
+<p>Alternatively the if argument values for the starting points are left at the
+default (NULL) then starting points will be sampled from the prior for group
+level values, or for subject level means they will be sampled from the
+multivariate normal using the group level means and variance.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># No example yet
-</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>lba_ll</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>data</span>) {
+  <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='no'>x</span>)
+  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span>(<span class='no'>data</span>$<span class='no'>rt</span> <span class='kw'>&lt;</span> <span class='no'>x</span>[<span class='st'>"t0"</span>])) {
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(-<span class='fl'>1e10</span>)
+  }
+  <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(
+    <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(
+      <span class='kw pkg'>rtdists</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rtdists/man/LBA.html'>dLBA</a></span>(<span class='kw'>rt</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>rt</span>,
+                    <span class='kw'>response</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>correct</span>,
+                    <span class='kw'>A</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>],
+                    <span class='kw'>b</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>] + <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>)][<span class='no'>data</span>$<span class='no'>condition</span>],
+                    <span class='kw'>t0</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"t0"</span>],
+                    <span class='kw'>mean_v</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v1"</span>, <span class='st'>"v2"</span>)],
+                    <span class='kw'>sd_v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>),
+                    <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    )
+  )
+}
+<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pmwgs.html'>pmwgs</a></span>(<span class='no'>forstmann</span>,
+                 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>),
+                 <span class='no'>lba_ll</span>
+           )
+<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'>init</span>(<span class='no'>sampler</span>, <span class='kw'>theta_mu</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>7</span>), <span class='kw'>theta_sig</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.01</span>, <span class='fl'>7</span>)))</div><div class='output co'>#&gt; Sampling Initial values for random effects
+#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
