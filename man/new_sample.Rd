@@ -48,7 +48,7 @@ effects and the conditional parameters repectively}
 of samples}
 
 \item{epsilon}{A scaling factor to reduce the variance on individual level
-parameter samples}
+parameter samples.}
 
 \item{subjects}{A list of unique subject ids in the order they appear in
 the data.frame}
