@@ -42,6 +42,12 @@ run_stage <- function(pmwgs,
     .n_unique <- extra_args$n_unique
     extra_args$n_unique <- NULL
   }
+  # Set a default value for epsilon if it does not exist
+  if (is.null(extra_args$epsilon)) {
+    extra_args$epsilon <- ifelse(pmwgs$n_pars > 15,
+                                 0.1,
+                                 ifelse(pmwgs$n_pars > 10, 0.3, 0.5))
+  }
 
 
   if (stage == "sample") {
@@ -200,7 +206,7 @@ run_stage <- function(pmwgs,
 #' @param likelihood_func A likelihood function for calculating log likelihood
 #'   of samples
 #' @param epsilon A scaling factor to reduce the variance on individual level
-#'   parameter samples
+#'   parameter samples.
 #' @param subjects A list of unique subject ids in the order they appear in
 #'   the data.frame
 #'
