@@ -99,7 +99,7 @@ run_stage <- function(pmwgs,
 
   for (i in 1:iter) {
     if (display_progress) {
-      setAcceptProgressBar(pb, i, extra = mean(accept_rate(stage_samples)))
+      update_progress_bar(pb, i, extra = mean(accept_rate(stage_samples)))
     }
 
     if (i == 1) store <- pmwgs$samples else store <- stage_samples
