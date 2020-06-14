@@ -61,3 +61,13 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
   class(sampler) <- "pmwgs"
   sampler
 }
+
+#' Test whether object is pmwgs
+#'
+#' Checks whether object is a Particle Metrolpolis with Gibbs sampler
+#'
+#' @param x An object to test
+#'
+#' @return logical, whether object inherits from pmwgs
+#' @export
+is.pmwgs <- function(x) inherits(x, "pmwgs")

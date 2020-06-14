@@ -358,8 +358,6 @@ accept_rate <- function(store) {
 #'
 #' @return A structure matching the structure of a txtProgresBar with additional
 #'   info
-#' @examples
-#' # No example yet
 #' @keywords internal
 accept_progress_bar <- function(min = 0, max = 1) {
   .val <- 0
@@ -405,7 +403,16 @@ accept_progress_bar <- function(min = 0, max = 1) {
             class = c("accept_progress_bar", "txtProgressBar"))
 }
  
-setAcceptProgressBar <- function(pb, value, extra = 0) {
+#' A function that updates the accept_progress_bar with progress and accept rate
+#'
+#' @param pb The progress bar object
+#' @param value The value to set the bar width to
+#' @param extra A value that represents the number of accepted particles
+#'
+#' @return The old value that was present before updating
+#'
+#' @keywords internal
+update_progress_bar <- function(pb, value, extra = 0) {
     if (!inherits(pb, "txtProgressBar"))
         stop(gettextf("'pb' is not from class %s",
                       dQuote("txtProgressBar")),

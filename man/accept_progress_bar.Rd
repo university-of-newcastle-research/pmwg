@@ -18,7 +18,4 @@ A structure matching the structure of a txtProgresBar with additional
 \description{
 An altered version of the utils:txtProgressBar that shows acceptance rate
 }
-\examples{
-# No example yet
-}
 \keyword{internal}
