@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>An altered version of the utils:txtProgressBar that shows acceptance rate — accept_progress_bar • psamplers</title>
+<title>A function that updates the accept_progress_bar with progress and accept rate — update_progress_bar • psamplers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="An altered version of the utils:txtProgressBar that shows acceptance rate — accept_progress_bar" />
-<meta property="og:description" content="An altered version of the utils:txtProgressBar that shows acceptance rate" />
+<meta property="og:title" content="A function that updates the accept_progress_bar with progress and accept rate — update_progress_bar" />
+<meta property="og:description" content="A function that updates the accept_progress_bar with progress and accept rate" />
 
 
 
@@ -108,34 +108,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>An altered version of the utils:txtProgressBar that shows acceptance rate</h1>
+    <h1>A function that updates the accept_progress_bar with progress and accept rate</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/helpers.R'><code>R/helpers.R</code></a></small>
-    <div class="hidden name"><code>accept_progress_bar.Rd</code></div>
+    <div class="hidden name"><code>update_progress_bar.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>An altered version of the utils:txtProgressBar that shows acceptance rate</p>
+    <p>A function that updates the accept_progress_bar with progress and accept rate</p>
     </div>
 
-    <pre class="usage"><span class='fu'>accept_progress_bar</span>(<span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+    <pre class="usage"><span class='fu'>update_progress_bar</span>(<span class='no'>pb</span>, <span class='no'>value</span>, <span class='kw'>extra</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>min</th>
-      <td><p>The minimum of the value being updated for the progress bar</p></td>
+      <th>pb</th>
+      <td><p>The progress bar object</p></td>
     </tr>
     <tr>
-      <th>max</th>
-      <td><p>The maximum of the value being updated for the progress bar</p></td>
+      <th>value</th>
+      <td><p>The value to set the bar width to</p></td>
+    </tr>
+    <tr>
+      <th>extra</th>
+      <td><p>A value that represents the number of accepted particles</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A structure matching the structure of a txtProgresBar with additional
-  info</p>
+    <p>The old value that was present before updating</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
