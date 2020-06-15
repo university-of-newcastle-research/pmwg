@@ -17,8 +17,8 @@ gen_particles(
 )
 }
 \arguments{
-\item{num_particles}{The total number of particles to generate using a combination of the
-three methods.}
+\item{num_particles}{The total number of particles to generate using a
+combination of the three methods.}
 
 \item{mu}{A vector of means for the multivariate normal}
 
@@ -26,9 +26,10 @@ three methods.}
 
 \item{particle}{A particle (re proposals for latent variables)}
 
-\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
-of particles to generate from the population level parameters, the individual random
-effects and the conditional parameters repectively}
+\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which
+give the ratio of particles to generate from the population level
+parameters, the individual random effects and the conditional parameters
+repectively}
 
 \item{epsilon}{Reduce the variance for the individual level samples by this
 factor}

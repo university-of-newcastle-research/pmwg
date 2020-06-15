@@ -33,7 +33,7 @@ after_success:
 
 branches:
   only:
-    - master
+    - release
     - develop
 
 notifications:

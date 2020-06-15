@@ -27,8 +27,8 @@ response time (\code{rt}), trial condition (\code{condition}),
 accuracy (\code{correct}) and subject (\code{subject}) which
 contains the data against which the particles are assessed}
 
-\item{num_particles}{The total number of particles to generate using a combination of the
-three methods.}
+\item{num_particles}{The total number of particles to generate using a
+combination of the three methods.}
 
 \item{parameters}{A list containing:
 * the vector of means for the multivariate normal (gm),
@@ -40,9 +40,10 @@ three methods.}
 
 \item{efficient_sig2}{The sigma value for the efficient proposals}
 
-\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
-of particles to generate from the population level parameters, the individual random
-effects and the conditional parameters repectively}
+\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which
+give the ratio of particles to generate from the population level
+parameters, the individual random effects and the conditional parameters
+repectively}
 
 \item{likelihood_func}{A likelihood function for calculating log likelihood
 of samples}

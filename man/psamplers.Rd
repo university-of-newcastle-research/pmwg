@@ -19,7 +19,12 @@ License: \tab GPL-3\cr
 URL: \tab https://github.com/gjcooper/samplers\cr
 }
 
-Provides particle sampling helper functions (log-likelihood functions, particle sampling functions). The initial version of the code is for parameter estimation and is primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available at https://arxiv.org/abs/1806.10089 and based on the Matlab code available at http://osf.io/5b4w3
+Provides particle sampling helper functions (log-likelihood functions,
+particle sampling functions). The initial version of the code is for
+parameter estimation and is primarily an implementation of the Particle
+Metropolis within Gibbs sampler outlined in the paper available at
+https://arxiv.org/abs/1806.10089 and based on the Matlab code available at
+http://osf.io/5b4w3
 }
 \author{
 Gavin Cooper
