@@ -1,6 +1,6 @@
 Package: psamplers
 Title: Particle Based Samplers for MCMC
-Version: 0.1.0
+Version: 0.1.1
 Author: Gavin Cooper
 Maintainer: Gavin Cooper <gavin@gavincooper.net>
 Description: Contains implementations of particle based sampling
