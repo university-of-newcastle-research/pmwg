@@ -141,13 +141,13 @@ run_stage <- function(pmwgs,
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, "ll"))
-    sm <- array(unlist(tmp), dim = dim(pars$sm))
+    alpha <- array(unlist(tmp), dim = dim(pars$alpha))
 
     # Store results locally.
-    stage_samples$theta_mu[, i] <- pars$gm
-    stage_samples$theta_sig[, , i] <- pars$gv
-    stage_samples$last_theta_sig_inv <- pars$gvi
-    stage_samples$alpha[, , i] <- sm
+    stage_samples$theta_mu[, i] <- pars$tmu
+    stage_samples$theta_sig[, , i] <- pars$tsig
+    stage_samples$last_theta_sig_inv <- pars$tsinv
+    stage_samples$alpha[, , i] <- alpha
     stage_samples$idx <- i
     stage_samples$subj_ll[, i] <- ll
     stage_samples$a_half[, i] <- pars$a_half
@@ -197,10 +197,10 @@ run_stage <- function(pmwgs,
 #'        accuracy (\code{correct}) and subject (\code{subject}) which
 #'        contains the data against which the particles are assessed
 #' @param parameters A list containing:
-#'          * the vector of means for the multivariate normal (gm),
-#'          * A covariate matrix for the multivariate normal (gv)
+#'          * the vector of means for the multivariate normal (tmu),
+#'          * A covariate matrix for the multivariate normal (tsig)
 #'          * An array of individual subject means (re proposals for latent
-#'            variables) (sm)
+#'            variables) (alpha)
 #' @inheritParams numbers_from_ratio
 #' @inheritParams check_efficient
 #' @param likelihood_func A likelihood function for calculating log likelihood
@@ -223,9 +223,9 @@ new_sample <- function(s, data, num_particles, parameters,
   check_efficient(mix_ratio, efficient_mu, efficient_sig2)
   e_mu <- efficient_mu[, s]
   e_sig2 <- efficient_sig2[, , s]
-  mu <- parameters$gm
-  sig2 <- parameters$gv
-  subj_mu <- parameters$sm[, s]
+  mu <- parameters$tmu
+  sig2 <- parameters$tsig
+  subj_mu <- parameters$alpha[, s]
   if (is.null(likelihood_func)) stop("likelihood_func is a required argument")
 
   # Create proposals for new particles

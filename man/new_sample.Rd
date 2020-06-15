@@ -31,10 +31,10 @@ contains the data against which the particles are assessed}
 combination of the three methods.}
 
 \item{parameters}{A list containing:
-* the vector of means for the multivariate normal (gm),
-* A covariate matrix for the multivariate normal (gv)
+* the vector of means for the multivariate normal (tmu),
+* A covariate matrix for the multivariate normal (tsig)
 * An array of individual subject means (re proposals for latent
-  variables) (sm)}
+  variables) (alpha)}
 
 \item{efficient_mu}{The mu value for the efficient proposals}
 

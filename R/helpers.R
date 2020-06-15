@@ -187,9 +187,9 @@ particle_draws <- function(n, mu, covar) {
 #' # No example yet
 #' @keywords internal
 conditional_parms <- function(s, samples) {
-  gmdim <- dim(samples$theta_mu)
-  n_par <- gmdim[1]
-  n_iter <- gmdim[2]
+  tmudim <- dim(samples$theta_mu)
+  n_par <- tmudim[1]
+  n_iter <- tmudim[2]
   pts2_unwound <- apply(
     samples$theta_sig,
     3,
@@ -273,10 +273,10 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
 #' @keywords internal
 last_sample <- function(store) {
   list(
-    gm = store$theta_mu[, store$idx],
-    gv = store$theta_sig[, , store$idx],
-    sm = store$alpha[, , store$idx],
-    gvi = store$last_theta_sig_inv,
+    tmu = store$theta_mu[, store$idx],
+    tsig = store$theta_sig[, , store$idx],
+    alpha = store$alpha[, , store$idx],
+    tsinv = store$last_theta_sig_inv,
     a_half = store$a_half[, store$idx]
   )
 }
@@ -292,20 +292,20 @@ last_sample <- function(store) {
 #' # No example yet
 #' @keywords internal
 update_sampler <- function(sampler, store) {
-  old_gm <- sampler$samples$theta_mu
-  old_gv <- sampler$samples$theta_sig
-  old_sm <- sampler$samples$alpha
+  old_tmu <- sampler$samples$theta_mu
+  old_tsig <- sampler$samples$theta_sig
+  old_alpha <- sampler$samples$alpha
   old_stage <- sampler$samples$stage
   old_sll <- sampler$samples$subj_ll
   old_a_half <- sampler$samples$a_half
   li <- store$idx
 
-  sampler$samples$theta_mu <- array(c(old_gm, store$theta_mu[, 1:li]),
-                                      dim = dim(old_gm) + c(0, li))
-  sampler$samples$theta_sig <- array(c(old_gv, store$theta_sig[, , 1:li]),
-                                     dim = dim(old_gv) + c(0, 0, li))
-  sampler$samples$alpha <- array(c(old_sm, store$alpha[, , 1:li]),
-                                        dim = dim(old_sm) + c(0, 0, li))
+  sampler$samples$theta_mu <- array(c(old_tmu, store$theta_mu[, 1:li]),
+                                      dim = dim(old_tmu) + c(0, li))
+  sampler$samples$theta_sig <- array(c(old_tsig, store$theta_sig[, , 1:li]),
+                                     dim = dim(old_tsig) + c(0, 0, li))
+  sampler$samples$alpha <- array(c(old_alpha, store$alpha[, , 1:li]),
+                                        dim = dim(old_alpha) + c(0, 0, li))
   sampler$samples$idx <- ncol(sampler$samples$theta_mu)
   sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
   sampler$samples$stage <- c(old_stage, store$stage[1:li])
