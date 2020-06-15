@@ -27,34 +27,41 @@
 #'   }
 #'   sum(
 #'     log(
-#'       rtdists::dLBA(rt = data$rt,
-#'                     response = data$correct,
-#'                     A = x["A"],
-#'                     b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
-#'                     t0 = x["t0"],
-#'                     mean_v = x[c("v1", "v2")],
-#'                     sd_v = c(1, 1),
-#'                     silent = TRUE)
+#'       rtdists::dLBA(
+#'         rt = data$rt,
+#'         response = data$correct,
+#'         A = x["A"],
+#'         b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
+#'         t0 = x["t0"],
+#'         mean_v = x[c("v1", "v2")],
+#'         sd_v = c(1, 1),
+#'         silent = TRUE
+#'       )
 #'     )
 #'   )
 #' }
-#' sampler <- pmwgs(forstmann,
-#'                  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
-#'                  lba_ll
-#'            )
-#' sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)))
+#' sampler <- pmwgs(
+#'   forstmann,
+#'   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
+#'   lba_ll
+#' )
+#' sampler <- init(sampler, theta_mu = rnorm(7), theta_sig = diag(rep(0.01, 7)))
 #' @export
-init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
-                       display_progress=TRUE, ...) {
+init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
+                 display_progress = TRUE, ...) {
   if (is.null(attr(pmwgs, "class"))) {
     print("No object to add start points to")
   }
   # If no starting point for group mean just use zeros
   if (is.null(theta_mu)) theta_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
   # If no starting point for group var just sample from inverse wishart
-  if (is.null(theta_sig)) theta_sig <- MCMCpack::riwish(pmwgs$n_pars * 3,
-                                                        diag(pmwgs$n_pars))
-  n_particles <- 1000  #GC: Fixed val here
+  if (is.null(theta_sig)) {
+    theta_sig <- MCMCpack::riwish(
+      pmwgs$n_pars * 3,
+      diag(pmwgs$n_pars)
+    )
+  }
+  n_particles <- 1000 # GC: Fixed val here
   # Sample the mixture variables' initial values.
   a_half <- 1 / stats::rgamma(n = pmwgs$n_pars, shape = 0.5, scale = 1)
   # Create and fill initial random effects for each subject
@@ -97,7 +104,7 @@ init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
 #' Takes the pmwgs object and sets up sampling loop variables
 #'
 #' @param samples The list containing the samples from the current run, or from
-#'   the master storage in the sampler
+#'   the main storage in the sampler
 #' @param sampler The pmwgs object from which to generate the new group
 #'   parameters.
 #'
@@ -106,32 +113,38 @@ init <- function(pmwgs, theta_mu=NULL, theta_sig=NULL,
 #' # No example yet
 #' @keywords internal
 new_group_pars <- function(samples, sampler) {
-  # Get single iter versions, gm = theta_mu, gv = theta_sig
+  # Get single iter versions, tmu = theta_mu, tsig = theta_sig
   last <- last_sample(samples)
   hyper <- attributes(sampler)
 
   # Here mu is group mean, so we are getting mean and variance
   var_mu <- MASS::ginv(
-    sampler$n_subjects * last$gvi + sampler$prior$theta_sig_inv
+    sampler$n_subjects * last$tsinv + sampler$prior$theta_sig_inv
   )
-  mean_mu <- as.vector(var_mu %*% (last$gvi %*% apply(last$sm, 1, sum)))
+  mean_mu <- as.vector(var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum)))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
-  gm <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
-  names(gm) <- sampler$par_names
+  tmu <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
+  names(tmu) <- sampler$par_names
 
   # New values for group var
-  theta_temp <- last$sm - gm
+  theta_temp <- last$alpha - tmu
   cov_temp <- (theta_temp) %*% (t(theta_temp))
-  B_half <- 2 * hyper$v_half * diag(1 / last$a_half) + cov_temp #nolint
-  gv <- MCMCpack::riwish(hyper$k_half, B_half) # New sample for group variance
-  gvi <- MASS::ginv(gv)
+  B_half <- 2 * hyper$v_half * diag(1 / last$a_half) + cov_temp # nolint
+  tsig <- MCMCpack::riwish(hyper$k_half, B_half) # New sample for group variance
+  tsinv <- MASS::ginv(tsig)
 
   # Sample new mixing weights.
   a_half <- 1 / stats::rgamma(
     n = sampler$n_pars,
     shape = hyper$v_shape,
-    scale = 1 / (hyper$v_half + diag(gvi) + hyper$A_half)
+    scale = 1 / (hyper$v_half + diag(tsinv) + hyper$A_half)
   )
-  list(gm = gm, gv = gv, gvi = gvi, a_half = a_half, sm = last$sm)
+  list(
+    tmu = tmu,
+    tsig = tsig,
+    tsinv = tsinv,
+    a_half = a_half,
+    alpha = last$alpha
+  )
 }

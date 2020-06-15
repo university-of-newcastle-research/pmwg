@@ -1,8 +1,8 @@
 # psamplers #
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/NewcastleCL/samplers.svg?branch=master)](https://travis-ci.com/NewcastleCL/samplers)
-[![Codecov test coverage](https://codecov.io/gh/NewcastleCL/samplers/branch/master/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/samplers?branch=master)
+[![Travis build status](https://travis-ci.com/NewcastleCL/samplers.svg?branch=release)](https://travis-ci.com/NewcastleCL/samplers)
+[![Codecov test coverage](https://codecov.io/gh/NewcastleCL/samplers/branch/release/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/samplers?branch=release)
 <!-- badges: end -->
 
 

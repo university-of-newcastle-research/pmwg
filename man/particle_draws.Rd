@@ -14,12 +14,14 @@ particle_draws(n, mu, covar)
 \item{covar}{covariance matrix}
 }
 \value{
-If n > 0 returns n draws from the multivariate normal with mean and sigma, otherwise returns NULL
+If n > 0 returns n draws from the multivariate normal with mean and
+  sigma, otherwise returns NULL
 }
 \description{
-Takes the mean and variance for a multivariate normal distribution, as well as the number of
-particles to generate and return random draws from the multivariate normal if the numbers of
-particles is > 0, otherwise return NULL. At least one of mean or sigma must be provided.
+Takes the mean and variance for a multivariate normal distribution, as well
+as the number of particles to generate and return random draws from the
+multivariate normal if the numbers of particles is > 0, otherwise return
+NULL. At least one of mean or sigma must be provided.
 }
 \examples{
 psamplers:::particle_draws(100, rep(0.2, 7), diag(rep(7)))

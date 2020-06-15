@@ -42,20 +42,23 @@ lba_ll <- function(x, data) {
   }
   sum(
     log(
-      rtdists::dLBA(rt = data$rt,
-                    response = data$correct,
-                    A = x["A"],
-                    b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
-                    t0 = x["t0"],
-                    mean_v = x[c("v1", "v2")],
-                    sd_v = c(1, 1),
-                    silent = TRUE)
+      rtdists::dLBA(
+        rt = data$rt,
+        response = data$correct,
+        A = x["A"],
+        b = x["A"] + x[c("b1", "b2", "b3")][data$condition],
+        t0 = x["t0"],
+        mean_v = x[c("v1", "v2")],
+        sd_v = c(1, 1),
+        silent = TRUE
+      )
     )
   )
 }
-sampler <- pmwgs(forstmann,
-                 c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
-                 lba_ll
-           )
-sampler <- init(sampler, theta_mu=rnorm(7), theta_sig=diag(rep(0.01, 7)))
+sampler <- pmwgs(
+  forstmann,
+  c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
+  lba_ll
+)
+sampler <- init(sampler, theta_mu = rnorm(7), theta_sig = diag(rep(0.01, 7)))
 }

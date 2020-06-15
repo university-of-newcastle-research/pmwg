@@ -7,9 +7,10 @@
 check_efficient(mix_ratio, efficient_mu, efficient_sig2)
 }
 \arguments{
-\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
-of particles to generate from the population level parameters, the individual random
-effects and the conditional parameters repectively}
+\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which
+give the ratio of particles to generate from the population level
+parameters, the individual random effects and the conditional parameters
+repectively}
 
 \item{efficient_mu}{The mu value for the efficient proposals}
 

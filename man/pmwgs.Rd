@@ -38,15 +38,17 @@ lba_loglike <- function(x, data) {
   # This is faster than "paste".
   bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition]
 
-  out <- rtdists::dLBA(rt = data$rt, # nolint
-                       response = data$correct,
-                       A = x["A"],
-                       b = bs,
-                       t0 = x["t0"],
-                       mean_v = x[c("v1", "v2")],
-                       sd_v = c(1, 1),
-                       distribution = "norm",
-                       silent = TRUE)
+  out <- rtdists::dLBA(
+    rt = data$rt, # nolint
+    response = data$correct,
+    A = x["A"],
+    b = bs,
+    t0 = x["t0"],
+    mean_v = x[c("v1", "v2")],
+    sd_v = c(1, 1),
+    distribution = "norm",
+    silent = TRUE
+  )
   bad <- (out < 1e-10) | (!is.finite(out))
   out[bad] <- 1e-10
   out <- sum(log(out))

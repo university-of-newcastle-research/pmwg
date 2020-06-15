@@ -8,7 +8,7 @@ new_group_pars(samples, sampler)
 }
 \arguments{
 \item{samples}{The list containing the samples from the current run, or from
-the master storage in the sampler}
+the main storage in the sampler}
 
 \item{sampler}{The pmwgs object from which to generate the new group
 parameters.}

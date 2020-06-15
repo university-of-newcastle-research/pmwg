@@ -13,7 +13,8 @@ wind(var_vector, ...)
 The wound vector as a matrix
 }
 \description{
-The reverse of the unwind function, takes a variance vector and windows back into matrix
+The reverse of the unwind function, takes a variance vector and windows back
+into matrix
 }
 \examples{
 psamplers:::wind(diag(rep(1, 7)))

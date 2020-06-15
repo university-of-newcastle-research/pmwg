@@ -91,7 +91,7 @@ means. All arrays must match the appropriate shape." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/psamplers/">
+  <a href="https://github.com/newcastlecl/samplers/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -110,7 +110,7 @@ means. All arrays must match the appropriate shape." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Initialise values for the random effects</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/init.R'><code>R/init.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/init.R'><code>R/init.R</code></a></small>
     <div class="hidden name"><code>init.Rd</code></div>
     </div>
 
@@ -167,22 +167,25 @@ multivariate normal using the group level means and variance.</p>
   }
   <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(
     <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(
-      <span class='kw pkg'>rtdists</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rtdists/man/LBA.html'>dLBA</a></span>(<span class='kw'>rt</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>rt</span>,
-                    <span class='kw'>response</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>correct</span>,
-                    <span class='kw'>A</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>],
-                    <span class='kw'>b</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>] + <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>)][<span class='no'>data</span>$<span class='no'>condition</span>],
-                    <span class='kw'>t0</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"t0"</span>],
-                    <span class='kw'>mean_v</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v1"</span>, <span class='st'>"v2"</span>)],
-                    <span class='kw'>sd_v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>),
-                    <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+      <span class='kw pkg'>rtdists</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rtdists/man/LBA.html'>dLBA</a></span>(
+        <span class='kw'>rt</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>rt</span>,
+        <span class='kw'>response</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>correct</span>,
+        <span class='kw'>A</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>],
+        <span class='kw'>b</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>] + <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>)][<span class='no'>data</span>$<span class='no'>condition</span>],
+        <span class='kw'>t0</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"t0"</span>],
+        <span class='kw'>mean_v</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v1"</span>, <span class='st'>"v2"</span>)],
+        <span class='kw'>sd_v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>),
+        <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+      )
     )
   )
 }
-<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pmwgs.html'>pmwgs</a></span>(<span class='no'>forstmann</span>,
-                 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>),
-                 <span class='no'>lba_ll</span>
-           )
-<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'>init</span>(<span class='no'>sampler</span>, <span class='kw'>theta_mu</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>7</span>), <span class='kw'>theta_sig</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.01</span>, <span class='fl'>7</span>)))</div><div class='output co'>#&gt; Sampling Initial values for random effects
+<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pmwgs.html'>pmwgs</a></span>(
+  <span class='no'>forstmann</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>),
+  <span class='no'>lba_ll</span>
+)
+<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'>init</span>(<span class='no'>sampler</span>, <span class='kw'>theta_mu</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>7</span>), <span class='kw'>theta_sig</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.01</span>, <span class='fl'>7</span>)))</div><div class='output co'>#&gt; Sampling Initial values for random effects
 #&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

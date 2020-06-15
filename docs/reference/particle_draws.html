@@ -40,9 +40,10 @@
 
 
 <meta property="og:title" content="Generate a cloud of particles from a multivariate normal distribution — particle_draws" />
-<meta property="og:description" content="Takes the mean and variance for a multivariate normal distribution, as well as the number of
-particles to generate and return random draws from the multivariate normal if the numbers of
-particles is &amp;gt; 0, otherwise return NULL. At least one of mean or sigma must be provided." />
+<meta property="og:description" content="Takes the mean and variance for a multivariate normal distribution, as well
+as the number of particles to generate and return random draws from the
+multivariate normal if the numbers of particles is &amp;gt; 0, otherwise return
+NULL. At least one of mean or sigma must be provided." />
 
 
 
@@ -92,7 +93,7 @@ particles is &amp;gt; 0, otherwise return NULL. At least one of mean or sigma mu
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/psamplers/">
+  <a href="https://github.com/newcastlecl/samplers/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -111,14 +112,15 @@ particles is &amp;gt; 0, otherwise return NULL. At least one of mean or sigma mu
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generate a cloud of particles from a multivariate normal distribution</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/psamplers/blob/master/R/helpers.R'><code>R/helpers.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/helpers.R'><code>R/helpers.R</code></a></small>
     <div class="hidden name"><code>particle_draws.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Takes the mean and variance for a multivariate normal distribution, as well as the number of
-particles to generate and return random draws from the multivariate normal if the numbers of
-particles is &gt; 0, otherwise return NULL. At least one of mean or sigma must be provided.</p>
+    <p>Takes the mean and variance for a multivariate normal distribution, as well
+as the number of particles to generate and return random draws from the
+multivariate normal if the numbers of particles is &gt; 0, otherwise return
+NULL. At least one of mean or sigma must be provided.</p>
     </div>
 
     <pre class="usage"><span class='fu'>particle_draws</span>(<span class='no'>n</span>, <span class='no'>mu</span>, <span class='no'>covar</span>)</pre>
@@ -142,7 +144,8 @@ particles is &gt; 0, otherwise return NULL. At least one of mean or sigma must b
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>If n &gt; 0 returns n draws from the multivariate normal with mean and sigma, otherwise returns NULL</p>
+    <p>If n &gt; 0 returns n draws from the multivariate normal with mean and
+  sigma, otherwise returns NULL</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw pkg'>psamplers</span><span class='kw ns'>:::</span><span class='fu'>particle_draws</span>(<span class='fl'>100</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>7</span>)))</div><div class='output co'>#&gt;               [,1]         [,2]         [,3]        [,4]         [,5]

@@ -16,7 +16,8 @@ unwind <- function(var_matrix, ...) {
 
 #' Winds a variance vector back to a vector
 #'
-#' The reverse of the unwind function, takes a variance vector and windows back into matrix
+#' The reverse of the unwind function, takes a variance vector and windows back
+#' into matrix
 #'
 #' @param var_vector A variance vector
 #'
@@ -36,14 +37,15 @@ wind <- function(var_vector, ...) {
 
 #' Check and normalise the number of each particle type from the mix_ratio
 #'
-#' Takes a mix ratio vector (3 x float) and a number of particles to generate and returns
-#' a vector containing the number of each particle type to generate
+#' Takes a mix ratio vector (3 x float) and a number of particles to generate
+#' and returns a vector containing the number of each particle type to generate
 #'
-#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
-#'   of particles to generate from the population level parameters, the individual random
-#'   effects and the conditional parameters repectively
-#' @param num_particles The total number of particles to generate using a combination of the
-#'   three methods.
+#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which
+#'   give the ratio of particles to generate from the population level
+#'   parameters, the individual random effects and the conditional parameters
+#'   repectively
+#' @param num_particles The total number of particles to generate using a
+#'   combination of the three methods.
 #'
 #' @return The wound vector as a matrix
 #' @examples
@@ -75,9 +77,10 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
 #'
 #' @param efficient_mu The mu value for the efficient proposals
 #' @param efficient_sig2 The sigma value for the efficient proposals
-#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which give the ratio
-#'   of particles to generate from the population level parameters, the individual random
-#'   effects and the conditional parameters repectively
+#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which
+#'   give the ratio of particles to generate from the population level
+#'   parameters, the individual random effects and the conditional parameters
+#'   repectively
 #'
 #' @return nothing, stops operation on incorrect combiation of parameters.
 #' @examples
@@ -127,7 +130,7 @@ extract_samples <- function(sampler, stage = c("adapt", "sample")) {
 #'
 #' @param x The current pmwgs object
 #'
-#' @return A list containing the mu and sigma for the proposal distribution.            
+#' @return A list containing the mu and sigma for the proposal distribution.
 #' @examples
 #' # No example yet
 #' @keywords internal
@@ -151,15 +154,17 @@ create_efficient <- function(x) {
 
 #' Generate a cloud of particles from a multivariate normal distribution
 #'
-#' Takes the mean and variance for a multivariate normal distribution, as well as the number of
-#' particles to generate and return random draws from the multivariate normal if the numbers of
-#' particles is > 0, otherwise return NULL. At least one of mean or sigma must be provided.
+#' Takes the mean and variance for a multivariate normal distribution, as well
+#' as the number of particles to generate and return random draws from the
+#' multivariate normal if the numbers of particles is > 0, otherwise return
+#' NULL. At least one of mean or sigma must be provided.
 #'
 #' @param n number of observations
 #' @param mu mean vector
 #' @param covar covariance matrix
 #'
-#' @return If n > 0 returns n draws from the multivariate normal with mean and sigma, otherwise returns NULL
+#' @return If n > 0 returns n draws from the multivariate normal with mean and
+#'   sigma, otherwise returns NULL
 #' @examples
 #' psamplers:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
 #' psamplers:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
@@ -203,8 +208,10 @@ conditional_parms <- function(s, samples) {
     dependent.ind = 1:n_par,
     given.ind = (n_par + 1):length(mu_tilde),
     # GC: Note, not sure what is happening here:v (Was ptm/pts2 now last sample)
-    X.given = c(samples$theta_mu[, n_iter],
-                unwind(samples$theta_sig[, , n_iter]))
+    X.given = c(
+      samples$theta_mu[, n_iter],
+      unwind(samples$theta_sig[, , n_iter])
+    )
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }
@@ -341,7 +348,9 @@ check_adapted <- function(samples, unq_vals = 20) {
 #' # No example yet
 #' @keywords internal
 accept_rate <- function(store) {
-  if (is.null(store$idx) || store$idx < 3) return(array(0, dim(store$alpha)[2]))
+  if (is.null(store$idx) || store$idx < 3) {
+    return(array(0, dim(store$alpha)[2]))
+  }
   vals <- store$alpha[1, , 1:store$idx]
   apply(
     apply(vals, 1, diff) != 0,  # If diff != 0
@@ -369,20 +378,25 @@ accept_progress_bar <- function(min = 0, max = 1) {
   width <- trunc(getOption("width") - 22L / nw)
   if (max <= min) stop("must have 'max' > 'min'")
 
-  up <- function(value, extra=0) {
-    if (!is.finite(value) || value < min || value > max) return()
+  up <- function(value, extra = 0) {
+    if (!is.finite(value) || value < min || value > max) {
+      return()
+    }
     .val <<- value
     nb <- round(width * (value - min) / (max - min))
     pc <- round(100 * (value - min) / (max - min))
     extra <- round(100 * extra)
-    if (nb == .nb && pc == .pc && .ex == extra) return()
+    if (nb == .nb && pc == .pc && .ex == extra) {
+      return()
+    }
     cat(paste0("\r  |", strrep(" ", nw * width + 6)))
-    cat(paste(c("\r  |",
-                rep.int("=", nb),
-                rep.int(" ", nw * (width - nb)),
-                sprintf("| %3d%%", pc),
-                sprintf(" | Acc(%3d%%)", extra)
-                ), collapse = ""))
+    cat(paste(c(
+      "\r  |",
+      rep.int("=", nb),
+      rep.int(" ", nw * (width - nb)),
+      sprintf("| %3d%%", pc),
+      sprintf(" | Acc(%3d%%)", extra)
+    ), collapse = ""))
     utils::flush.console()
     .nb <<- nb
     .pc <<- pc
@@ -402,7 +416,7 @@ accept_progress_bar <- function(min = 0, max = 1) {
   structure(list(getVal = get_value, up = up, kill = kill),
             class = c("accept_progress_bar", "txtProgressBar"))
 }
- 
+
 #' A function that updates the accept_progress_bar with progress and accept rate
 #'
 #' @param pb The progress bar object
@@ -413,11 +427,15 @@ accept_progress_bar <- function(min = 0, max = 1) {
 #'
 #' @keywords internal
 update_progress_bar <- function(pb, value, extra = 0) {
-    if (!inherits(pb, "txtProgressBar"))
-        stop(gettextf("'pb' is not from class %s",
-                      dQuote("txtProgressBar")),
-             domain = NA)
-    oldval <- pb$getVal()
-    pb$up(value, extra)
-    invisible(oldval)
+  if (!inherits(pb, "txtProgressBar")) {
+    stop(gettextf(
+      "'pb' is not from class %s",
+      dQuote("txtProgressBar")
+    ),
+    domain = NA
+    )
+  }
+  oldval <- pb$getVal()
+  pb$up(value, extra)
+  invisible(oldval)
 }
