@@ -59,9 +59,9 @@ run_stage <- function(pmwgs,
 
     if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
-      pars <- new_group_pars(store, pmwgs),
+      pars <- gibbs_step(store, pmwgs),
       error = function(err_cond) {
-        new_group_pars_err(pmwgs, store)
+        gibbs_step_err(pmwgs, store)
       }
     )
 

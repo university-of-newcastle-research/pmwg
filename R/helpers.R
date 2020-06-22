@@ -545,7 +545,8 @@ update_progress_bar <- function(pb, value, extra = 0) {
   invisible(oldval)
 }
 
-#' Error handler for the new_group_pars call
+
+#' Error handler for the gibbs_step call
 #'
 #' @param err_cond The samples store (containing random effects) with which we are
 #'   working
@@ -554,7 +555,7 @@ update_progress_bar <- function(pb, value, extra = 0) {
 #' @examples
 #' # No example yet
 #' @keywords internal
-new_group_pars_err <- function(pmwgs, store) {
+gibbs_step_err <- function(pmwgs, store) {
   store_tmp <- tempfile(
     pattern = "pmwg_stage_samples_",
     tmpdir = ".",

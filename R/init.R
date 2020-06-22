@@ -99,9 +99,9 @@ init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
 }
 
 
-#' Initialise variables needed for individual loops within PMwG
+#' Gibbs step of the Particle Metropolis within Gibbs sampelr
 #'
-#' Takes the pmwgs object and sets up sampling loop variables
+#' Samples new theta_mu and theta_sig using Gibbs sampling
 #'
 #' @param samples The list containing the samples from the current run, or from
 #'   the main storage in the sampler
@@ -112,7 +112,7 @@ init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
 #' @examples
 #' # No example yet
 #' @keywords internal
-new_group_pars <- function(samples, sampler) {
+gibbs_step <- function(samples, sampler) {
   # Get single iter versions, tmu = theta_mu, tsig = theta_sig
   last <- last_sample(samples)
   hyper <- attributes(sampler)
