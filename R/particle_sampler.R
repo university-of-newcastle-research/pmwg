@@ -52,7 +52,8 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
     subjects = subjects,
     prior = prior,
     ll_func = ll_func,
-    samples = samples
+    samples = samples,
+    init = FALSE
   )
   attr(sampler, "v_half") <- v_half
   attr(sampler, "A_half") <- A_half

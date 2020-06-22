@@ -4,7 +4,8 @@
 #' sampler. Each stage involves slightly different processes, so for the
 #' full PMwG we need to run this three times.
 #'
-#' @param pmwgs A pmwgs object that has been initialised
+#' @param pmwgs A Particle Metropolis within Gibbs sampler which has been set
+#'   up and initialised
 #' @param stage The sampling stage to run. Must be one of 'burn', 'adapt' or
 #'   'sample'. If not provided assumes that the stage should be 'burn'
 #' @param iter The number of iterations to run for the sampler. For 'burn' and
@@ -28,57 +29,9 @@ run_stage <- function(pmwgs,
                       display_progress = TRUE,
                       n_cores = 1,
                       ...) {
-  if (!is.pmwgs(pmwgs)) {
-    stop("Requires an object of type pmwgs")
-  }
-  # Test stage argument
-  stage <- match.arg(stage, c("burn", "adapt", "sample"))
-  # Expand the dots
-  extra_args <- list(...)
-  # Extract n_unique argument
-  if (is.null(extra_args$n_unique)) {
-    .n_unique <- 20
-  } else {
-    .n_unique <- extra_args$n_unique
-    extra_args$n_unique <- NULL
-  }
-  # Set a default value for epsilon if it does not exist
-  if (is.null(extra_args$epsilon)) {
-    extra_args$epsilon <- ifelse(pmwgs$n_pars > 15,
-                                 0.1,
-                                 ifelse(pmwgs$n_pars > 10, 0.3, 0.5))
-  }
-
-
-  if (stage == "sample") {
-    prop_args <- try(create_efficient(pmwgs))
-    if (class(prop_args) == "try-error") {
-      cat("ERR01: An error was detected creating efficient dist\n")
-      outfile <- tempfile(
-        pattern = "PMwG_err_",
-        tmpdir = ".",
-        fileext = ".RData"
-      )
-      cat("Saving current state of environment in file: ", outfile, "\n")
-      save.image(outfile)
-    }
-    mix <- c(0.1, 0.2, 0.7)
-  } else {
-    mix <- c(0.5, 0.5, 0.0)
-    prop_args <- list()
-    n_unique <- .n_unique
-  }
-  # Test pmwgs object initialised
-  try(if (is.null(pmwgs$init)) stop("pmwgs object has not been initialised"))
-  apply_fn <- lapply
-  apply_args <- list()
-  if (n_cores > 1) {
-    if (Sys.info()[["sysname"]] == "Windows") {
-      stop("n_cores cannot be greater than 1 on Windows systems.")
-    }
-    apply_fn <- parallel::mclapply
-    apply_args <- list(mc.cores = n_cores)
-  }
+  # Check the passed arguments and return to current environment.
+  .args <- as.list(match.call()[-1])
+  list2env(do.call(check_run_stage_args, .args), environment())
 
   # Display stage to screen
   msgs <- list(
@@ -97,6 +50,7 @@ run_stage <- function(pmwgs,
     pb <- accept_progress_bar(min = 0, max = iter)
   }
 
+  # Main iteration loop
   for (i in 1:iter) {
     if (display_progress) {
       update_progress_bar(pb, i, extra = mean(accept_rate(stage_samples)))
@@ -118,11 +72,10 @@ run_stage <- function(pmwgs,
       data = pmwgs$data,
       num_particles = particles,
       parameters = pars,
-      mix_ratio = mix,
       likelihood_func = pmwgs$ll_func,
       subjects = pmwgs$subjects
     )
-    fn_args <- c(pmwgs_args, apply_args, prop_args, extra_args)
+    fn_args <- c(pmwgs_args, sample_args)
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, "ll"))
@@ -164,10 +117,12 @@ run_stage <- function(pmwgs,
   if (display_progress) close(pb)
   if (stage == "adapt") {
     if (i == iter) {
-      message(paste("Particicle Metropolis within Gibbs Sampler did not",
-                    "finish adaptation phase early (all", i, "iterations were",
-                    "run).\nYou should examine your samples and perhaps start",
-                    "a longer adaptaion run."))
+      message(paste(
+        "Particicle Metropolis within Gibbs Sampler did not",
+        "finish adaptation phase early (all", i, "iterations were",
+        "run).\nYou should examine your samples and perhaps start",
+        "a longer adaptaion run."
+      ))
     }
   }
   update_sampler(pmwgs, stage_samples)

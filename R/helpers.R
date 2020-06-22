@@ -35,6 +35,117 @@ wind <- function(var_vector, ...) {
 }
 
 
+#' Test the arguments to the run_stage function for correctness
+#'
+#' Takes the arguments to run_stage and checks them for completeness and
+#' correctness. Uses parent.frame to edit run_stage env directly
+#'
+#' @inheritParams run_stage
+#'
+#' @keywords internal
+check_run_stage_args <- function(pmwgs,
+                                 stage,
+                                 iter = 1000,
+                                 particles = 1000,
+                                 display_progress = TRUE,
+                                 n_cores = 1,
+                                 ...) {
+  # Two lists of arguments used in different places to return
+  run_args <- list()
+  sample_args <- list()
+  # Check pmwgs object is correct type and has been initialised
+  pmwgs <- pmwgs
+  if (!is.pmwgs(pmwgs)) {
+    stop("`run_stage` function Requires an object of type <pmwgs>")
+  }
+  if (!pmwgs$init) stop("pmwgs object has not been initialised")
+
+  # Test stage argument
+  tryCatch(
+    run_args$stage <- match.arg(stage, c("burn", "adapt", "sample")),
+    error = function(err_cond) {
+      stop("Argument `stage` should be one of 'burn', 'adapt' or 'sample'")
+    }
+  )
+
+  dots <- list(...)
+  # Extract n_unique argument
+  if (stage == "adapt") {
+    if (is.null(dots$n_unique)) {
+      run_args$.n_unique <- 20
+    } else {
+      run_args$.n_unique <- dots$n_unique
+      dots$n_unique <- NULL
+    }
+    run_args$n_unique <- .n_unique
+  } else {
+    if (!is.null(dots$n_unique)) {
+      dots$n_unique <- NULL
+      warning("Argument `n_unique` unused for any stage other than adapt")
+    }
+  }
+
+  # Set a default value for epsilon if it does not exist
+  if (is.null(dots$epsilon)) {
+    sample_args$epsilon <- ifelse(pmwgs$n_pars > 15,
+      0.1,
+      ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
+    )
+  }
+
+  # Create efficient proposal distribution if we are in sampling phase
+  if (stage == "sample") {
+    tryCatch(
+      prop_args <- try(create_efficient(pmwgs)),
+      error = function(err_cond) {
+        outfile <- tempfile(
+          pattern = "PMwG_err_",
+          tmpdir = ".",
+          fileext = ".RData"
+        )
+        msg <- paste(
+          "An error was detected whilst creating conditional",
+          "distribution.\n",
+          "Saving current state of environment in file:",
+          outfile
+        )
+        save.image(outfile)
+        stop(msg)
+      }
+    )
+    run_args <- c(run_args, prop_args)
+  }
+
+  # Set default values for the mix_ratio parameter if not passed in as arg, and
+  # perform checks on its values/length
+  if (is.null(dots$mix)) {
+    if (stage == "sample") {
+      sample_args$mix <- c(0.1, 0.2, 0.7)
+    } else {
+      sample_args$mix <- c(0.5, 0.5, 0.0)
+    }
+  } else {
+    sample_args$mix <- dots$mix
+  }
+  if (!isTRUE(all.equal(sum(sample_args$mix), 1))) {
+    stop("The elements of the `mix` ratio vector must sum to 1")
+  }
+  if (length(sample_args$mix) != 3) {
+    stop("`mix` ratio vector must have three elements which sum to 1")
+  }
+
+  apply_fn <- lapply
+  if (n_cores > 1) {
+    if (Sys.info()[["sysname"]] == "Windows") {
+      stop("`n_cores` cannot be greater than 1 on Windows systems.")
+    }
+    apply_fn <- parallel::mclapply
+    sample_args$mc.cores <- n_cores #nolint
+  }
+  list(run_args = run_args, sample_args = sample_args, apply_fn = apply_fn)
+}
+
+
 #' Check and normalise the number of each particle type from the mix_ratio
 #'
 #' Takes a mix ratio vector (3 x float) and a number of particles to generate
@@ -52,12 +163,6 @@ wind <- function(var_vector, ...) {
 #' psamplers:::numbers_from_ratio(c(0.1, 0.3, 0.6))
 #' @keywords internal
 numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
-  if (!isTRUE(all.equal(sum(mix_ratio), 1))) {
-    stop("The elements of the mix_ratio vector must sum to 1")
-  }
-  if (length(mix_ratio) != 3) {
-    stop("mix_ratio vector must have three elements which sum to 1")
-  }
   numbers <- stats::rbinom(n = 2, size = num_particles, prob = mix_ratio)
   if (mix_ratio[3] == 0) {
     numbers[3] <- 0
@@ -353,7 +458,7 @@ accept_rate <- function(store) {
   }
   vals <- store$alpha[1, , 1:store$idx]
   apply(
-    apply(vals, 1, diff) != 0,  # If diff != 0
+    apply(vals, 1, diff) != 0, # If diff != 0
     2,
     mean
   )
