@@ -162,6 +162,14 @@ run_stage <- function(pmwgs,
     }
   }
   if (display_progress) close(pb)
+  if (stage == "adapt") {
+    if (i == iter) {
+      message(paste("Particicle Metropolis within Gibbs Sampler did not",
+                    "finish adaptation phase early (all", i, "iterations were",
+                    "run).\nYou should examine your samples and perhaps start",
+                    "a longer adaptaion run."))
+    }
+  }
   update_sampler(pmwgs, stage_samples)
 }
 
