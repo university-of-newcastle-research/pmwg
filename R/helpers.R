@@ -77,7 +77,7 @@ check_run_stage_args <- function(pmwgs,
       run_args$.n_unique <- dots$n_unique
       dots$n_unique <- NULL
     }
-    run_args$n_unique <- .n_unique
+    run_args$n_unique <- run_args$.n_unique
   } else {
     if (!is.null(dots$n_unique)) {
       dots$n_unique <- NULL
@@ -113,7 +113,7 @@ check_run_stage_args <- function(pmwgs,
         stop(msg)
       }
     )
-    run_args <- c(run_args, prop_args)
+    sample_args <- c(sample_args, prop_args)
   }
 
   # Set default values for the mix_ratio parameter if not passed in as arg, and

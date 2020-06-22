@@ -32,6 +32,7 @@ run_stage <- function(pmwgs,
   # Check the passed arguments and return to current environment.
   .args <- as.list(match.call()[-1])
   list2env(do.call(check_run_stage_args, .args), environment())
+  list2env(run_args, environment())
 
   # Display stage to screen
   msgs <- list(
