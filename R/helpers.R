@@ -439,3 +439,31 @@ update_progress_bar <- function(pb, value, extra = 0) {
   pb$up(value, extra)
   invisible(oldval)
 }
+
+#' Error handler for the new_group_pars call
+#'
+#' @param err_cond The samples store (containing random effects) with which we are
+#'   working
+#'
+#' @return A vector with the acceptance rate for each subject
+#' @examples
+#' # No example yet
+#' @keywords internal
+new_group_pars_err <- function(pmwgs, store) {
+  store_tmp <- tempfile(
+    pattern = "pmwg_stage_samples_",
+    tmpdir = ".",
+    fileext = ".RDS"
+  )
+  sampler_tmp <- tempfile(
+    pattern = "pmwg_obj_",
+    tmpdir = ".",
+    fileext = ".RDS"
+  )
+  message("Error while generating new group level parameters")
+  message("Saving current state of pmwgs object: ", sampler_tmp)
+  saveRDS(pmwgs, file = sampler_tmp)
+  message("Saving current state of stage sample storage", store_tmp)
+  saveRDS(store, file = store_tmp)
+  stop("Stopping execution")
+}

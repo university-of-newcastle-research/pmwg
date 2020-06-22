@@ -70,4 +70,4 @@ pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
 #'
 #' @return logical, whether object inherits from pmwgs
 #' @export
-is.pmwgs <- function(x) inherits(x, "pmwgs")
+is.pmwgs <- function(x) inherits(x, "pmwgs")  # nolint

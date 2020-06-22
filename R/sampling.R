@@ -106,22 +106,7 @@ run_stage <- function(pmwgs,
     tryCatch(
       pars <- new_group_pars(store, pmwgs),
       error = function(err_cond) {
-        store_tmp <- tempfile(
-          pattern = "pmwg_stage_samples_",
-          tmpdir = ".",
-          fileext = ".RDS"
-        )
-        sampler_tmp <- tempfile(
-          pattern = "pmwg_obj_",
-          tmpdir = ".",
-          fileext = ".RDS"
-        )
-        message("Problem generating new group level parameters")
-        message("Saving current state of pmwgs object: ", sampler_tmp)
-        saveRDS(pmwgs, file = sampler_tmp)
-        message("Saving current state of stage sample storage", store_tmp)
-        saveRDS(store, file = store_tmp)
-        stop("Stopping execution")
+        new_group_pars_err(pmwgs, store)
       }
     )
 
@@ -311,7 +296,11 @@ gen_particles <- function(num_particles,
   particle_numbers <- numbers_from_ratio(mix_ratio, num_particles)
   # Generate proposal particles
   pop_particles <- particle_draws(particle_numbers[1], mu, sig2)
-  ind_particles <- particle_draws(particle_numbers[2], particle, sig2 * epsilon^2)
+  ind_particles <- particle_draws(
+    particle_numbers[2],
+    particle,
+    sig2 * epsilon^2
+  )
   eff_particles <- particle_draws(particle_numbers[3], prop_mu, prop_sig2)
   particles <- rbind(pop_particles, ind_particles, eff_particles)
   colnames(particles) <- names(mu) # stripped otherwise.
