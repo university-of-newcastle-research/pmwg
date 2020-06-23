@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run a stage of the PMwG sampler — run_stage • psamplers</title>
+<title>Error handler for the gibbs_step call — gibbs_step_err • psamplers</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,8 @@
 
 
 
-<meta property="og:title" content="Run a stage of the PMwG sampler — run_stage" />
-<meta property="og:description" content="Run one of burnin, adaptation of sampling phase from the PMwG
-sampler. Each stage involves slightly different processes, so for the
-full PMwG we need to run this three times." />
+<meta property="og:title" content="Error handler for the gibbs_step call — gibbs_step_err" />
+<meta property="og:description" content="Error handler for the gibbs_step call" />
 
 
 
@@ -110,69 +108,30 @@ full PMwG we need to run this three times." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run a stage of the PMwG sampler</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/sampling.R'><code>R/sampling.R</code></a></small>
-    <div class="hidden name"><code>run_stage.Rd</code></div>
+    <h1>Error handler for the gibbs_step call</h1>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/helpers.R'><code>R/helpers.R</code></a></small>
+    <div class="hidden name"><code>gibbs_step_err.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Run one of burnin, adaptation of sampling phase from the PMwG
-sampler. Each stage involves slightly different processes, so for the
-full PMwG we need to run this three times.</p>
+    <p>Error handler for the gibbs_step call</p>
     </div>
 
-    <pre class="usage"><span class='fu'>run_stage</span>(
-  <span class='no'>pmwgs</span>,
-  <span class='no'>stage</span>,
-  <span class='kw'>iter</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>particles</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>display_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>n_cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>gibbs_step_err</span>(<span class='no'>pmwgs</span>, <span class='no'>store</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>pmwgs</th>
-      <td><p>A Particle Metropolis within Gibbs sampler which has been set
-up and initialised</p></td>
-    </tr>
-    <tr>
-      <th>stage</th>
-      <td><p>The sampling stage to run. Must be one of 'burn', 'adapt' or
-'sample'. If not provided assumes that the stage should be 'burn'</p></td>
-    </tr>
-    <tr>
-      <th>iter</th>
-      <td><p>The number of iterations to run for the sampler. For 'burn' and
-'sample' all iteration will run. However for 'adapt' if all subjects have
-enough unique samples to create the conditional distribution then it will
-finish early.</p></td>
-    </tr>
-    <tr>
-      <th>particles</th>
-      <td><p>The default here is 1000 particles to be generated for each
-iteration, however during the sample phase this should be reduced.</p></td>
-    </tr>
-    <tr>
-      <th>display_progress</th>
-      <td><p>Display a progress bar during sampling.</p></td>
-    </tr>
-    <tr>
-      <th>n_cores</th>
-      <td><p>Set to &gt; 1 to use mclapply</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Further arguments passed to or from other methods.</p></td>
+      <th>err_cond</th>
+      <td><p>The samples store (containing random effects) with which we are
+working</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A pmwgs object with the newly generated samples in place.</p>
+    <p>A vector with the acceptance rate for each subject</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># No example yet
