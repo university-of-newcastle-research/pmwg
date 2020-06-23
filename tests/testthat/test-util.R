@@ -14,15 +14,21 @@ test_that("Wind+Unwind", {
 
 
 test_that("numbers_from_ratio", {
-  # Test error checking
-  expect_error(
-    numbers_from_ratio(c(0.3, 0.3, 0.3)),
-    "The elements of the mix_ratio vector must sum to 1"
-  )
-  expect_error(
-    numbers_from_ratio(c(0.5, 0.5)),
-    "mix_ratio vector must have three elements which sum to 1"
-  )
+  # Test error checking - now done in run_stage level
   # Test 0 for efficient sampling returning 0 particles to select
   expect_equal(numbers_from_ratio(c(0.5, 0.5, 0))[3], 0)
 })
+
+
+test_that("run_stage", {
+  # Test error checking
+  # expect_error(
+  #   numbers_from_ratio(c(0.3, 0.3, 0.3)),
+  #   "The elements of the mix_ratio vector must sum to 1"
+  # )
+  # expect_error(
+  #   numbers_from_ratio(c(0.5, 0.5)),
+  #   "mix_ratio vector must have three elements which sum to 1"
+  # )
+})
+

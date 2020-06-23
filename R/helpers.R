@@ -51,8 +51,7 @@ check_run_stage_args <- function(pmwgs,
                                  n_cores = 1,
                                  ...) {
   # Two lists of arguments used in different places to return
-  run_args <- list()
-  sample_args <- list()
+  sargs <- list()
   # Check pmwgs object is correct type and has been initialised
   pmwgs <- pmwgs
   if (!is.pmwgs(pmwgs)) {
@@ -62,7 +61,7 @@ check_run_stage_args <- function(pmwgs,
 
   # Test stage argument
   tryCatch(
-    run_args$stage <- match.arg(stage, c("burn", "adapt", "sample")),
+    stage <- match.arg(stage, c("burn", "adapt", "sample")),
     error = function(err_cond) {
       stop("Argument `stage` should be one of 'burn', 'adapt' or 'sample'")
     }
@@ -71,14 +70,16 @@ check_run_stage_args <- function(pmwgs,
   dots <- list(...)
   # Extract n_unique argument
   if (stage == "adapt") {
+    adapt_args <- list()
     if (is.null(dots$n_unique)) {
-      run_args$.n_unique <- 20
+      adapt_args$.n_unique <- 20
     } else {
-      run_args$.n_unique <- dots$n_unique
+      adapt_args$.n_unique <- dots$n_unique
       dots$n_unique <- NULL
     }
-    run_args$n_unique <- run_args$.n_unique
+    adapt_args$n_unique <- adapt_args$.n_unique
   } else {
+    adapt_args <- list()
     if (!is.null(dots$n_unique)) {
       dots$n_unique <- NULL
       warning("Argument `n_unique` unused for any stage other than adapt")
@@ -87,7 +88,7 @@ check_run_stage_args <- function(pmwgs,
 
   # Set a default value for epsilon if it does not exist
   if (is.null(dots$epsilon)) {
-    sample_args$epsilon <- ifelse(pmwgs$n_pars > 15,
+    sargs$epsilon <- ifelse(pmwgs$n_pars > 15,
       0.1,
       ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
     )
@@ -113,24 +114,24 @@ check_run_stage_args <- function(pmwgs,
         stop(msg)
       }
     )
-    sample_args <- c(sample_args, prop_args)
+    sargs <- c(sargs, prop_args)
   }
 
   # Set default values for the mix_ratio parameter if not passed in as arg, and
   # perform checks on its values/length
   if (is.null(dots$mix)) {
     if (stage == "sample") {
-      sample_args$mix <- c(0.1, 0.2, 0.7)
+      sargs$mix <- c(0.1, 0.2, 0.7)
     } else {
-      sample_args$mix <- c(0.5, 0.5, 0.0)
+      sargs$mix <- c(0.5, 0.5, 0.0)
     }
   } else {
-    sample_args$mix <- dots$mix
+    sargs$mix <- dots$mix
   }
-  if (!isTRUE(all.equal(sum(sample_args$mix), 1))) {
+  if (!isTRUE(all.equal(sum(sargs$mix), 1))) {
     stop("The elements of the `mix` ratio vector must sum to 1")
   }
-  if (length(sample_args$mix) != 3) {
+  if (length(sargs$mix) != 3) {
     stop("`mix` ratio vector must have three elements which sum to 1")
   }
 
@@ -140,9 +141,9 @@ check_run_stage_args <- function(pmwgs,
       stop("`n_cores` cannot be greater than 1 on Windows systems.")
     }
     apply_fn <- parallel::mclapply
-    sample_args$mc.cores <- n_cores #nolint
+    sargs$mc.cores <- n_cores #nolint
   }
-  list(run_args = run_args, sample_args = sample_args, apply_fn = apply_fn)
+  c(adapt_args, list(stage = stage, sample_args = sargs, apply_fn = apply_fn))
 }
 
 

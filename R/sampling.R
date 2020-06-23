@@ -29,10 +29,15 @@ run_stage <- function(pmwgs,
                       display_progress = TRUE,
                       n_cores = 1,
                       ...) {
-  # Check the passed arguments and return to current environment.
+  # Check the passed arguments and return cleaned - extract relevant args
   .args <- as.list(match.call()[-1])
-  list2env(do.call(check_run_stage_args, .args), environment())
-  list2env(run_args, environment())
+  clean_args <- do.call(check_run_stage_args, .args)
+  stage <- clean_args$stage
+  if (stage == "adapt") {
+    .n_unique <- clean_args$.n_unique
+    n_unique <- clean_args$n_unique
+  }
+  apply_fn <- clean_args$apply_fn
 
   # Display stage to screen
   msgs <- list(
@@ -76,7 +81,7 @@ run_stage <- function(pmwgs,
       likelihood_func = pmwgs$ll_func,
       subjects = pmwgs$subjects
     )
-    fn_args <- c(pmwgs_args, sample_args)
+    fn_args <- c(pmwgs_args, clean_args$sample_args)
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, "ll"))
