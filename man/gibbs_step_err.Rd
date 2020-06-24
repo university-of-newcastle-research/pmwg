@@ -7,8 +7,8 @@
 gibbs_step_err(pmwgs, store)
 }
 \arguments{
-\item{err_cond}{The samples store (containing random effects) with which we are
-working}
+\item{err_cond}{The samples store (containing random effects) with which we
+are working}
 }
 \value{
 A vector with the acceptance rate for each subject

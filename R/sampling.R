@@ -97,28 +97,14 @@ run_stage <- function(pmwgs,
     stage_samples$a_half[, i] <- pars$a_half
 
     if (stage == "adapt") {
-      if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
-        message("Enough unique values detected: ", n_unique)
-        message("Testing proposal distribution creation")
-        attempt <- try({
-          tmp_sampler <- update_sampler(pmwgs, stage_samples)
-          lapply(
-            X = 1:tmp_sampler$n_subjects,
-            FUN = conditional_parms,
-            samples = extract_samples(tmp_sampler)
-          )
-        })
-        if (class(attempt) == "try-error") {
-          warning("An error was encountered creating proposal distribution")
-          warning("Increasing required unique values")
-          n_unique <- n_unique + .n_unique
-        }
-        else {
-          message("Adapted after ", i, "iterations - stopping early")
-          break
-        }
+      res <- test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
+      if (res == "success") {
+        break
+      } else if (res == "increase") {
+        n_unique <- n_unique + .n_unique
       }
     }
+
   }
   if (display_progress) close(pb)
   if (stage == "adapt") {

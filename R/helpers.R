@@ -549,8 +549,8 @@ update_progress_bar <- function(pb, value, extra = 0) {
 
 #' Error handler for the gibbs_step call
 #'
-#' @param err_cond The samples store (containing random effects) with which we are
-#'   working
+#' @param err_cond The samples store (containing random effects) with which we
+#'   are working
 #'
 #' @return A vector with the acceptance rate for each subject
 #' @examples
@@ -573,4 +573,42 @@ gibbs_step_err <- function(pmwgs, store) {
   message("Saving current state of stage sample storage", store_tmp)
   saveRDS(store, file = store_tmp)
   stop("Stopping execution")
+}
+
+
+#' Test that the sampler has succssfully adapted
+#'
+#' @param stage_samples The samples store for the currently running stage.
+#' @param pmwgs The full pmwgs object with all samples from previous runs.
+#' @param n_unique The number of unique samplesto look for in random effects for
+#'   each participant.
+#' @param i The number for the current iteration of the sampler
+#'
+#' @return A string representing successful/unsuccessful adaptation. Can be one
+#'   of c("success", "continue", "increase")
+#'
+#' @keywords internal
+test_sampler_adapted <- function(stage_samples, pmwgs, n_unique, i) {
+  if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
+    message("Enough unique values detected: ", n_unique)
+    message("Testing proposal distribution creation")
+    attempt <- try({
+      tmp_sampler <- update_sampler(pmwgs, stage_samples)
+      lapply(
+        X = 1:tmp_sampler$n_subjects,
+        FUN = conditional_parms,
+        samples = extract_samples(tmp_sampler)
+      )
+    })
+    if (class(attempt) == "try-error") {
+      warning("An error was encountered creating proposal distribution")
+      warning("Increasing required unique values")
+      return("increase")
+    }
+    else {
+      message("Adapted after ", i, "iterations - stopping early")
+      return("success")
+    }
+  }
+  return("continue")
 }
