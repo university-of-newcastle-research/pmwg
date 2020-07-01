@@ -1,7 +1,1 @@
 destination: docs
-repo:
-  url:
-    home: https://github.com/newcastlecl/samplers/
-    source: https://github.com/newcastlecl/samplers/blob/release/
-    issue: https://github.com/newcastlecl/samplers/issues/
-    user: https://github.com/

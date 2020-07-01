@@ -237,7 +237,7 @@ new_sample <- function(s, data, num_particles, parameters,
 #'
 #' @return The new proposals
 #' @examples
-#' psamplers:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
+#' pmwg:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
 #' @keywords internal
 gen_particles <- function(num_particles,
                           mu,

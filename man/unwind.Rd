@@ -16,6 +16,6 @@ The unwound matrix as a vector
 Takes a variance matrix and unwind to a vector via Cholesky then log
 }
 \examples{
-psamplers:::unwind(diag(rep(1, 7)))
+pmwg:::unwind(diag(rep(1, 7)))
 }
 \keyword{internal}

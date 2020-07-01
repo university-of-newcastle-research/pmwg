@@ -6,7 +6,7 @@
 #'
 #' @return The unwound matrix as a vector
 #' @examples
-#' psamplers:::unwind(diag(rep(1, 7)))
+#' pmwg:::unwind(diag(rep(1, 7)))
 #' @keywords internal
 unwind <- function(var_matrix, ...) {
   y <- t(chol(var_matrix))
@@ -23,7 +23,7 @@ unwind <- function(var_matrix, ...) {
 #'
 #' @return The wound vector as a matrix
 #' @examples
-#' psamplers:::wind(diag(rep(1, 7)))
+#' pmwg:::wind(diag(rep(1, 7)))
 #' @keywords internal
 wind <- function(var_vector, ...) {
   n <- sqrt(2 * length(var_vector) + 0.25) - 0.5 ## Dim of matrix.
@@ -161,7 +161,7 @@ check_run_stage_args <- function(pmwgs,
 #'
 #' @return The wound vector as a matrix
 #' @examples
-#' psamplers:::numbers_from_ratio(c(0.1, 0.3, 0.6))
+#' pmwg:::numbers_from_ratio(c(0.1, 0.3, 0.6))
 #' @keywords internal
 numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
   numbers <- stats::rbinom(n = 2, size = num_particles, prob = mix_ratio)
@@ -190,7 +190,7 @@ numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
 #'
 #' @return nothing, stops operation on incorrect combiation of parameters.
 #' @examples
-#' psamplers:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
+#' pmwg:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
 #' @keywords internal
 check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
   if (mix_ratio[3] != 0) {
@@ -272,8 +272,8 @@ create_efficient <- function(x) {
 #' @return If n > 0 returns n draws from the multivariate normal with mean and
 #'   sigma, otherwise returns NULL
 #' @examples
-#' psamplers:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
-#' psamplers:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
+#' pmwg:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
+#' pmwg:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
 #' @keywords internal
 particle_draws <- function(n, mu, covar) {
   if (n <= 0) {

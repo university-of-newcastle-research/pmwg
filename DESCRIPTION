@@ -1,15 +1,15 @@
-Package: psamplers
-Title: Particle Based Samplers for MCMC
+Package: pmwg
+Title: Particle Metropolis within Gibbs Sampler
 Version: 0.1.3
 Author: Gavin Cooper
 Maintainer: Gavin Cooper <gavin@gavincooper.net>
-Description: Contains implementations of particle based sampling
-    methods for model parameter estimation. Primarily an implementation of
-    the Particle Metropolis within Gibbs sampler outlined in the paper
+Description: Contains an R implementation of a Particle Metropolis within Gibbs
+	sampling method for model parameter estimation. Primarily an implementation
+	of the Particle Metropolis within Gibbs sampler outlined in the paper
     available at https://arxiv.org/abs/1806.10089.
 License: GPL-3
-URL: https://github.com/newcastlecl/psamplers
-BugReports: https://github.com/newcastlecl/psamplers/issues
+URL: https://github.com/newcastlecl/pmwg
+BugReports: https://github.com/newcastlecl/pmwg/issues
 Depends: 
     R (>= 3.5.0)
 Imports:

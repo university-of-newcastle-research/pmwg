@@ -23,6 +23,6 @@ Takes a mix ratio vector (3 x float) and a number of particles to generate
 and returns a vector containing the number of each particle type to generate
 }
 \examples{
-psamplers:::numbers_from_ratio(c(0.1, 0.3, 0.6))
+pmwg:::numbers_from_ratio(c(0.1, 0.3, 0.6))
 }
 \keyword{internal}

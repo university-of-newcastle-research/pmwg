@@ -17,6 +17,6 @@ The reverse of the unwind function, takes a variance vector and windows back
 into matrix
 }
 \examples{
-psamplers:::wind(diag(rep(1, 7)))
+pmwg:::wind(diag(rep(1, 7)))
 }
 \keyword{internal}

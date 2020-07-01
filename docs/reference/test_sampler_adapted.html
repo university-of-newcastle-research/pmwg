@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test the arguments to the run_stage function for correctness — check_run_stage_args • pmwg</title>
+<title>Test that the sampler has succssfully adapted — test_sampler_adapted • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Test the arguments to the run_stage function for correctness — check_run_stage_args" />
-<meta property="og:description" content="Takes the arguments to run_stage and checks them for completeness and
-correctness. Uses parent.frame to edit run_stage env directly" />
+<meta property="og:title" content="Test that the sampler has succssfully adapted — test_sampler_adapted" />
+<meta property="og:description" content="Test that the sampler has succssfully adapted" />
 
 
 
@@ -112,65 +111,43 @@ correctness. Uses parent.frame to edit run_stage env directly" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test the arguments to the run_stage function for correctness</h1>
+    <h1>Test that the sampler has succssfully adapted</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/helpers.R'><code>R/helpers.R</code></a></small>
-    <div class="hidden name"><code>check_run_stage_args.Rd</code></div>
+    <div class="hidden name"><code>test_sampler_adapted.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Takes the arguments to run_stage and checks them for completeness and
-correctness. Uses parent.frame to edit run_stage env directly</p>
+    <p>Test that the sampler has succssfully adapted</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check_run_stage_args</span>(
-  <span class='no'>pmwgs</span>,
-  <span class='no'>stage</span>,
-  <span class='kw'>iter</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>particles</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>display_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>n_cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>test_sampler_adapted</span>(<span class='no'>stage_samples</span>, <span class='no'>pmwgs</span>, <span class='no'>n_unique</span>, <span class='no'>i</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>stage_samples</th>
+      <td><p>The samples store for the currently running stage.</p></td>
+    </tr>
+    <tr>
       <th>pmwgs</th>
-      <td><p>A Particle Metropolis within Gibbs sampler which has been set
-up and initialised</p></td>
+      <td><p>The full pmwgs object with all samples from previous runs.</p></td>
     </tr>
     <tr>
-      <th>stage</th>
-      <td><p>The sampling stage to run. Must be one of 'burn', 'adapt' or
-'sample'. If not provided assumes that the stage should be 'burn'</p></td>
+      <th>n_unique</th>
+      <td><p>The number of unique samplesto look for in random effects for
+each participant.</p></td>
     </tr>
     <tr>
-      <th>iter</th>
-      <td><p>The number of iterations to run for the sampler. For 'burn' and
-'sample' all iteration will run. However for 'adapt' if all subjects have
-enough unique samples to create the conditional distribution then it will
-finish early.</p></td>
-    </tr>
-    <tr>
-      <th>particles</th>
-      <td><p>The default here is 1000 particles to be generated for each
-iteration, however during the sample phase this should be reduced.</p></td>
-    </tr>
-    <tr>
-      <th>display_progress</th>
-      <td><p>Display a progress bar during sampling.</p></td>
-    </tr>
-    <tr>
-      <th>n_cores</th>
-      <td><p>Set to &gt; 1 to use mclapply</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Further arguments passed to or from other methods.</p></td>
+      <th>i</th>
+      <td><p>The number for the current iteration of the sampler</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A string representing successful/unsuccessful adaptation. Can be one
+  of c("success", "continue", "increase")</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

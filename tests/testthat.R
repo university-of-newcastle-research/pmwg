@@ -1,4 +1,4 @@
 library(testthat)
-library(psamplers)
+library(pmwg)
 
-test_check("psamplers")
+test_check("pmwg")

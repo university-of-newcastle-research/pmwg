@@ -31,4 +31,3 @@ test_that("run_stage", {
   #   "mix_ratio vector must have three elements which sum to 1"
   # )
 })
-
