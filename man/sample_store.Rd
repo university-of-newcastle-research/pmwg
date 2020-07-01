@@ -14,7 +14,7 @@ sample_store(par_names, n_subjects, iters = 1, stage = "init")
 \item{iters}{The number of iterations to be pre-allocated}
 
 \item{stage}{The stage for which the samples will be created. Should be one
-of `c("init", "burn", "adapt", "sample")`}
+of \code{c("init", "burn", "adapt", "sample")}}
 }
 \value{
 A list containing the conditional mean and variances for this subject

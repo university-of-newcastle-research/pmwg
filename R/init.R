@@ -1,24 +1,30 @@
 #' Initialise values for the random effects
 #'
-#' Takes the starting values for the group mean and variance, and subject level
-#' means. All arrays must match the appropriate shape.
+#' Initialise the random effects for each participant using MCMC.
 #'
-#' For example, with 5 parameters and 10 subjects, the group means must be a
-#' vector of length 5, the group variance must be an array of 5 x 5, and the
-#' subject means must be 5 x 10.
+#' Before sampling can start the Particle Metropolis within Gibbs sampler needs
+#' initial values for the random effects. The \code{init} function generates
+#' these values using a Monte Carlo algorithm. One alternative methods would be
+#' setting the initial values randomly.
+#'
+#' Optionally takes starting values for the model parameters and the variance /
+#' covariance matrix. All arrays must match the appropriate shape.
+#'
+#' For example, with 5 parameters and 10 subjects, the model parameter start
+#' means must be a vector of length 5 and the covariance matrix must be an array
+#' of 5 x 5.
 #'
 #' Alternatively the if argument values for the starting points are left at the
 #' default (NULL) then starting points will be sampled from the prior for group
-#' level values, or for subject level means they will be sampled from the
-#' multivariate normal using the group level means and variance.
+#' level values (model parameters and covariance matrix)
 #'
 #' @param pmwgs The sampler object that provides the parameters.
-#' @param theta_mu An array of starting values for the group means
-#' @param theta_sig An array of starting values for the group covariance matrix
+#' @param start_mu An array of starting values for the group means
+#' @param start_sig An array of starting values for the group covariance matrix
 #' @param display_progress Display a progress bar during sampling
-#' @param ... Further arguments passed to or from other methods.
 #'
-#' @return The sampler object but with initial values set for latent_theta_mu
+#' @return The sampler object but with initial values set for \code{theta_mu},
+#'   \code{theta_sig}, \code{alpha} and other values for the first sample.
 #' @examples
 #' lba_ll <- function(x, data) {
 #'   x <- exp(x)
@@ -45,18 +51,18 @@
 #'   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
 #'   lba_ll
 #' )
-#' sampler <- init(sampler, theta_mu = rnorm(7), theta_sig = diag(rep(0.01, 7)))
+#' sampler <- init(sampler, start_mu = rnorm(7), start_sig = diag(rep(0.01, 7)))
 #' @export
-init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
-                 display_progress = TRUE, ...) {
+init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
+                 display_progress = TRUE) {
   if (is.null(attr(pmwgs, "class"))) {
     print("No object to add start points to")
   }
   # If no starting point for group mean just use zeros
-  if (is.null(theta_mu)) theta_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
+  if (is.null(start_mu)) start_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
   # If no starting point for group var just sample from inverse wishart
-  if (is.null(theta_sig)) {
-    theta_sig <- MCMCpack::riwish(
+  if (is.null(start_sig)) {
+    start_sig <- MCMCpack::riwish(
       pmwgs$n_pars * 3,
       diag(pmwgs$n_pars)
     )
@@ -73,7 +79,7 @@ init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
   likelihoods <- array(NA_real_, dim = c(pmwgs$n_subjects))
   for (s in 1:pmwgs$n_subjects) {
     if (display_progress) utils::setTxtProgressBar(pb, s)
-    particles <- mvtnorm::rmvnorm(n_particles, theta_mu, theta_sig)
+    particles <- mvtnorm::rmvnorm(n_particles, start_mu, start_sig)
     colnames(particles) <- rownames(pmwgs$samples$theta_mu) # preserve par names
     lw <- apply(
       particles,
@@ -88,10 +94,10 @@ init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
   }
   if (display_progress) close(pb)
   pmwgs$init <- TRUE
-  pmwgs$samples$theta_mu[, 1] <- theta_mu
-  pmwgs$samples$theta_sig[, , 1] <- theta_sig
+  pmwgs$samples$theta_mu[, 1] <- start_mu
+  pmwgs$samples$theta_sig[, , 1] <- start_sig
   pmwgs$samples$alpha[, , 1] <- alpha
-  pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(theta_sig)
+  pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(start_sig)
   pmwgs$samples$subj_ll[, 1] <- likelihoods
   pmwgs$samples$a_half[, 1] <- a_half
   pmwgs$samples$idx <- 1
@@ -99,16 +105,17 @@ init <- function(pmwgs, theta_mu = NULL, theta_sig = NULL,
 }
 
 
-#' Gibbs step of the Particle Metropolis within Gibbs sampelr
+#' Gibbs step of the Particle Metropolis within Gibbs sampler
 #'
-#' Samples new theta_mu and theta_sig using Gibbs sampling
+#' Samples new \code{theta_mu} and \code{theta_sig} using Gibbs sampling
 #'
 #' @param samples The list containing the samples from the current run, or from
 #'   the main storage in the sampler
 #' @param sampler The pmwgs object from which to generate the new group
 #'   parameters.
 #'
-#' @return A list of generated variables that can be modified after the fact
+#' @return A new sample for \code{theta_mu}, \code{theta_sig} and some new
+#'   mixing weights in a list for use in the Particle Metropolis step.
 #' @examples
 #' # No example yet
 #' @keywords internal

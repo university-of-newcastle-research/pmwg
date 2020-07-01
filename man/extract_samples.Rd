@@ -12,7 +12,7 @@ extract_samples(sampler, stage = c("adapt", "sample"))
 \item{stage}{The stage, or list of stages from which you want the samples}
 }
 \value{
-A list containing only appopriate samples (non init/burnin samples)
+A list containing only appropriate samples (non init/burnin samples)
 }
 \description{
 From the sampler, extract relevant samples for the creation of

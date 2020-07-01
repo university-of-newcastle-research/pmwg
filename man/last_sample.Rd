@@ -7,7 +7,7 @@
 last_sample(store)
 }
 \arguments{
-\item{store}{The list containing samples from t=which to grab the last.}
+\item{store}{The list containing samples from which to grab the last.}
 }
 \value{
 A list containing the last sample of group mean and variance and

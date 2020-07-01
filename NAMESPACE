@@ -2,6 +2,5 @@
 
 export(init)
 export(is.pmwgs)
-export(new_sample)
 export(pmwgs)
 export(run_stage)

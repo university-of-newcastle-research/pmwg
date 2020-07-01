@@ -10,10 +10,10 @@
 #' URL: \tab https://github.com/newcastlecl/pmwg\cr
 #' }
 #'
-#' Provides an R implementation of the Particle Metrolpolis within Gibbs sampler
+#' Provides an R implementation of the Particle Metropolis within Gibbs sampler
 #' for model parameter and random effect estimation. Based on the paper at
-#' https://arxiv.org/abs/1806.10089 and based on the Matlab code available at
-#' http://osf.io/5b4w3
+#' \url{https://doi.org/10.1016/j.jmp.2020.102368} and on the Matlab code
+#' available at \url{http://osf.io/5b4w3}
 #'
 #' @aliases pmwg-package
 #' @name pmwg

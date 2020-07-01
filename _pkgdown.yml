@@ -1,1 +1,16 @@
 destination: docs
+reference:
+- title: Package
+  desc:  Top level package documentation
+- contents:
+  - pmwg
+- title: Datasets
+  desc: Data included in the package
+- contents:
+  - forstmann
+- title: Sampling
+  desc: Functions for creating a sampler object and running the Particle Metropolis within Gibbs estimation methods.
+- contents:
+  - pmwgs
+  - is.pmwgs
+  - run_stage

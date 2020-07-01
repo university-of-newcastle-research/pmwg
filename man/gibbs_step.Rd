@@ -2,7 +2,7 @@
 % Please edit documentation in R/init.R
 \name{gibbs_step}
 \alias{gibbs_step}
-\title{Gibbs step of the Particle Metropolis within Gibbs sampelr}
+\title{Gibbs step of the Particle Metropolis within Gibbs sampler}
 \usage{
 gibbs_step(samples, sampler)
 }
@@ -14,10 +14,11 @@ the main storage in the sampler}
 parameters.}
 }
 \value{
-A list of generated variables that can be modified after the fact
+A new sample for \code{theta_mu}, \code{theta_sig} and some new
+  mixing weights in a list for use in the Particle Metropolis step.
 }
 \description{
-Samples new theta_mu and theta_sig using Gibbs sampling
+Samples new \code{theta_mu} and \code{theta_sig} using Gibbs sampling
 }
 \examples{
 # No example yet

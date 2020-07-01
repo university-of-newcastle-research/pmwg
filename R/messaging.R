@@ -83,10 +83,14 @@ update_progress_bar <- function(pb, value, extra = 0) {
 
 #' Error handler for the gibbs_step call
 #'
-#' @param err_cond The samples store (containing random effects) with which we
-#'   are working
+#' If an error was detected when generating new values in Gibbs step this
+#' function is called to generate the error message and save the state of the
+#' samples at that moment to help with debugging.
 #'
-#' @return A vector with the acceptance rate for each subject
+#' @param pmwgs The pmwgs object for the current run.
+#' @param store The samples store (containing random effects) with which we
+#'   are working in the current stage.
+#'
 #' @examples
 #' # No example yet
 #' @keywords internal

@@ -2,31 +2,36 @@
 % Please edit documentation in R/particle_sampler.R
 \name{pmwgs}
 \alias{pmwgs}
-\title{Initialise a PMwG sampler and return a pmwgs object}
+\title{Create a PMwG sampler and return the created object}
 \usage{
-pmwgs(data, pars, ll_func, prior = NULL, ...)
+pmwgs(data, pars, ll_func, prior = NULL)
 }
 \arguments{
-\item{data}{The data.frame containing empirical data to be modelled. Assumed
+\item{data}{A data frame containing empirical data to be modelled. Assumed
 to contain at least one column called subject whose elements are unique
-identifiers for each subject.}
+identifiers for each subject. Can be any of \code{data.frame},
+\code{data.table} or \code{tibble}, or any other data frame like object
+that can have subsets created in an identical way.}
 
 \item{pars}{The list of parameter names to be used in the model}
 
 \item{ll_func}{A log likelihood function that given a list of parameter
-values and a data.frame (or other data store) containing subject data will
+values and a data frame (or other data store) containing subject data will
 return the log likelihood of \code{x} given \code{data}.}
 
-\item{prior}{Specification of the prior distribution for mu and sigma2}
-
-\item{...}{Other tuning parameters that you want to specify for the sampler.}
+\item{prior}{Specification of the prior distribution for the model
+parameters. It should be a list with two elements, \code{theta_mu} and
+\code{theta_sig} which fully specify the prior distribution. If left as the
+default (NULL) then the \code{theta_mu} will be all zeroes and
+\code{theta_sig} will be 1 on the diagonal and zero elsewhere.}
 }
 \value{
-A pmwgs object that can be run, plotted and more
+A pmwgs object that is ready to be initialised and sampled.
 }
 \description{
-Takes the initial parameter set and creates default values for a
-range of PMwG necessary variables.
+This function takes a few necessary elements for creating a PMwG sampler.
+Each pmwgs object is required to have a dataset, a list of parameter names,
+a log likelihood function and optionally a prior for the model parameters.
 }
 \examples{
 # Specify the log likelihood function

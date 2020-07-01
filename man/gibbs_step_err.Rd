@@ -7,14 +7,15 @@
 gibbs_step_err(pmwgs, store)
 }
 \arguments{
-\item{err_cond}{The samples store (containing random effects) with which we
-are working}
-}
-\value{
-A vector with the acceptance rate for each subject
+\item{pmwgs}{The pmwgs object for the current run.}
+
+\item{store}{The samples store (containing random effects) with which we
+are working in the current stage.}
 }
 \description{
-Error handler for the gibbs_step call
+If an error was detected when generating new values in Gibbs step this
+function is called to generate the error message and save the state of the
+samples at that moment to help with debugging.
 }
 \examples{
 # No example yet

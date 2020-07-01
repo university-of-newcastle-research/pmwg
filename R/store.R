@@ -1,4 +1,3 @@
-
 #' Extract relevant samples from the list for conditional dist calc
 #'
 #' From the sampler, extract relevant samples for the creation of
@@ -7,7 +6,7 @@
 #' @param sampler The pmwgs object containing the samples
 #' @param stage The stage, or list of stages from which you want the samples
 #'
-#' @return A list containing only appopriate samples (non init/burnin samples)
+#' @return A list containing only appropriate samples (non init/burnin samples)
 #' @examples
 #' # No example yet
 #' @keywords internal
@@ -24,7 +23,8 @@ extract_samples <- function(sampler, stage = c("adapt", "sample")) {
 
 #' Unwinds variance matrix to a vector
 #'
-#' Takes a variance matrix and unwind to a vector via Cholesky then log
+#' Takes a variance matrix and unwind to a vector via Cholesky decomposition
+#' then take the log of the diagonal.
 #'
 #' @param var_matrix A variance matrix
 #'
@@ -65,7 +65,7 @@ wind <- function(var_vector, ...) {
 #' @param n_subjects The number of subjects for the subject mean storage.
 #' @param iters The number of iterations to be pre-allocated
 #' @param stage The stage for which the samples will be created. Should be one
-#'   of `c("init", "burn", "adapt", "sample")`
+#'   of \code{c("init", "burn", "adapt", "sample")}
 #'
 #' @return A list containing the conditional mean and variances for this subject
 #' @examples
@@ -141,7 +141,7 @@ update_sampler <- function(sampler, store) {
 
 #' Create a list with the last samples in the pmwgs object
 #'
-#' @param store The list containing samples from t=which to grab the last.
+#' @param store The list containing samples from which to grab the last.
 #'
 #' @return A list containing the last sample of group mean and variance and
 #'   subject means.

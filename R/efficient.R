@@ -1,28 +1,28 @@
-
 #' Check for efficient proposals if necessary
 #'
-#' Takes a mix ratio vector (3 x float) and the efficient proposal mu and sigma
-#' If efficient proposals are to be used (mix_ratio[3] > 0) then test the
-#' efficient proposal values to see whether they are not null and appropriate.
+#' Takes a mix proportion vector (3 x float) and the efficient proposal mu and
+#' sigma. If efficient proposals are to be used (mix_proportion[3] > 0) then
+#' test the efficient proposal values to see whether they are not null and
+#' appropriate.
 #'
 #' @param efficient_mu The mu value for the efficient proposals
 #' @param efficient_sig2 The sigma value for the efficient proposals
-#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which
-#'   give the ratio of particles to generate from the population level
-#'   parameters, the individual random effects and the conditional parameters
-#'   repectively
+#' @param mix_proportion A vector of floats between 0 and 1 and summing to 1
+#'   which give the proportion of particles to generate from the population
+#'   level parameters, the individual random effects and the conditional
+#'   parameters respectively
 #'
-#' @return nothing, stops operation on incorrect combiation of parameters.
+#' @return nothing, stops operation on incorrect combination of parameters.
 #' @examples
 #' pmwg:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
 #' @keywords internal
-check_efficient <- function(mix_ratio, efficient_mu, efficient_sig2) {
-  if (mix_ratio[3] != 0) {
+check_efficient <- function(mix_proportion, efficient_mu, efficient_sig2) {
+  if (mix_proportion[3] != 0) {
     if (is.null(efficient_mu) || is.null(efficient_sig2)) {
       stop(
         paste0(
           "Mu and sigma from efficient conditional ",
-          "proposals must be provided for mix_ratio[3] > 0"
+          "proposals must be provided for mix_proportion[3] > 0"
         )
       )
     }
@@ -89,7 +89,6 @@ conditional_parms <- function(s, samples) {
     sigma = sigma_tilde,
     dependent.ind = 1:n_par,
     given.ind = (n_par + 1):length(mu_tilde),
-    # GC: Note, not sure what is happening here:v (Was ptm/pts2 now last sample)
     X.given = c(
       samples$theta_mu[, n_iter],
       unwind(samples$theta_sig[, , n_iter])
@@ -103,8 +102,8 @@ conditional_parms <- function(s, samples) {
 #'
 #' @param stage_samples The samples store for the currently running stage.
 #' @param pmwgs The full pmwgs object with all samples from previous runs.
-#' @param n_unique The number of unique samplesto look for in random effects for
-#'   each participant.
+#' @param n_unique The number of unique samples to look for in random effects
+#'   for each participant.
 #' @param i The number for the current iteration of the sampler
 #'
 #' @return A string representing successful/unsuccessful adaptation. Can be one

@@ -11,8 +11,8 @@ test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
 
 \item{pmwgs}{The full pmwgs object with all samples from previous runs.}
 
-\item{n_unique}{The number of unique samplesto look for in random effects for
-each participant.}
+\item{n_unique}{The number of unique samples to look for in random effects
+for each participant.}
 
 \item{i}{The number for the current iteration of the sampler}
 }
