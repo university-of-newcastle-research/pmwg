@@ -261,3 +261,195 @@ gen_particles <- function(num_particles,
   colnames(particles) <- names(mu) # stripped otherwise.
   particles
 }
+
+
+#' Check and normalise the number of each particle type from the mix_ratio
+#'
+#' Takes a mix ratio vector (3 x float) and a number of particles to generate
+#' and returns a vector containing the number of each particle type to generate
+#'
+#' @param mix_ratio A vector of floats betwen 0 and 1 and summing to 1 which
+#'   give the ratio of particles to generate from the population level
+#'   parameters, the individual random effects and the conditional parameters
+#'   repectively
+#' @param num_particles The total number of particles to generate using a
+#'   combination of the three methods.
+#'
+#' @return The wound vector as a matrix
+#' @examples
+#' pmwg:::numbers_from_ratio(c(0.1, 0.3, 0.6))
+#' @keywords internal
+numbers_from_ratio <- function(mix_ratio, num_particles = 1000) {
+  numbers <- stats::rbinom(n = 2, size = num_particles, prob = mix_ratio)
+  if (mix_ratio[3] == 0) {
+    numbers[3] <- 0
+    numbers[2] <- num_particles - numbers[1]
+  } else {
+    numbers[3] <- num_particles - sum(numbers)
+  }
+  numbers
+}
+
+
+#' Generate a cloud of particles from a multivariate normal distribution
+#'
+#' Takes the mean and variance for a multivariate normal distribution, as well
+#' as the number of particles to generate and return random draws from the
+#' multivariate normal if the numbers of particles is > 0, otherwise return
+#' NULL. At least one of mean or sigma must be provided.
+#'
+#' @param n number of observations
+#' @param mu mean vector
+#' @param covar covariance matrix
+#'
+#' @return If n > 0 returns n draws from the multivariate normal with mean and
+#'   sigma, otherwise returns NULL
+#' @examples
+#' pmwg:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
+#' pmwg:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
+#' @keywords internal
+particle_draws <- function(n, mu, covar) {
+  if (n <= 0) {
+    return(NULL)
+  }
+  mvtnorm::rmvnorm(n, mean = mu, sigma = covar)
+}
+
+
+#' Test the arguments to the run_stage function for correctness
+#'
+#' Takes the arguments to run_stage and checks them for completeness and
+#' correctness. Uses parent.frame to edit run_stage env directly
+#'
+#' @inheritParams run_stage
+#'
+#' @keywords internal
+check_run_stage_args <- function(pmwgs,
+                                 stage,
+                                 iter = 1000,
+                                 particles = 1000,
+                                 display_progress = TRUE,
+                                 n_cores = 1,
+                                 ...) {
+  # Two lists of arguments used in different places to return
+  sargs <- list()
+  # Check pmwgs object is correct type and has been initialised
+  if (!is.pmwgs(pmwgs)) {
+    stop("`run_stage` function Requires an object of type <pmwgs>")
+  }
+  if (!pmwgs$init) stop("pmwgs object has not been initialised")
+
+  # Test stage argument
+  tryCatch(
+    stage <- match.arg(stage, c("burn", "adapt", "sample")),
+    error = function(err_cond) {
+      stop("Argument `stage` should be one of 'burn', 'adapt' or 'sample'")
+    }
+  )
+
+  acceptable_extras <- c("n_unique", "epsilon", "mix")
+  dots <- list(...)
+  for (argname in names(dots)) {
+    if (!argname %in% acceptable_extras) {
+      stop(paste("Unexpected argument", argname, "passed to run_stage"))
+    }
+  }
+  # Extract n_unique argument
+  if (stage == "adapt") {
+    adapt_args <- list()
+    if (is.null(dots$n_unique)) {
+      adapt_args$.n_unique <- 20
+    } else {
+      adapt_args$.n_unique <- dots$n_unique
+      dots$n_unique <- NULL
+    }
+    adapt_args$n_unique <- adapt_args$.n_unique
+  } else {
+    adapt_args <- list()
+    if (!is.null(dots$n_unique)) {
+      dots$n_unique <- NULL
+      warning("Argument `n_unique` unused for any stage other than adapt")
+    }
+  }
+
+  # Set a default value for epsilon if it does not exist
+  if (is.null(dots$epsilon)) {
+    sargs$epsilon <- ifelse(pmwgs$n_pars > 15,
+      0.1,
+      ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
+    )
+  }
+
+  # Create efficient proposal distribution if we are in sampling phase
+  if (stage == "sample") {
+    tryCatch(
+      prop_args <- try(create_efficient(pmwgs)),
+      error = function(err_cond) {
+        outfile <- tempfile(
+          pattern = "PMwG_err_",
+          tmpdir = ".",
+          fileext = ".RData"
+        )
+        msg <- paste(
+          "An error was detected whilst creating conditional",
+          "distribution.\n",
+          "Saving current state of environment in file:",
+          outfile
+        )
+        save.image(outfile)
+        stop(msg)
+      }
+    )
+    sargs <- c(sargs, prop_args)
+  }
+
+  # Set default values for the mix_ratio parameter if not passed in as arg, and
+  # perform checks on its values/length
+  if (is.null(dots$mix)) {
+    if (stage == "sample") {
+      sargs$mix <- c(0.1, 0.2, 0.7)
+    } else {
+      sargs$mix <- c(0.5, 0.5, 0.0)
+    }
+  } else {
+    sargs$mix <- dots$mix
+  }
+  if (!isTRUE(all.equal(sum(sargs$mix), 1))) {
+    stop("The elements of the `mix` ratio vector must sum to 1")
+  }
+  if (length(sargs$mix) != 3) {
+    stop("`mix` ratio vector must have three elements which sum to 1")
+  }
+
+  apply_fn <- lapply
+  if (n_cores > 1) {
+    if (Sys.info()[["sysname"]] == "Windows") {
+      stop("`n_cores` cannot be greater than 1 on Windows systems.")
+    }
+    apply_fn <- parallel::mclapply
+    sargs$mc.cores <- n_cores #nolint
+  }
+  c(adapt_args, list(stage = stage, sample_args = sargs, apply_fn = apply_fn))
+}
+
+
+#' Return the acceptance rate for all subjects
+#'
+#' @param store The samples store (containing random effects) with which we are
+#'   working
+#'
+#' @return A vector with the acceptance rate for each subject
+#' @examples
+#' # No example yet
+#' @keywords internal
+accept_rate <- function(store) {
+  if (is.null(store$idx) || store$idx < 3) {
+    return(array(0, dim(store$alpha)[2]))
+  }
+  vals <- store$alpha[1, , 1:store$idx]
+  apply(
+    apply(vals, 1, diff) != 0, # If diff != 0
+    2,
+    mean
+  )
+}
