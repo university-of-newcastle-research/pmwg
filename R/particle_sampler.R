@@ -19,6 +19,9 @@
 pmwgs <- function(data, pars, ll_func, prior = NULL, ...) {
   # Descriptives
   n_pars <- length(pars)
+  if (!"subject" %in% colnames(data)) {
+    stop("Data must have a column named 'subject'")
+  }
   subjects <- unique(data$subject)
   n_subjects <- length(subjects)
   # Tuning settings for the Gibbs steps
