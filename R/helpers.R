@@ -53,7 +53,6 @@ check_run_stage_args <- function(pmwgs,
   # Two lists of arguments used in different places to return
   sargs <- list()
   # Check pmwgs object is correct type and has been initialised
-  pmwgs <- pmwgs
   if (!is.pmwgs(pmwgs)) {
     stop("`run_stage` function Requires an object of type <pmwgs>")
   }
@@ -67,7 +66,13 @@ check_run_stage_args <- function(pmwgs,
     }
   )
 
+  acceptable_extras <- c("n_unique", "epsilon", "mix")
   dots <- list(...)
+  for (argname in names(dots)) {
+    if (!argname %in% acceptable_extras) {
+      stop(paste("Unexpected argument", argname, "passed to run_stage"))
+    }
+  }
   # Extract n_unique argument
   if (stage == "adapt") {
     adapt_args <- list()
