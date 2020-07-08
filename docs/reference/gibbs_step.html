@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Gibbs step of the Particle Metropolis within Gibbs sampelr — gibbs_step • pmwg</title>
+<title>Gibbs step of the Particle Metropolis within Gibbs sampler — gibbs_step • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Gibbs step of the Particle Metropolis within Gibbs sampelr — gibbs_step" />
+<meta property="og:title" content="Gibbs step of the Particle Metropolis within Gibbs sampler — gibbs_step" />
 <meta property="og:description" content="Samples new theta_mu and theta_sig using Gibbs sampling" />
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -111,13 +111,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Gibbs step of the Particle Metropolis within Gibbs sampelr</h1>
+    <h1>Gibbs step of the Particle Metropolis within Gibbs sampler</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/init.R'><code>R/init.R</code></a></small>
     <div class="hidden name"><code>gibbs_step.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Samples new theta_mu and theta_sig using Gibbs sampling</p>
+    <p>Samples new <code>theta_mu</code> and <code>theta_sig</code> using Gibbs sampling</p>
     </div>
 
     <pre class="usage"><span class='fu'>gibbs_step</span>(<span class='no'>samples</span>, <span class='no'>sampler</span>)</pre>
@@ -139,7 +139,8 @@ parameters.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of generated variables that can be modified after the fact</p>
+    <p>A new sample for <code>theta_mu</code>, <code>theta_sig</code> and some new
+  mixing weights in a list for use in the Particle Metropolis step.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># No example yet

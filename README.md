@@ -11,6 +11,8 @@ To install the currently recommended method is via devtools.
 
 `devtools::install_github('newcastlecl/pmwg', ref="release")`
 
+Instructions on installing to an earlier version of R are included below.
+
 ## Using the package
 
 ### Quickstart Guide
@@ -42,19 +44,24 @@ sampler <- run_stage(sampler, stage="adapt")
 sampler <- run_stage(sampler, stage="sample")
 ```
 
-The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others. For a full list see: https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler
+The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others. For a full list see [the description in the PMwG Tutorial Book](https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
 
-
-The documentation is available at https://newcastlecl.github.io/samplerDoc/.
-
+The full documentation is available at https://newcastlecl.github.io/samplerDoc/.
 
 ## Installing to an older version of R (< 3.6)
 
-Terminal
-* wget https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip
-* unzip reduce_requirements.zip
-R
-* devtools::install_version('mvtnorm', version='1.0-0')
-* (Maybe need install.packages("mcmc")
-* devtools::install_version('MCMCpack', version='1.4-0')
-* install.packages(c("pmwg-reduce_requirements/"), repos=NULL)
+**Terminal**
+
+```bash
+wget https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip
+unzip reduce_requirements.zip
+```
+
+**R**
+
+```R
+devtools::install_version('mvtnorm', version='1.0-0')
+# (Maybe need install.packages("mcmc")
+devtools::install_version('MCMCpack', version='1.4-0')
+install.packages(c("pmwg-reduce_requirements/"), repos=NULL)
+```

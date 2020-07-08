@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate a new particle — new_sample • pmwg</title>
+<title>Generate particles and select one to be the new sample — new_sample • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,10 @@
 
 
 
-<meta property="og:title" content="Generate a new particle — new_sample" />
-<meta property="og:description" content="Generate samples from either the initial proposal or from the last
-iteration of the particles (according to a mixing value) and return
-a weighted random sample from the new proposals
-This uses the simplest, and slowest, proposals: a mixture of the
-the population distribution and Gaussian around current random effect." />
+<meta property="og:title" content="Generate particles and select one to be the new sample — new_sample" />
+<meta property="og:description" content="Generate a new sample for a particular subject given their data and the
+new model parameter estimates. This should not be called directly, rather it
+is used internally to run_stage." />
 
 
 
@@ -76,7 +74,7 @@ the population distribution and Gaussian around current random effect." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -115,17 +113,15 @@ the population distribution and Gaussian around current random effect." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate a new particle</h1>
+    <h1>Generate particles and select one to be the new sample</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/sampling.R'><code>R/sampling.R</code></a></small>
     <div class="hidden name"><code>new_sample.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate samples from either the initial proposal or from the last
-iteration of the particles (according to a mixing value) and return
-a weighted random sample from the new proposals
-This uses the simplest, and slowest, proposals: a mixture of the
-the population distribution and Gaussian around current random effect.</p>
+    <p>Generate a new sample for a particular subject given their data and the
+new model parameter estimates. This should not be called directly, rather it
+is used internally to run_stage.</p>
     </div>
 
     <pre class="usage"><span class='fu'>new_sample</span>(
@@ -135,7 +131,7 @@ the population distribution and Gaussian around current random effect.</p>
   <span class='no'>parameters</span>,
   <span class='kw'>efficient_mu</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>efficient_sig2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mix_ratio</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0</span>),
+  <span class='kw'>mix_proportion</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0</span>),
   <span class='kw'>likelihood_func</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>subjects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
@@ -146,16 +142,17 @@ the population distribution and Gaussian around current random effect.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>s</th>
-      <td><p>A number - the index of the subject, also selects particles. For
-`s == 1` The first subject ID from the `data` subject column will be
-selected. For `s == 2` the second unique value for subject id will be used.</p></td>
+      <td><p>A number - the index of the subject. For <code>s == 1</code> The first
+subject ID from the <code>data</code> subject column will be selected. For
+<code>s == 2</code> the second unique value for subject id will be used.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>A data.frame containing variables for
-response time (<code>rt</code>), trial condition (<code>condition</code>),
-accuracy (<code>correct</code>) and subject (<code>subject</code>) which
-contains the data against which the particles are assessed</p></td>
+      <td><p>A data.frame (or similar object) which contains the data against
+which the particles are assessed. The only strict requirement is that
+it contains a subject column named as such to allow for the splitting
+of the data by unique subject id. The provided log likelihood function
+is the only other contact with the data.</p></td>
     </tr>
     <tr>
       <th>num_particles</th>
@@ -164,11 +161,12 @@ combination of the three methods.</p></td>
     </tr>
     <tr>
       <th>parameters</th>
-      <td><p>A list containing:
-* the vector of means for the multivariate normal (tmu),
-* A covariate matrix for the multivariate normal (tsig)
-* An array of individual subject means (re proposals for latent
-  variables) (alpha)</p></td>
+      <td><p>A list containing:</p><dl'>
+  <dt><code>tmu</code></dt><dd><p>The vector of means for the multivariate normal</p></dd>
+  <dt><code>tsig</code></dt><dd><p>A covariate matrix for the multivariate normal</p></dd>
+  <dt><code>alpha</code></dt><dd><p>An array of individual subject random effects</p></dd>
+
+</dl></td>
     </tr>
     <tr>
       <th>efficient_mu</th>
@@ -179,21 +177,22 @@ combination of the three methods.</p></td>
       <td><p>The sigma value for the efficient proposals</p></td>
     </tr>
     <tr>
-      <th>mix_ratio</th>
-      <td><p>A vector of floats betwen 0 and 1 and summing to 1 which
-give the ratio of particles to generate from the population level
-parameters, the individual random effects and the conditional parameters
-repectively</p></td>
+      <th>mix_proportion</th>
+      <td><p>A vector of floats between 0 and 1 and summing to 1
+which give the proportion of particles to generate from the population
+level parameters, the individual random effects and the conditional
+parameters respectively</p></td>
     </tr>
     <tr>
       <th>likelihood_func</th>
       <td><p>A likelihood function for calculating log likelihood
-of samples</p></td>
+of samples. Usually provided internally in <code>run_stage</code> from the pmwgs
+object.</p></td>
     </tr>
     <tr>
       <th>epsilon</th>
-      <td><p>A scaling factor to reduce the variance on individual level
-parameter samples.</p></td>
+      <td><p>A scaling factor to reduce the variance on the distribution
+based on subject random effects when generating particles.</p></td>
     </tr>
     <tr>
       <th>subjects</th>
@@ -205,6 +204,20 @@ the data.frame</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A single sample from the new proposals</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The function that controls the generation of new samples for the Particle
+Metropolis within Gibbs sampler. It generates samples from either the initial
+proposal or from the last iteration of the sampler. This function should not
+usually need to be called, as the <code>run_stage</code> function uses this
+internally.</p>
+<p>The way it selects a new sample is by generating proposal particles from up
+to three different distributions (according to a mixing proportion).</p>
+<p>The first distribution is based on the current model parameter sample values.
+The second distribution is based on the last random effects for the subject.
+The third distribution is only used in the final sampling phase and is based
+on the conditional distribution built from accepted particles in the adapt
+phase of the sampler.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># No example yet

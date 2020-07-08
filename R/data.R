@@ -4,12 +4,12 @@
 #' Motion experiment.
 #'
 #' Details on the dataset can be found in the following paper:
-#' 
+#'
 #' \strong{Striatum and pre-SMA facilitate decision-making under time pressure}
-#' 
+#'
 #' Birte U. Forstmann, Gilles Dutilh, Scott Brown, Jane Neumann,
 #' D. Yves von Cramon, K. Richard Ridderinkhof, Eric-Jan Wagenmakers.
-#' 
+#'
 #' \emph{Proceedings of the National Academy of Sciences Nov 2008, 105 (45)
 #' 17538-17542; DOI: \url{10.1073/pnas.0805903105}}
 #'
