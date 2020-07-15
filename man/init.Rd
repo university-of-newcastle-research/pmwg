@@ -4,7 +4,13 @@
 \alias{init}
 \title{Initialise values for the random effects}
 \usage{
-init(pmwgs, start_mu = NULL, start_sig = NULL, display_progress = TRUE)
+init(
+  pmwgs,
+  start_mu = NULL,
+  start_sig = NULL,
+  display_progress = TRUE,
+  particles = 1000
+)
 }
 \arguments{
 \item{pmwgs}{The sampler object that provides the parameters.}
@@ -14,6 +20,8 @@ init(pmwgs, start_mu = NULL, start_sig = NULL, display_progress = TRUE)
 \item{start_sig}{An array of starting values for the group covariance matrix}
 
 \item{display_progress}{Display a progress bar during sampling}
+
+\item{particles}{The number of particles to generate in initialisation}
 }
 \value{
 The sampler object but with initial values set for \code{theta_mu},
