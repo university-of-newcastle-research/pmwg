@@ -94,7 +94,7 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
     subj_ll = array(
       NA_real_,
       dim = c(n_subjects, iters),
-      dimnames = list(subjects_ids, NULL)
+      dimnames = list(subject_ids, NULL)
     ),
     a_half = array(
       NA_real_,
@@ -146,7 +146,7 @@ update_sampler <- function(sampler, store) {
   sampler$samples$subj_ll <- array(
     c(old_sll, store$subj_ll[, 1:li]),
     dim = dim(old_sll) + c(0, li),
-    dimnames = list(subjects_ids, NULL)
+    dimnames = list(subject_ids, NULL)
   )
   sampler$samples$a_half <- array(
     c(old_a_half, store$a_half[, 1:li]),
