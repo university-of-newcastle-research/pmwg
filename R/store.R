@@ -122,20 +122,37 @@ update_sampler <- function(sampler, store) {
   old_sll <- sampler$samples$subj_ll
   old_a_half <- sampler$samples$a_half
   li <- store$idx
+  par_names <- sampler$par_names
+  subject_ids <- sampler$subjects
 
-  sampler$samples$theta_mu <- array(c(old_tmu, store$theta_mu[, 1:li]),
-                                      dim = dim(old_tmu) + c(0, li))
-  sampler$samples$theta_sig <- array(c(old_tsig, store$theta_sig[, , 1:li]),
-                                     dim = dim(old_tsig) + c(0, 0, li))
-  sampler$samples$alpha <- array(c(old_alpha, store$alpha[, , 1:li]),
-                                        dim = dim(old_alpha) + c(0, 0, li))
+  sampler$samples$theta_mu <- array(
+    c(old_tmu, store$theta_mu[, 1:li]),
+    dim = dim(old_tmu) + c(0, li),
+    dimnames = list(par_names, NULL)
+  )
+  sampler$samples$theta_sig <- array(
+    c(old_tsig, store$theta_sig[, , 1:li]),
+    dim = dim(old_tsig) + c(0, 0, li),
+    dimnames = list(par_names, par_names, NULL)
+  )
+  sampler$samples$alpha <- array(
+    c(old_alpha, store$alpha[, , 1:li]),
+    dim = dim(old_alpha) + c(0, 0, li),
+    dimnames = list(par_names, subject_ids, NULL)
+  )
   sampler$samples$idx <- ncol(sampler$samples$theta_mu)
   sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
   sampler$samples$stage <- c(old_stage, store$stage[1:li])
-  sampler$samples$subj_ll <- array(c(old_sll, store$subj_ll[, 1:li]),
-                                   dim = dim(old_sll) + c(0, li))
-  sampler$samples$a_half <- array(c(old_a_half, store$a_half[, 1:li]),
-                                      dim = dim(old_a_half) + c(0, li))
+  sampler$samples$subj_ll <- array(
+    c(old_sll, store$subj_ll[, 1:li]),
+    dim = dim(old_sll) + c(0, li),
+    dimnames = list(subjects_ids, NULL)
+  )
+  sampler$samples$a_half <- array(
+    c(old_a_half, store$a_half[, 1:li]),
+    dim = dim(old_a_half) + c(0, li),
+    dimnames = list(par_names, NULL)
+  )
   sampler
 }
 
