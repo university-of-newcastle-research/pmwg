@@ -62,7 +62,7 @@ wind <- function(var_vector, ...) {
 #' Create a new list for storage samples in the pmwgs object
 #'
 #' @param par_names The names of each parameter as a character vector
-#' @param n_subjects The number of subjects for the subject mean storage.
+#' @param subjects_ids The unique ID of each subjects as a character vector
 #' @param iters The number of iterations to be pre-allocated
 #' @param stage The stage for which the samples will be created. Should be one
 #'   of \code{c("init", "burn", "adapt", "sample")}
@@ -71,13 +71,14 @@ wind <- function(var_vector, ...) {
 #' @examples
 #' # No example yet
 #' @keywords internal
-sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
+sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
   n_pars <- length(par_names)
+  n_subjects <- length(subject_ids)
   list(
     alpha = array(
       NA_real_,
       dim = c(n_pars, n_subjects, iters),
-      dimnames = list(par_names, NULL, NULL)
+      dimnames = list(par_names, subject_ids, NULL)
     ),
     theta_mu = array(
       NA_real_,
@@ -93,7 +94,7 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
     subj_ll = array(
       NA_real_,
       dim = c(n_subjects, iters),
-      dimnames = list(NULL, NULL)
+      dimnames = list(subjects_ids, NULL)
     ),
     a_half = array(
       NA_real_,
