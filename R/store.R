@@ -175,3 +175,39 @@ last_sample <- function(store) {
     a_half = store$a_half[, store$idx]
   )
 }
+
+
+#' Return a CODA mcmc object with the required samples
+#'
+#' Given a sampler object and a specification of the samples required, return
+#' either an individual coda mcmc object, or a list of mcmc objects.
+#'
+#' @param sampler The pmwgs object containing samples to extract.
+#' @param selection The selection of samples to return
+#'
+#' @return An mcmc object or list containing the selected samples.
+#' @examples
+#' # No example yet
+#' @export
+as_mcmc <- function(sampler, selection = "theta_mu") {
+  if (selection == "theta_mu") {
+    return(coda::mcmc(t(sampler$samples$theta_mu)))
+  } else if (selection == "theta_sig") {
+    tsig <- sampler$samples$theta_sig
+    return(stats::setNames(lapply(
+      seq(dim(tsig)[1]),
+      function(x) {
+        coda::mcmc(t(tsig[x, , ]))
+      }
+    ), sampler$par_names))
+  } else if (selection == "alpha") {
+    alpha <- sampler$samples$alpha
+    return(stats::setNames(lapply(
+      seq(dim(alpha)[2]),
+      function(x) {
+        coda::mcmc(t(alpha[, x, ]))
+      }
+    ), sampler$subjects))
+  }
+  stop("Argument `selection` should be one of theta_mu, theta_sig, alpha")
+}
