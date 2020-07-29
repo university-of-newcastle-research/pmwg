@@ -433,6 +433,8 @@ check_run_stage_args <- function(pmwgs,
       0.1,
       ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
     )
+    message(paste("Epsilon has been set automatically to:", sargs$epsilon))
+    message("This is based on the number of parameters")
   }
 
   # Create efficient proposal distribution if we are in sampling phase
