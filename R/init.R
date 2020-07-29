@@ -127,7 +127,7 @@ gibbs_step <- function(samples, sampler) {
 
   # Here mu is group mean, so we are getting mean and variance
   var_mu <- MASS::ginv(
-    sampler$n_subjects * last$tsinv + sampler$prior$theta_sig_inv
+    sampler$n_subjects * last$tsinv + sampler$prior$theta_mu_invar
   )
   mean_mu <- as.vector(var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum)))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
