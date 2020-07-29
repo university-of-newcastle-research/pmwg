@@ -74,7 +74,7 @@ a log likelihood function and optionally a prior for the model parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
       </span>
     </div>
 
@@ -150,10 +150,10 @@ return the log likelihood of <code>x</code> given <code>data</code>.</p></td>
     <tr>
       <th>prior</th>
       <td><p>Specification of the prior distribution for the model
-parameters. It should be a list with two elements, <code>theta_mu</code> and
-<code>theta_sig</code> which fully specify the prior distribution. If left as the
-default (NULL) then the <code>theta_mu</code> will be all zeroes and
-<code>theta_sig</code> will be 1 on the diagonal and zero elsewhere.</p></td>
+parameters. It should be a list with two elements, <code>theta_mu_mean</code> and
+<code>theta_mu_var</code> which fully specify the prior distribution. If left as
+the default (NULL) then the <code>theta_mu_mean</code> will be all zeroes and
+<code>theta_mu_var</code> will be 1 on the diagonal and zero elsewhere.</p></td>
     </tr>
     </table>
 
@@ -191,8 +191,8 @@ default (NULL) then the <code>theta_mu</code> will be all zeroes and
 <span class='co'># Specify parameter names and priors</span>
 <span class='no'>pars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>)
 <span class='no'>priors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>theta_mu</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)),
-  <span class='kw'>theta_sig</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)))
+  <span class='kw'>theta_mu_mean</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)),
+  <span class='kw'>theta_mu_var</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)))
 )
 
 <span class='co'># Create the Particle Metropolis within Gibbs sampler object</span>

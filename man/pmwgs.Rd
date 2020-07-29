@@ -20,10 +20,10 @@ values and a data frame (or other data store) containing subject data will
 return the log likelihood of \code{x} given \code{data}.}
 
 \item{prior}{Specification of the prior distribution for the model
-parameters. It should be a list with two elements, \code{theta_mu} and
-\code{theta_sig} which fully specify the prior distribution. If left as the
-default (NULL) then the \code{theta_mu} will be all zeroes and
-\code{theta_sig} will be 1 on the diagonal and zero elsewhere.}
+parameters. It should be a list with two elements, \code{theta_mu_mean} and
+\code{theta_mu_var} which fully specify the prior distribution. If left as
+the default (NULL) then the \code{theta_mu_mean} will be all zeroes and
+\code{theta_mu_var} will be 1 on the diagonal and zero elsewhere.}
 }
 \value{
 A pmwgs object that is ready to be initialised and sampled.
@@ -63,8 +63,8 @@ lba_loglike <- function(x, data) {
 # Specify parameter names and priors
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 priors <- list(
-  theta_mu = rep(0, length(pars)),
-  theta_sig = diag(rep(1, length(pars)))
+  theta_mu_mean = rep(0, length(pars)),
+  theta_mu_var = diag(rep(1, length(pars)))
 )
 
 # Create the Particle Metropolis within Gibbs sampler object

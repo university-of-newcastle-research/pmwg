@@ -14,10 +14,10 @@
 #'   values and a data frame (or other data store) containing subject data will
 #'   return the log likelihood of \code{x} given \code{data}.
 #' @param prior Specification of the prior distribution for the model
-#'   parameters. It should be a list with two elements, \code{theta_mu} and
-#'   \code{theta_sig} which fully specify the prior distribution. If left as the
-#'   default (NULL) then the \code{theta_mu} will be all zeroes and
-#'   \code{theta_sig} will be 1 on the diagonal and zero elsewhere.
+#'   parameters. It should be a list with two elements, \code{theta_mu_mean} and
+#'   \code{theta_mu_var} which fully specify the prior distribution. If left as
+#'   the default (NULL) then the \code{theta_mu_mean} will be all zeroes and
+#'   \code{theta_mu_var} will be 1 on the diagonal and zero elsewhere.
 #'
 #' @return A pmwgs object that is ready to be initialised and sampled.
 #' @example examples/pmwgs.R
@@ -42,8 +42,8 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
   samples <- sample_store(pars, subjects)
   # Checking and default priors
   prior_default <- list(
-    theta_mu = rep(0, n_pars),
-    theta_sig = diag(rep(1, n_pars))
+    theta_mu_mean = rep(0, n_pars),
+    theta_mu_var = diag(rep(1, n_pars))
   )
   if (is.null(prior)) {
     prior <- prior_default
@@ -52,19 +52,22 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
     if (!identical(names(prior), names(prior_default))) {
       stop(paste(
         "pmwgs prior should be a list with two elements,",
-        "`theta_mu` describing the mean of the prior",
-        "and `theta_sig` describing the covariance matrix."))
+        "`theta_mu_mean`, a vector that is the prior for the mean of the",
+        "group-level mean parameters and `theta_mu_var`, a covariance matrix",
+        "that is the prior for the variance of the group-level mean",
+        "parameters"))
     }
     if (!identical(lapply(prior, dim), lapply(prior_default, dim)) |
         !identical(lapply(prior, length), lapply(prior_default, length))) {
       stop(paste(
         "pmwgs prior list elements specified with incorrect shape.",
-        "`theta_mu` should have length equal to the pars argument.",
-        "`theta_sig` should have dim equal to N x N where N is length of pars"))
+        "`theta_mu_mean` should have length equal to the pars argument.",
+        "`theta_mu_var` should have dim equal to N x N where N is length of",
+        "pars"))
     }
   }
   # Things I save rather than re-compute inside the loops.
-  prior$theta_sig_inv <- MASS::ginv(prior$theta_sig)
+  prior$theta_mu_invar <- MASS::ginv(prior$theta_mu_var)
 
   sampler <- list(
     data = data,
