@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
       </span>
     </div>
 
@@ -120,7 +120,13 @@
     <p>Initialise the random effects for each participant using MCMC.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>init</span>(<span class='no'>pmwgs</span>, <span class='kw'>start_mu</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>start_sig</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>display_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>init</span>(
+  <span class='no'>pmwgs</span>,
+  <span class='kw'>start_mu</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>start_sig</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>display_progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>particles</span> <span class='kw'>=</span> <span class='fl'>1000</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,6 +146,10 @@
     <tr>
       <th>display_progress</th>
       <td><p>Display a progress bar during sampling</p></td>
+    </tr>
+    <tr>
+      <th>particles</th>
+      <td><p>The number of particles to generate in initialisation</p></td>
     </tr>
     </table>
 

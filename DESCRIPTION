@@ -1,6 +1,6 @@
 Package: pmwg
 Title: Particle Metropolis within Gibbs Sampler
-Version: 0.1.5
+Version: 0.1.6
 Author: Gavin Cooper
 Maintainer: Gavin Cooper <gavin@gavincooper.net>
 Description: Provides an R implementation of the Particle Metropolis within

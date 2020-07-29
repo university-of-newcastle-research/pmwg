@@ -62,7 +62,7 @@ wind <- function(var_vector, ...) {
 #' Create a new list for storage samples in the pmwgs object
 #'
 #' @param par_names The names of each parameter as a character vector
-#' @param n_subjects The number of subjects for the subject mean storage.
+#' @param subjects_ids The unique ID of each subjects as a character vector
 #' @param iters The number of iterations to be pre-allocated
 #' @param stage The stage for which the samples will be created. Should be one
 #'   of \code{c("init", "burn", "adapt", "sample")}
@@ -71,13 +71,14 @@ wind <- function(var_vector, ...) {
 #' @examples
 #' # No example yet
 #' @keywords internal
-sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
+sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
   n_pars <- length(par_names)
+  n_subjects <- length(subject_ids)
   list(
     alpha = array(
       NA_real_,
       dim = c(n_pars, n_subjects, iters),
-      dimnames = list(par_names, NULL, NULL)
+      dimnames = list(par_names, subject_ids, NULL)
     ),
     theta_mu = array(
       NA_real_,
@@ -93,7 +94,7 @@ sample_store <- function(par_names, n_subjects, iters = 1, stage = "init") {
     subj_ll = array(
       NA_real_,
       dim = c(n_subjects, iters),
-      dimnames = list(NULL, NULL)
+      dimnames = list(subject_ids, NULL)
     ),
     a_half = array(
       NA_real_,
@@ -121,20 +122,37 @@ update_sampler <- function(sampler, store) {
   old_sll <- sampler$samples$subj_ll
   old_a_half <- sampler$samples$a_half
   li <- store$idx
+  par_names <- sampler$par_names
+  subject_ids <- sampler$subjects
 
-  sampler$samples$theta_mu <- array(c(old_tmu, store$theta_mu[, 1:li]),
-                                      dim = dim(old_tmu) + c(0, li))
-  sampler$samples$theta_sig <- array(c(old_tsig, store$theta_sig[, , 1:li]),
-                                     dim = dim(old_tsig) + c(0, 0, li))
-  sampler$samples$alpha <- array(c(old_alpha, store$alpha[, , 1:li]),
-                                        dim = dim(old_alpha) + c(0, 0, li))
+  sampler$samples$theta_mu <- array(
+    c(old_tmu, store$theta_mu[, 1:li]),
+    dim = dim(old_tmu) + c(0, li),
+    dimnames = list(par_names, NULL)
+  )
+  sampler$samples$theta_sig <- array(
+    c(old_tsig, store$theta_sig[, , 1:li]),
+    dim = dim(old_tsig) + c(0, 0, li),
+    dimnames = list(par_names, par_names, NULL)
+  )
+  sampler$samples$alpha <- array(
+    c(old_alpha, store$alpha[, , 1:li]),
+    dim = dim(old_alpha) + c(0, 0, li),
+    dimnames = list(par_names, subject_ids, NULL)
+  )
   sampler$samples$idx <- ncol(sampler$samples$theta_mu)
   sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
   sampler$samples$stage <- c(old_stage, store$stage[1:li])
-  sampler$samples$subj_ll <- array(c(old_sll, store$subj_ll[, 1:li]),
-                                   dim = dim(old_sll) + c(0, li))
-  sampler$samples$a_half <- array(c(old_a_half, store$a_half[, 1:li]),
-                                      dim = dim(old_a_half) + c(0, li))
+  sampler$samples$subj_ll <- array(
+    c(old_sll, store$subj_ll[, 1:li]),
+    dim = dim(old_sll) + c(0, li),
+    dimnames = list(subject_ids, NULL)
+  )
+  sampler$samples$a_half <- array(
+    c(old_a_half, store$a_half[, 1:li]),
+    dim = dim(old_a_half) + c(0, li),
+    dimnames = list(par_names, NULL)
+  )
   sampler
 }
 
@@ -156,4 +174,40 @@ last_sample <- function(store) {
     tsinv = store$last_theta_sig_inv,
     a_half = store$a_half[, store$idx]
   )
+}
+
+
+#' Return a CODA mcmc object with the required samples
+#'
+#' Given a sampler object and a specification of the samples required, return
+#' either an individual coda mcmc object, or a list of mcmc objects.
+#'
+#' @param sampler The pmwgs object containing samples to extract.
+#' @param selection The selection of samples to return
+#'
+#' @return An mcmc object or list containing the selected samples.
+#' @examples
+#' # No example yet
+#' @export
+as_mcmc <- function(sampler, selection = "theta_mu") {
+  if (selection == "theta_mu") {
+    return(coda::mcmc(t(sampler$samples$theta_mu)))
+  } else if (selection == "theta_sig") {
+    tsig <- sampler$samples$theta_sig
+    return(stats::setNames(lapply(
+      seq(dim(tsig)[1]),
+      function(x) {
+        coda::mcmc(t(tsig[x, , ]))
+      }
+    ), sampler$par_names))
+  } else if (selection == "alpha") {
+    alpha <- sampler$samples$alpha
+    return(stats::setNames(lapply(
+      seq(dim(alpha)[2]),
+      function(x) {
+        coda::mcmc(t(alpha[, x, ]))
+      }
+    ), sampler$subjects))
+  }
+  stop("Argument `selection` should be one of theta_mu, theta_sig, alpha")
 }

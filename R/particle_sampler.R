@@ -39,7 +39,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
   # Inverse Gamma shape parameter, Algorithm 3, 2(c)
   v_shape <- (v_half + n_pars) / 2
   # Storage for the samples.
-  samples <- sample_store(pars, n_subjects)
+  samples <- sample_store(pars, subjects)
   # Checking and default priors
   prior_default <- list(
     theta_mu = rep(0, n_pars),

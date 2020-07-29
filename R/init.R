@@ -22,6 +22,7 @@
 #' @param start_mu An array of starting values for the group means
 #' @param start_sig An array of starting values for the group covariance matrix
 #' @param display_progress Display a progress bar during sampling
+#' @param particles The number of particles to generate in initialisation
 #'
 #' @return The sampler object but with initial values set for \code{theta_mu},
 #'   \code{theta_sig}, \code{alpha} and other values for the first sample.
@@ -54,7 +55,7 @@
 #' sampler <- init(sampler, start_mu = rnorm(7), start_sig = diag(rep(0.01, 7)))
 #' @export
 init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
-                 display_progress = TRUE) {
+                 display_progress = TRUE, particles = 1000) {
   if (is.null(attr(pmwgs, "class"))) {
     print("No object to add start points to")
   }
@@ -67,7 +68,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
       diag(pmwgs$n_pars)
     )
   }
-  n_particles <- 1000 # GC: Fixed val here
+  n_particles <- particles
   # Sample the mixture variables' initial values.
   a_half <- 1 / stats::rgamma(n = pmwgs$n_pars, shape = 0.5, scale = 1)
   # Create and fill initial random effects for each subject
