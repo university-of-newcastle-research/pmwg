@@ -129,7 +129,7 @@ gibbs_step <- function(samples, sampler) {
   var_mu <- MASS::ginv(
     sampler$n_subjects * last$tsinv + sampler$prior$theta_mu_invar
   )
-  mean_mu <- as.vector(var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum)))
+  mean_mu <- as.vector(var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum) + sampler$prior$theta_mu_invar%*%sampler$prior$theta_mu_mean))
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   tmu <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
