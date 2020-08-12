@@ -1,8 +1,14 @@
 Package: pmwg
 Title: Particle Metropolis within Gibbs Sampler
-Version: 0.1.7
-Author: Gavin Cooper
-Maintainer: Gavin Cooper <gavin@gavincooper.net>
+Version: 0.1.8
+Authors@R: c(
+	person("Gavin", "Cooper", email = "gavin@gavincooper.net", role = c("aut", "cre", "trl"), comment = "Package creator, additional translation of MATLAB code"),
+	person("Reilly", "Innes", email = "Reilly.Innes@uon.edu.au", role = c("aut")),
+	person("Caroline", "Kuhne", email = "caroline.kuhne@newcastle.edu.au", role = c("aut")),
+	person("Jon-Paul", "Cavallaro", email = "jon-paul.cavallaro@uon.edu.au", role = c("aut")),
+	person("David", "Gunawan", email = "dgunawan@uow.edu.au", role = c("aut"), comment = "Author of original MATLAB code from which this package was adapted"),
+	person("Guy", "Hawkins", email = "guy.hawkins@newcastle.edu.au", role = c("aut")),
+	person("Scott", "Brown", email = "scott.brown@newcastle.edu.au", role = c("aut", "trl"), comment = "Original translator from MATLAB to R"))
 Description: Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter and random effect estimation. Based on
     the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab

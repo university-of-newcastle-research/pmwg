@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
       </span>
     </div>
 
@@ -114,6 +114,32 @@
       <small>Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="pmwg-0-1-8" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.8">
+<a href="#pmwg-0-1-8" class="anchor"></a>pmwg 0.1.8</h1>
+<ul>
+<li>Fixes: Non-zero mean in prior was not applied in the sampling algorithm</li>
+<li>Updated author/creator information.</li>
+</ul>
+</div>
+    <div id="pmwg-0-1-7" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.7">
+<a href="#pmwg-0-1-7" class="anchor"></a>pmwg 0.1.7</h1>
+<ul>
+<li>Inform users of the default epsilon value chosen by the package if no explicit value is given.</li>
+<li>Rename list elements for the prior distribution on theta_mu to increase clarity over their purpose.</li>
+</ul>
+</div>
+    <div id="pmwg-0-1-6" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.6">
+<a href="#pmwg-0-1-6" class="anchor"></a>pmwg 0.1.6</h1>
+<ul>
+<li>Add <code>as_mcmc</code> function to export mcmc objects (from coda package) or a list of mcmc objects for the covariance matrix and subject random effects.</li>
+<li>Add unique subject identifiers as the appropriate dimnension names in sample storage (ie for random effects)</li>
+<li>Fixes: dimension names no longer lost when updating the sample storage with new samples.</li>
+<li>New particles argument in the <code>init</code> function to reduce time for sampler initialisation.</li>
+</ul>
+</div>
     <div id="pmwg-0-1-5" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.5">
 <a href="#pmwg-0-1-5" class="anchor"></a>pmwg 0.1.5</h1>
@@ -151,7 +177,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">
