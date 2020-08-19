@@ -1,3 +1,7 @@
+#' @references
+#' Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D. (2020).
+#' New estimation approaches for the hierarchical Linear Ballistic Accumulator
+#' model. *Journal of Mathematical Psychology*, *96*, 102368.
 #' @keywords internal
 "_PACKAGE"
 

@@ -14,6 +14,11 @@ Provides an R implementation of the Particle Metropolis within
 	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
 	examples.
 }
+\references{
+Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D. (2020).
+New estimation approaches for the hierarchical Linear Ballistic Accumulator
+model. *Journal of Mathematical Psychology*, *96*, 102368.
+}
 \seealso{
 Useful links:
 \itemize{
