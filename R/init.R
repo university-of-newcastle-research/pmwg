@@ -124,12 +124,16 @@ gibbs_step <- function(samples, sampler) {
   # Get single iter versions, tmu = theta_mu, tsig = theta_sig
   last <- last_sample(samples)
   hyper <- attributes(sampler)
+  prior <- sampler$prior
 
   # Here mu is group mean, so we are getting mean and variance
   var_mu <- MASS::ginv(
-    sampler$n_subjects * last$tsinv + sampler$prior$theta_mu_invar
+    sampler$n_subjects * last$tsinv + prior$theta_mu_invar
   )
-  mean_mu <- as.vector(var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum) + sampler$prior$theta_mu_invar%*%sampler$prior$theta_mu_mean))
+  mean_mu <- as.vector(
+    var_mu %*% (last$tsinv %*% apply(last$alpha, 1, sum) +
+                prior$theta_mu_invar %*% prior$theta_mu_mean)
+  )
   chol_var_mu <- t(chol(var_mu)) # t() because I want lower triangle.
   # New sample for mu.
   tmu <- mvtnorm::rmvnorm(1, mean_mu, chol_var_mu %*% t(chol_var_mu))[1, ]
