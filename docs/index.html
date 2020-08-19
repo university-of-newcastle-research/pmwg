@@ -15,7 +15,10 @@
 <meta property="og:description" content="Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter and random effect estimation. Based on
     the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
-    code available at http://osf.io/5b4w3 written by David Gunawan.">
+    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
+	document describing the package is available at
+	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
+	examples.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -74,7 +77,8 @@
   <div class="contents col-md-9">
 <div id="pmwg---particle-metropolis-within-gibbs-sampler" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#pmwg---particle-metropolis-within-gibbs-sampler" class="anchor"></a>pmwg - Particle Metropolis within Gibbs Sampler</h1></div>
+<a href="#pmwg---particle-metropolis-within-gibbs-sampler" class="anchor"></a>pmwg - Particle Metropolis within Gibbs Sampler <img src="reference/figures/hexlogo_small.png" align="right">
+</h1></div>
 <!-- badges: start -->
 
 <div id="installation" class="section level2">
@@ -87,6 +91,7 @@
 <div id="using-the-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-the-package" class="anchor"></a>Using the package</h2>
+<p>The best introduction to the package can be found at the bookdown site located at: <a href="https://newcastlecl.github.io/samplerDoc/" class="uri">https://newcastlecl.github.io/samplerDoc/</a> The documentation there includes the motivation for the approach, several detailed examples of the package in action and a list of common problems and troubleshooting techniques. Included here is a skeleton of the required steps to run the sampler.</p>
 <div id="quickstart-guide" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quickstart-guide" class="anchor"></a>Quickstart Guide</h3>
@@ -115,7 +120,6 @@
 <span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/run_stage.html">run_stage</a></span>(<span class="no">sampler</span>, <span class="kw">stage</span><span class="kw">=</span><span class="st">"adapt"</span>)
 <span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/run_stage.html">run_stage</a></span>(<span class="no">sampler</span>, <span class="kw">stage</span><span class="kw">=</span><span class="st">"sample"</span>)</pre></div>
 <p>The <code>run_stage</code> command can also be passed other arguments such as <code>iter</code> for number of iterations, <code>particles</code> for number of particles among others. For a full list see <a href="https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler">the description in the PMwG Tutorial Book</a>.</p>
-<p>The full documentation is available at <a href="https://newcastlecl.github.io/samplerDoc/" class="uri">https://newcastlecl.github.io/samplerDoc/</a>.</p>
 </div>
 </div>
 <div id="installing-to-an-older-version-of-r-3-6" class="section level2">

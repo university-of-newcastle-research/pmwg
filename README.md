@@ -1,4 +1,4 @@
-# pmwg - Particle Metropolis within Gibbs Sampler <img src="media/hexlogo_small.png" align="right"/> #
+# pmwg - Particle Metropolis within Gibbs Sampler <img src="man/figures/hexlogo_small.png" align="right"/> #
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/NewcastleCL/pmwg.svg?branch=release)](https://travis-ci.com/NewcastleCL/pmwg)
@@ -15,6 +15,9 @@ Instructions on installing to an earlier version of R are included below.
 
 ## Using the package
 
+The best introduction to the package can be found at the bookdown site located at: https://newcastlecl.github.io/samplerDoc/
+The documentation there includes the motivation for the approach, several detailed examples of the package in action and a list of common problems and troubleshooting techniques. Included here is a skeleton of the required steps to run the sampler.
+
 ### Quickstart Guide
 
 ```r
@@ -27,12 +30,12 @@ loglikelihood_func <- function(x, data) {
 }
 
 # Create the sampler object with your data, parameter names, loglike function and
-# A list of priors for theta_mu (model parameters) and theta_sig (covariance matrix)
+# A list of priors for theta_mu_mean (mean of model parameters) and theta_mu_var (covariance of model parameters)
 sampler <- pmwgs(
   data = my_data_source,
   pars = c("a", "list", "of", "par", "names"),
   ll_func = loglikelihood_func,
-  prior = list(theta_mu = rep(0, length(pars)), theta_sig = diag(rep(1, length(pars))))
+  prior = list(theta_mu_mean = rep(0, length(pars)), theta_mu_var = diag(rep(1, length(pars))))
 )
 
 # Initialise (generate first random effects for sampler)
@@ -45,8 +48,6 @@ sampler <- run_stage(sampler, stage="sample")
 ```
 
 The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others. For a full list see [the description in the PMwG Tutorial Book](https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
-
-The full documentation is available at https://newcastlecl.github.io/samplerDoc/.
 
 ## Installing to an older version of R (< 3.6)
 

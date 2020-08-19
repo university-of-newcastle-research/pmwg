@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • pmwg</title>
+<title>pmwg: Particle Metropolis within Gibbs Sampler — pmwg-package • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,14 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="pmwg: Particle Metropolis within Gibbs Sampler — pmwg-package" />
+<meta property="og:description" content="Provides an R implementation of the Particle Metropolis within
+    Gibbs sampler for model parameter and random effect estimation. Based on
+    the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
+    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
+	document describing the package is available at
+	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
+	examples." />
 
 
 
@@ -58,7 +65,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,117 +115,40 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>pmwg: Particle Metropolis within Gibbs Sampler</h1>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/pmwg-package.R'><code>R/pmwg-package.R</code></a></small>
+    <div class="hidden name"><code>pmwg-package.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Provides an R implementation of the Particle Metropolis within
+    Gibbs sampler for model parameter and random effect estimation. Based on
+    the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
+    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
+	document describing the package is available at
+	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
+	examples.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-package" class="hasAnchor"><a href="#section-package" class="anchor"></a>Package</h2>
-          <p class="section-desc"><p>Top level package documentation</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="pmwg-package.html">pmwg-package</a></code> </p>
-        </td>
-        <td><p>pmwg: Particle Metropolis within Gibbs Sampler</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-sampling" class="hasAnchor"><a href="#section-sampling" class="anchor"></a>Sampling</h2>
-          <p class="section-desc"><p>Functions for creating a sampler object and running the Particle Metropolis within Gibbs estimation methods.</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="pmwgs.html">pmwgs()</a></code> </p>
-        </td>
-        <td><p>Create a PMwG sampler and return the created object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is.pmwgs.html">is.pmwgs()</a></code> </p>
-        </td>
-        <td><p>Test whether object is a pmwgs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="run_stage.html">run_stage()</a></code> </p>
-        </td>
-        <td><p>Run a stage of the PMwG sampler</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="init.html">init()</a></code> </p>
-        </td>
-        <td><p>Initialise values for the random effects</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-data-access" class="hasAnchor"><a href="#section-data-access" class="anchor"></a>Data Access</h2>
-          <p class="section-desc"><p>Functions for accessing and exporting samples in easy to work with formats.</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="as_mcmc.html">as_mcmc()</a></code> </p>
-        </td>
-        <td><p>Return a CODA mcmc object with the required samples</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h2>
-          <p class="section-desc"><p>Data included in the package</p></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="forstmann.html">forstmann</a></code> </p>
-        </td>
-        <td><p>Forstmann et al.'s data</p></td>
-      </tr>
-    </tbody>
-    </table>
+
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., &amp; Brown, S. D. (2020).
+New estimation approaches for the hierarchical Linear Ballistic Accumulator
+model. *Journal of Mathematical Psychology*, *96*, 102368.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Useful links:</p><ul>
+<li><p><a href='https://github.com/newcastlecl/pmwg'>https://github.com/newcastlecl/pmwg</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/newcastlecl/pmwg/issues'>https://github.com/newcastlecl/pmwg/issues</a></p></li>
+</ul>
+
+</div>
+
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
