@@ -12,7 +12,10 @@ Authors@R: c(
 Description: Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter and random effect estimation. Based on
     the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
-    code available at http://osf.io/5b4w3 written by David Gunawan.
+    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
+	document describing the package is available at
+	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
+	examples.
 License: GPL-3
 URL: https://github.com/newcastlecl/pmwg
 BugReports: https://github.com/newcastlecl/pmwg/issues
