@@ -1,4 +1,4 @@
-# pmwg - Particle Metropolis within Gibbs Sampler #
+# pmwg - Particle Metropolis within Gibbs Sampler <img src="media/hexlogo_small.png" align="right"/> #
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/NewcastleCL/pmwg.svg?branch=release)](https://travis-ci.com/NewcastleCL/pmwg)
