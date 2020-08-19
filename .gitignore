@@ -38,3 +38,7 @@ TEMP/
 inst/doc
 doc
 Meta
+
+#Cran submission
+cran-comments.md
+pmwg.Rcheck/
