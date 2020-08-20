@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>pmwg: Particle Metropolis within Gibbs Sampler — pmwg-package • pmwg</title>
+<title>pmwg: Particle Metropolis Within Gibbs. — pmwg-package • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,14 +39,14 @@
 
 
 
-<meta property="og:title" content="pmwg: Particle Metropolis within Gibbs Sampler — pmwg-package" />
-<meta property="og:description" content="Provides an R implementation of the Particle Metropolis within
-    Gibbs sampler for model parameter and random effect estimation. Based on
-    the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
-    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
-	document describing the package is available at
-	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
-	examples." />
+<meta property="og:title" content="pmwg: Particle Metropolis Within Gibbs. — pmwg-package" />
+<meta property="og:description" content="The pmwg package provides a general purpose implementation of the
+sampling techniques outlined in
+Gunawan et al. (2020).
+The user of this package is required to provide their own log likelihood
+function, but given this the functions provided can estimate model
+parameters, the full covariance matrix and subject random effects in a
+hierarchical Bayesian way." />
 
 
 
@@ -117,28 +117,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>pmwg: Particle Metropolis within Gibbs Sampler</h1>
+    <h1>pmwg: Particle Metropolis Within Gibbs.</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/pmwg-package.R'><code>R/pmwg-package.R</code></a></small>
     <div class="hidden name"><code>pmwg-package.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Provides an R implementation of the Particle Metropolis within
-    Gibbs sampler for model parameter and random effect estimation. Based on
-    the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
-    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
-	document describing the package is available at
-	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
-	examples.</p>
+    <p>The pmwg package provides a general purpose implementation of the
+sampling techniques outlined in
+<a href='https://doi.org/10.1016/j.jmp.2020.102368'>Gunawan et al. (2020)</a>.
+The user of this package is required to provide their own log likelihood
+function, but given this the functions provided can estimate model
+parameters, the full covariance matrix and subject random effects in a
+hierarchical Bayesian way.</p>
     </div>
 
 
 
+    <h2 class="hasAnchor" id="documentation"><a class="anchor" href="#documentation"></a>Documentation</h2>
+
+    
+
+<p>The documentation found at <a href='https://newcastlecl.github.io/samplerDoc/'>https://newcastlecl.github.io/samplerDoc/</a>
+contains background information and motivation for the approach used in
+this package and several detailed examples of the package in action. It also
+includes a list of common problems and associated troubleshooting steps.</p>
+    <h2 class="hasAnchor" id="user-input"><a class="anchor" href="#user-input"></a>User input</h2>
+
+    
+
+<p>The user is expected to provide a data source in a format that is compatible
+with R data.frame methods. This data must have at least one column named
+`subject` that has a unique identifier for each participants data.</p>
+<p>Additionally the user should provide a function that when given a set of
+parameter estimates and the data for a single subject return the log of the
+likelihood of that data given the parameter estimates.</p>
+<p>The final piece of required information is a list of the names of each
+parameter that should be estimated. There is also the capability to provide
+priors on the model parameters, start points for the model parameters and
+covariance matrix as well as options to fine tune the sampling process</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., &amp; Brown, S. D. (2020).
 New estimation approaches for the hierarchical Linear Ballistic Accumulator
-model. *Journal of Mathematical Psychology*, *96*, 102368.</p>
+model. <em>Journal of Mathematical Psychology, 96</em>, 102368.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Useful links:</p><ul>

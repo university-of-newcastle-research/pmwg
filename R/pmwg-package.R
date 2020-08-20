@@ -1,13 +1,15 @@
 #' pmwg: Particle Metropolis Within Gibbs.
 #'
 #' The pmwg package provides a general purpose implementation of the
-#' sampling techniques outlined in <doi:10.1016/j.jmp.2020.102368>. The user
-#' of this package is required to provide their own log likelihood function, but
-#' given this the functions provided can estimate model parameters, the full
-#' covariance matrix and subject random effects in a hierarchical Bayesian way.
+#' sampling techniques outlined in
+#' \href{https://doi.org/10.1016/j.jmp.2020.102368}{Gunawan et al. (2020)}.
+#' The user of this package is required to provide their own log likelihood
+#' function, but given this the functions provided can estimate model
+#' parameters, the full covariance matrix and subject random effects in a
+#' hierarchical Bayesian way.
 #'
 #' @section Documentation:
-#' The documentation found at <https://newcastlecl.github.io/samplerDoc/>
+#' The documentation found at \url{https://newcastlecl.github.io/samplerDoc/}
 #' contains background information and motivation for the approach used in
 #' this package and several detailed examples of the package in action. It also
 #' includes a list of common problems and associated troubleshooting steps.
@@ -29,7 +31,7 @@
 #' @references
 #' Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D. (2020).
 #' New estimation approaches for the hierarchical Linear Ballistic Accumulator
-#' model. *Journal of Mathematical Psychology*, *96*, 102368.
+#' model. \emph{Journal of Mathematical Psychology, 96}, 102368.
 #' @keywords internal
 "_PACKAGE"
 
