@@ -4,14 +4,14 @@
 \name{pmwg-package}
 \alias{pmwg}
 \alias{pmwg-package}
-\title{pmwg: Particle Metropolis within Gibbs Sampler}
+\title{pmwg: Particle Metropolis Within Gibbs}
 \description{
 Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter and random effect estimation. Based on
-    the paper at https://doi.org/10.1016/j.jmp.2020.102368 and on the Matlab
-    code available at http://osf.io/5b4w3 written by David Gunawan. A bookdown
-	document describing the package is available at
-	https://newcastlecl.github.io/samplerDoc/ and includes several detailed
+    the paper at <doi:10.1016/j.jmp.2020.102368> and on the Matlab
+    code available at <http://osf.io/5b4w3> written by David Gunawan. An HTML
+	tutorial document describing the package is available at
+	<https://newcastlecl.github.io/samplerDoc/> and includes several detailed
 	examples.
 }
 \references{
