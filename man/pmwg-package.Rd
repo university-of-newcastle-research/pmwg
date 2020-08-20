@@ -4,16 +4,38 @@
 \name{pmwg-package}
 \alias{pmwg}
 \alias{pmwg-package}
-\title{pmwg: Particle Metropolis Within Gibbs}
+\title{pmwg: Particle Metropolis Within Gibbs.}
 \description{
-Provides an R implementation of the Particle Metropolis within
-    Gibbs sampler for model parameter and random effect estimation. Based on
-    the paper at <doi:10.1016/j.jmp.2020.102368> and on the Matlab
-    code available at <http://osf.io/5b4w3> written by David Gunawan. An HTML
-	tutorial document describing the package is available at
-	<https://newcastlecl.github.io/samplerDoc/> and includes several detailed
-	examples.
+The pmwg package provides a general purpose implementation of the
+sampling techniques outlined in <doi:10.1016/j.jmp.2020.102368>. The user
+of this package is required to provide their own log likelihood function, but
+given this the functions provided can estimate model parameters, the full
+covariance matrix and subject random effects in a hierarchical Bayesian way.
 }
+\section{Documentation}{
+
+The documentation found at <https://newcastlecl.github.io/samplerDoc/>
+contains background information and motivation for the approach used in
+this package and several detailed examples of the package in action. It also
+includes a list of common problems and associated troubleshooting steps.
+}
+
+\section{User input}{
+
+The user is expected to provide a data source in a format that is compatible
+with R data.frame methods. This data must have at least one column named
+`subject` that has a unique identifier for each participants data.
+
+Additionally the user should provide a function that when given a set of
+parameter estimates and the data for a single subject return the log of the
+likelihood of that data given the parameter estimates.
+
+The final piece of required information is a list of the names of each
+parameter that should be estimated. There is also the capability to provide
+priors on the model parameters, start points for the model parameters and
+covariance matrix as well as options to fine tune the sampling process
+}
+
 \references{
 Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D. (2020).
 New estimation approaches for the hierarchical Linear Ballistic Accumulator
@@ -28,16 +50,16 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Gavin Cooper \email{gavin@gavincooper.net} (Package creator, additional translation of MATLAB code) [translator]
+\strong{Maintainer}: Gavin Cooper \email{gavin@gavincooper.net} (Package creator and maintainer) [translator]
 
 Authors:
 \itemize{
   \item Reilly Innes \email{Reilly.Innes@uon.edu.au}
   \item Caroline Kuhne \email{caroline.kuhne@newcastle.edu.au}
   \item Jon-Paul Cavallaro \email{jon-paul.cavallaro@uon.edu.au}
-  \item David Gunawan \email{dgunawan@uow.edu.au} (Author of original MATLAB code from which this package was adapted)
+  \item David Gunawan \email{dgunawan@uow.edu.au} (Author of original MATLAB code)
   \item Guy Hawkins \email{guy.hawkins@newcastle.edu.au}
-  \item Scott Brown \email{scott.brown@newcastle.edu.au} (Original translator from MATLAB to R) [translator]
+  \item Scott Brown \email{scott.brown@newcastle.edu.au} (Original translation from MATLAB to R) [translator]
 }
 
 }

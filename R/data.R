@@ -11,7 +11,7 @@
 #' D. Yves von Cramon, K. Richard Ridderinkhof, Eric-Jan Wagenmakers.
 #'
 #' \emph{Proceedings of the National Academy of Sciences Nov 2008, 105 (45)
-#' 17538-17542; DOI: \url{10.1073/pnas.0805903105}}
+#' 17538-17542; DOI: 10.1073/pnas.0805903105}
 #'
 #' @format A data frame with 15818 rows and 5 variables:
 #' \describe{
