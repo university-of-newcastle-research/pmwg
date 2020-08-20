@@ -1,3 +1,5 @@
+# pmwg 0.1.9
+
 # pmwg 0.1.8
 
 * Fixes: Non-zero mean in prior was not applied in the sampling algorithm

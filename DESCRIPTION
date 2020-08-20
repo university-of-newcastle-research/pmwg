@@ -1,6 +1,6 @@
 Package: pmwg
 Title: Particle Metropolis Within Gibbs
-Version: 0.1.8
+Version: 0.1.9
 Authors@R: c(
 	person("Gavin", "Cooper", email = "gavin@gavincooper.net", role = c("aut", "cre", "trl"), comment = "Package creator and maintainer"),
 	person("Reilly", "Innes", email = "Reilly.Innes@uon.edu.au", role = c("aut")),
