@@ -183,17 +183,33 @@ last_sample <- function(store) {
 #' either an individual coda mcmc object, or a list of mcmc objects.
 #'
 #' @param sampler The pmwgs object containing samples to extract.
-#' @param selection The selection of samples to return
+#' @param selection The selection of samples to return. The possible values can
+#'   be:
+#'     * `theta_mu`: the model parameter estimate samples
+#'     * `theta_sig`: the covariance matrix estimates, returns a list of mcmc
+#'       objects, one for each model parameter.
+#'     * `alpha`: The random effect estimates, returns a list of mcmc objects,
+#'       one for each subject.
+#' @param filter A filter that defines which stage to draw samples from. Can be
+#'   either a sequence of integers (a numeric range) or a vector of strings
+#'   defining the stages from which to draw the estimated samples. Defaults to
+#'   all stages, c("init", "burn", "adapt", "sample").
 #'
 #' @return An mcmc object or list containing the selected samples.
 #' @examples
 #' # No example yet
 #' @export
-as_mcmc <- function(sampler, selection = "theta_mu") {
+as_mcmc <- function(sampler, selection = "theta_mu", filter = stages) {
+  if (all(filter %in% stages)) {
+    filter <- which(sampler$samples$stage %in% filter)
+  } else if (!all(filter %in% 1:sampler$samples$idx)) {
+    stop("filter is not a vector of stage names, or integer vector of indices")
+  }
+
   if (selection == "theta_mu") {
-    return(coda::mcmc(t(sampler$samples$theta_mu)))
+    return(coda::mcmc(t(sampler$samples$theta_mu[, filter])))
   } else if (selection == "theta_sig") {
-    tsig <- sampler$samples$theta_sig
+    tsig <- sampler$samples$theta_sig[, , filter]
     return(stats::setNames(lapply(
       seq(dim(tsig)[1]),
       function(x) {
@@ -201,7 +217,7 @@ as_mcmc <- function(sampler, selection = "theta_mu") {
       }
     ), sampler$par_names))
   } else if (selection == "alpha") {
-    alpha <- sampler$samples$alpha
+    alpha <- sampler$samples$alpha[, , filter]
     return(stats::setNames(lapply(
       seq(dim(alpha)[2]),
       function(x) {

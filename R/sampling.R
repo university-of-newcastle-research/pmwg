@@ -395,10 +395,14 @@ check_run_stage_args <- function(pmwgs,
   if (!pmwgs$init) stop("pmwgs object has not been initialised")
 
   # Test stage argument
+  valid_stages <- stages[2:length(stages)]
+  stage_err <- paste(c("Argument `stage` should be one of -", valid_stages),
+                     collapse = " ",
+                     sep = ",")
   tryCatch(
-    stage <- match.arg(stage, c("burn", "adapt", "sample")),
+    stage <- match.arg(stage, valid_stages),
     error = function(err_cond) {
-      stop("Argument `stage` should be one of 'burn', 'adapt' or 'sample'")
+      stop(stage_err)
     }
   )
 
