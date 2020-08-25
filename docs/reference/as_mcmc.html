@@ -73,7 +73,7 @@ either an individual coda mcmc object, or a list of mcmc objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -122,7 +122,7 @@ either an individual coda mcmc object, or a list of mcmc objects." />
 either an individual coda mcmc object, or a list of mcmc objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>as_mcmc</span>(<span class='no'>sampler</span>, <span class='kw'>selection</span> <span class='kw'>=</span> <span class='st'>"theta_mu"</span>)</pre>
+    <pre class="usage"><span class='fu'>as_mcmc</span>(<span class='no'>sampler</span>, <span class='kw'>selection</span> <span class='kw'>=</span> <span class='st'>"theta_mu"</span>, <span class='kw'>filter</span> <span class='kw'>=</span> <span class='no'>stages</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,13 +133,43 @@ either an individual coda mcmc object, or a list of mcmc objects.</p>
     </tr>
     <tr>
       <th>selection</th>
-      <td><p>The selection of samples to return</p></td>
+      <td><p>The selection of sample types to return.</p></td>
+    </tr>
+    <tr>
+      <th>filter</th>
+      <td><p>A filter that defines which stage to draw samples from.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An mcmc object or list containing the selected samples.</p>
+    <h2 class="hasAnchor" id="selecting-sample-types"><a class="anchor" href="#selecting-sample-types"></a>Selecting sample types</h2>
+
+    
+
+
+<p>The values that can be chosen for the <code>selection</code> argument can be one
+of the following list:</p><dl'>
+  <dt><code>"theta_mu"</code></dt><dd><p>the model parameter estimate samples</p></dd>
+  <dt><code>"theta_sig"</code></dt><dd><p>the covariance matrix estimates, returns a list
+    of mcmc objects, one for each model parameter.</p></dd>
+  <dt><code>"alpha"</code></dt><dd><p>the random effect estimates, returns a list of mcmc
+    objects, one for each subject.</p></dd>
+
+</dl><p>The default value for <code>selection</code> is <code>"theta_mu"</code></p>
+    <h2 class="hasAnchor" id="filtering-samples"><a class="anchor" href="#filtering-samples"></a>Filtering samples</h2>
+
+    
+
+
+<p>The <code>filter</code> argument can take one of two forms:</p><ul>
+<li><p>An integer vector, usually a sequence of integers, that must fall
+        within the range 1:end.</p></li>
+<li><p>A character vector, where each element corresponds to a stage of the
+        sampling process, ie one or more of "init", "burn", "adapt" or
+        "sample".</p></li>
+</ul><p>The default value for <code>filter</code> is all stages.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># No example yet
