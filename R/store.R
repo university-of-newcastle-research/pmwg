@@ -182,18 +182,34 @@ last_sample <- function(store) {
 #' Given a sampler object and a specification of the samples required, return
 #' either an individual coda mcmc object, or a list of mcmc objects.
 #'
+#' @section Selecting sample types:
+#'
+#' The values that can be chosen for the \code{selection} argument can be one
+#' of the following list:
+#' \describe{
+#'   \item{\code{"theta_mu"}}{the model parameter estimate samples}
+#'   \item{\code{"theta_sig"}}{the covariance matrix estimates, returns a list
+#'     of mcmc objects, one for each model parameter.}
+#'   \item{\code{"alpha"}}{the random effect estimates, returns a list of mcmc
+#'     objects, one for each subject.}
+#' }
+#' The default value for \code{selection} is \code{"theta_mu"}
+#'
+#' @section Filtering samples:
+#'
+#' The \code{filter} argument can take one of two forms:
+#' \itemize{
+#'   \item An integer vector, usually a sequence of integers, that must fall
+#'         within the range 1:end.
+#'   \item A character vector, where each element corresponds to a stage of the
+#'         sampling process, ie one or more of "init", "burn", "adapt" or
+#'         "sample".
+#' }
+#' The default value for \code{filter} is all stages.
+#'
 #' @param sampler The pmwgs object containing samples to extract.
-#' @param selection The selection of samples to return. The possible values can
-#'   be:
-#'     * `theta_mu`: the model parameter estimate samples
-#'     * `theta_sig`: the covariance matrix estimates, returns a list of mcmc
-#'       objects, one for each model parameter.
-#'     * `alpha`: The random effect estimates, returns a list of mcmc objects,
-#'       one for each subject.
-#' @param filter A filter that defines which stage to draw samples from. Can be
-#'   either a sequence of integers (a numeric range) or a vector of strings
-#'   defining the stages from which to draw the estimated samples. Defaults to
-#'   all stages, c("init", "burn", "adapt", "sample").
+#' @param selection The selection of sample types to return.
+#' @param filter A filter that defines which stage to draw samples from.
 #'
 #' @return An mcmc object or list containing the selected samples.
 #' @examples
