@@ -1,5 +1,8 @@
 # pmwg 0.1.9
 
+* Clean up documentation ready for CRAN submission
+* Add extra argument to as_mcmc to filter specific samples
+
 # pmwg 0.1.8
 
 * Fixes: Non-zero mean in prior was not applied in the sampling algorithm

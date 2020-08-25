@@ -6,7 +6,7 @@
 * macOS High Sierra 10.13.6 (on travis-ci), R version 3.6.3 (2020-02-29)
 * macOS High Sierra 10.13.6 (on travis-ci), R version 4.0.2 (2020-06-22)
 * Windows 10 x64 (build 19041) (local system), R version 4.0.2 (2020-06-22)
-* win-builder (devel - R Under development (unstable) (2020-08-18 r79041)
+* win-builder, R Under development (unstable) (2020-08-23 r79071)
 * R-hub (rhub::check_for_cran()): Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 * R-hub (rhub::check_for_cran()): Ubuntu Linux 16.04 LTS, R-release, GCC
 * R-hub (rhub::check_for_cran()): Fedora Linux, R-devel, clang, gfortran
