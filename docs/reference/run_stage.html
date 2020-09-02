@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run a stage of the PMwG sampler — run_stage • psamplers</title>
+<title>Run a stage of the PMwG sampler — run_stage • pmwg</title>
 
 
 <!-- jquery -->
@@ -40,9 +40,9 @@
 
 
 <meta property="og:title" content="Run a stage of the PMwG sampler — run_stage" />
-<meta property="og:description" content="Run one of burnin, adaptation of sampling phase from the PMwG
+<meta property="og:description" content="Run one of burnin, adaptation or sampling phase from the PMwG
 sampler. Each stage involves slightly different processes, so for the
-full PMwG we need to run this three times." />
+full PMwG sampling we need to run this three times." />
 
 
 
@@ -73,8 +73,8 @@ full PMwG we need to run this three times." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <a class="navbar-link" href="../index.html">pmwg</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -89,10 +89,13 @@ full PMwG we need to run this three times." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/samplers/">
+  <a href="https://github.com/newcastlecl/pmwg/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -111,14 +114,14 @@ full PMwG we need to run this three times." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Run a stage of the PMwG sampler</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/sampling.R'><code>R/sampling.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/sampling.R'><code>R/sampling.R</code></a></small>
     <div class="hidden name"><code>run_stage.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Run one of burnin, adaptation of sampling phase from the PMwG
+    <p>Run one of burnin, adaptation or sampling phase from the PMwG
 sampler. Each stage involves slightly different processes, so for the
-full PMwG we need to run this three times.</p>
+full PMwG sampling we need to run this three times.</p>
     </div>
 
     <pre class="usage"><span class='fu'>run_stage</span>(
@@ -136,19 +139,20 @@ full PMwG we need to run this three times.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>pmwgs</th>
-      <td><p>A pmwgs object that has been initialised</p></td>
+      <td><p>A Particle Metropolis within Gibbs sampler which has been set
+up and initialised</p></td>
     </tr>
     <tr>
       <th>stage</th>
-      <td><p>The sampling stage to run. Must be one of 'burn', 'adapt' or
-'sample'. If not provided assumes that the stage should be 'burn'</p></td>
+      <td><p>The sampling stage to run. Must be one of <code>'burn'</code>,
+<code>'adapt'</code> or <code>'sample'</code>.</p></td>
     </tr>
     <tr>
       <th>iter</th>
-      <td><p>The number of iterations to run for the sampler. For 'burn' and
-'sample' all iteration will run. However for 'adapt' if all subjects have
-enough unique samples to create the conditional distribution then it will
-finish early.</p></td>
+      <td><p>The number of iterations to run for the sampler. For
+<code>'burn'</code> and <code>'sample'</code> all iterations will run. However for
+<code>'adapt'</code> if all subjects have enough unique samples to create the
+conditional distribution then the stage will finish early.</p></td>
     </tr>
     <tr>
       <th>particles</th>
@@ -161,17 +165,50 @@ iteration, however during the sample phase this should be reduced.</p></td>
     </tr>
     <tr>
       <th>n_cores</th>
-      <td><p>Set to &gt; 1 to use mclapply</p></td>
+      <td><p>Set to more than 1 to use <code>mclapply</code>. Setting
+<code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X
+machines.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Further arguments passed to or from other methods.</p></td>
+      <td><p>Further arguments used to fine tune the sampling process. Accepted
+additional arguments include:</p><ul>
+<li><p><code>epsilon</code> which should be a value between 0 and 1.
+    <strong>epsilon</strong> controls the extent to which the covariance matrix is
+    scaled when generating particles from the previous random effect.</p></li>
+<li><p><code>mix</code> controls the mixture of different sources for particles.
+    The function <code><a href='numbers_from_proportion.html'>numbers_from_proportion</a></code> is passed this value
+    and includes extra details on what is accepted.</p></li>
+<li><p><code>n_unique</code> is a number representing the number of unique
+    samples to check for on each iteration of the sampler. Only used during
+    the <code>'adapt'</code> stage.</p></li>
+</ul></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A pmwgs object with the newly generated samples in place.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <strong>burnin</strong> stage by default selects 50<!-- % of particles from the model -->
+parameter sample (selected through a Gibbs step) and 50<!-- % of particles from -->
+the previous random effect of each participant. It assesses each particle
+with the log-likelihood function and samples from all particles weighted by
+their log-likelihood.</p>
+<p>The <strong>adaptation</strong> stage selects and assesses particle in the same was
+as burnin, however on each iteration it also checks whether each participant
+has enough unique random effect samples to attempt to create a conditional
+distribution for efficient sampling in the next stage. If the attempt at
+creating a conditional distribution fails, then the number of unique samples
+is increased and sampling continues. If the attempt succeeds then the stage
+is finished early.</p>
+<p>The <strong>final</strong> stage (sampling) by default samples predominantly from the
+conditional distribution created at the end of adaptation. This is more
+efficient and allows the number of particles to be reduced whilst still
+getting a high enough acceptance rate of new samples.</p>
+<p>Once complete each stage will return a sampler object with the new samples
+stored within it.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'># No example yet
@@ -187,7 +224,7 @@ iteration, however during the sample phase this should be reduced.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">

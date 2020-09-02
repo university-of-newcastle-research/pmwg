@@ -1,7 +1,21 @@
 destination: docs
-repo:
-  url:
-    home: https://github.com/newcastlecl/samplers/
-    source: https://github.com/newcastlecl/samplers/blob/release/
-    issue: https://github.com/newcastlecl/samplers/issues/
-    user: https://github.com/
+reference:
+- title: Package
+  desc:  Top level package documentation
+- contents:
+  - pmwg
+- title: Sampling
+  desc: Functions for creating a sampler object and running the Particle Metropolis within Gibbs estimation methods.
+- contents:
+  - pmwgs
+  - is.pmwgs
+  - run_stage
+  - init
+- title: Data Access
+  desc: Functions for accessing and exporting samples in easy to work with formats.
+- contents:
+  - as_mcmc
+- title: Datasets
+  desc: Data included in the package
+- contents:
+  - forstmann

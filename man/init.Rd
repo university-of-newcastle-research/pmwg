@@ -4,35 +4,48 @@
 \alias{init}
 \title{Initialise values for the random effects}
 \usage{
-init(pmwgs, theta_mu = NULL, theta_sig = NULL, display_progress = TRUE, ...)
+init(
+  pmwgs,
+  start_mu = NULL,
+  start_sig = NULL,
+  display_progress = TRUE,
+  particles = 1000
+)
 }
 \arguments{
 \item{pmwgs}{The sampler object that provides the parameters.}
 
-\item{theta_mu}{An array of starting values for the group means}
+\item{start_mu}{An array of starting values for the group means}
 
-\item{theta_sig}{An array of starting values for the group covariance matrix}
+\item{start_sig}{An array of starting values for the group covariance matrix}
 
 \item{display_progress}{Display a progress bar during sampling}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{particles}{The number of particles to generate in initialisation}
 }
 \value{
-The sampler object but with initial values set for latent_theta_mu
+The sampler object but with initial values set for \code{theta_mu},
+  \code{theta_sig}, \code{alpha} and other values for the first sample.
 }
 \description{
-Takes the starting values for the group mean and variance, and subject level
-means. All arrays must match the appropriate shape.
+Initialise the random effects for each participant using MCMC.
 }
 \details{
-For example, with 5 parameters and 10 subjects, the group means must be a
-vector of length 5, the group variance must be an array of 5 x 5, and the
-subject means must be 5 x 10.
+Before sampling can start the Particle Metropolis within Gibbs sampler needs
+initial values for the random effects. The \code{init} function generates
+these values using a Monte Carlo algorithm. One alternative methods would be
+setting the initial values randomly.
+
+Optionally takes starting values for the model parameters and the variance /
+covariance matrix. All arrays must match the appropriate shape.
+
+For example, with 5 parameters and 10 subjects, the model parameter start
+means must be a vector of length 5 and the covariance matrix must be an array
+of 5 x 5.
 
 Alternatively the if argument values for the starting points are left at the
 default (NULL) then starting points will be sampled from the prior for group
-level values, or for subject level means they will be sampled from the
-multivariate normal using the group level means and variance.
+level values (model parameters and covariance matrix)
 }
 \examples{
 lba_ll <- function(x, data) {
@@ -60,5 +73,5 @@ sampler <- pmwgs(
   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
   lba_ll
 )
-sampler <- init(sampler, theta_mu = rnorm(7), theta_sig = diag(rep(0.01, 7)))
+sampler <- init(sampler, start_mu = rnorm(7), start_sig = diag(rep(0.01, 7)))
 }

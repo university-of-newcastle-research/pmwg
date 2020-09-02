@@ -11,9 +11,8 @@ local({
       projDir <- sub("/+$", "", projDir)
 
       ## Only prepend path if different from current working dir
-      if (!identical(normalizePath(projDir), normalizePath(getwd()))) {
+      if (!identical(normalizePath(projDir), normalizePath(getwd())))
         path <- file.path(projDir, path)
-      }
     }
 
     path
@@ -23,18 +22,16 @@ local({
   ## project directory. Normally, this should be the working directory,
   ## but we also use '.rs.getProjectDirectory()' if necessary (e.g. we're
   ## rebuilding a project while within a separate directory)
-  libDir <- if (exists(".rs.getProjectDirectory")) {
+  libDir <- if (exists(".rs.getProjectDirectory"))
     getPackratLibDir(.rs.getProjectDirectory())
-  } else {
+  else
     getPackratLibDir()
-  }
 
   ## Unload packrat in case it's loaded -- this ensures packrat _must_ be
   ## loaded from the private library. Note that `requireNamespace` will
   ## succeed if the package is already loaded, regardless of lib.loc!
-  if ("packrat" %in% loadedNamespaces()) {
+  if ("packrat" %in% loadedNamespaces())
     try(unloadNamespace("packrat"), silent = TRUE)
-  }
 
   if (suppressWarnings(requireNamespace("packrat", quietly = TRUE, lib.loc = libDir))) {
 

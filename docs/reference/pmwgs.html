@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Initialise a PMwG sampler and return a pmwgs object — pmwgs • psamplers</title>
+<title>Create a PMwG sampler and return the created object — pmwgs • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Initialise a PMwG sampler and return a pmwgs object — pmwgs" />
-<meta property="og:description" content="Takes the initial parameter set and creates default values for a
-range of PMwG necessary variables." />
+<meta property="og:title" content="Create a PMwG sampler and return the created object — pmwgs" />
+<meta property="og:description" content="This function takes a few necessary elements for creating a PMwG sampler.
+Each pmwgs object is required to have a dataset, a list of parameter names,
+a log likelihood function and optionally a prior for the model parameters." />
 
 
 
@@ -72,8 +73,8 @@ range of PMwG necessary variables." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <a class="navbar-link" href="../index.html">pmwg</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -88,10 +89,13 @@ range of PMwG necessary variables." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/samplers/">
+  <a href="https://github.com/newcastlecl/pmwg/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -109,26 +113,29 @@ range of PMwG necessary variables." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Initialise a PMwG sampler and return a pmwgs object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/particle_sampler.R'><code>R/particle_sampler.R</code></a></small>
+    <h1>Create a PMwG sampler and return the created object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/particle_sampler.R'><code>R/particle_sampler.R</code></a></small>
     <div class="hidden name"><code>pmwgs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Takes the initial parameter set and creates default values for a
-range of PMwG necessary variables.</p>
+    <p>This function takes a few necessary elements for creating a PMwG sampler.
+Each pmwgs object is required to have a dataset, a list of parameter names,
+a log likelihood function and optionally a prior for the model parameters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pmwgs</span>(<span class='no'>data</span>, <span class='no'>pars</span>, <span class='no'>ll_func</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>pmwgs</span>(<span class='no'>data</span>, <span class='no'>pars</span>, <span class='no'>ll_func</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The data.frame containing empirical data to be modelled. Assumed
+      <td><p>A data frame containing empirical data to be modelled. Assumed
 to contain at least one column called subject whose elements are unique
-identifiers for each subject.</p></td>
+identifiers for each subject. Can be any of <code>data.frame</code>,
+<code>data.table</code> or <code>tibble</code>, or any other data frame like object
+that can have subsets created in an identical way.</p></td>
     </tr>
     <tr>
       <th>pars</th>
@@ -137,22 +144,22 @@ identifiers for each subject.</p></td>
     <tr>
       <th>ll_func</th>
       <td><p>A log likelihood function that given a list of parameter
-values and a data.frame (or other data store) containing subject data will
+values and a data frame (or other data store) containing subject data will
 return the log likelihood of <code>x</code> given <code>data</code>.</p></td>
     </tr>
     <tr>
       <th>prior</th>
-      <td><p>Specification of the prior distribution for mu and sigma2</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Other tuning parameters that you want to specify for the sampler.</p></td>
+      <td><p>Specification of the prior distribution for the model
+parameters. It should be a list with two elements, <code>theta_mu_mean</code> and
+<code>theta_mu_var</code> which fully specify the prior distribution. If left as
+the default (NULL) then the <code>theta_mu_mean</code> will be all zeroes and
+<code>theta_mu_var</code> will be 1 on the diagonal and zero elsewhere.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A pmwgs object that can be run, plotted and more</p>
+    <p>A pmwgs object that is ready to be initialised and sampled.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Specify the log likelihood function</span>
@@ -184,8 +191,8 @@ return the log likelihood of <code>x</code> given <code>data</code>.</p></td>
 <span class='co'># Specify parameter names and priors</span>
 <span class='no'>pars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>)
 <span class='no'>priors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>theta_mu</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)),
-  <span class='kw'>theta_sig</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)))
+  <span class='kw'>theta_mu_mean</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)),
+  <span class='kw'>theta_mu_var</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)))
 )
 
 <span class='co'># Create the Particle Metropolis within Gibbs sampler object</span>
@@ -206,7 +213,7 @@ return the log likelihood of <code>x</code> given <code>data</code>.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">

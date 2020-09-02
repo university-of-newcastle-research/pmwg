@@ -14,3 +14,6 @@
 ^docs$
 ^pkgdown$
 ^codecov\.yml$
+^\.github$
+^media/
+^CRAN-RELEASE$

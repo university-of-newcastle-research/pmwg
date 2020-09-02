@@ -15,32 +15,70 @@ run_stage(
 )
 }
 \arguments{
-\item{pmwgs}{A pmwgs object that has been initialised}
+\item{pmwgs}{A Particle Metropolis within Gibbs sampler which has been set
+up and initialised}
 
-\item{stage}{The sampling stage to run. Must be one of 'burn', 'adapt' or
-'sample'. If not provided assumes that the stage should be 'burn'}
+\item{stage}{The sampling stage to run. Must be one of \code{'burn'},
+\code{'adapt'} or \code{'sample'}.}
 
-\item{iter}{The number of iterations to run for the sampler. For 'burn' and
-'sample' all iteration will run. However for 'adapt' if all subjects have
-enough unique samples to create the conditional distribution then it will
-finish early.}
+\item{iter}{The number of iterations to run for the sampler. For
+\code{'burn'} and \code{'sample'} all iterations will run. However for
+\code{'adapt'} if all subjects have enough unique samples to create the
+conditional distribution then the stage will finish early.}
 
 \item{particles}{The default here is 1000 particles to be generated for each
 iteration, however during the sample phase this should be reduced.}
 
 \item{display_progress}{Display a progress bar during sampling.}
 
-\item{n_cores}{Set to > 1 to use mclapply}
+\item{n_cores}{Set to more than 1 to use \code{mclapply}. Setting
+\code{n_cores} greater than 1 is only permitted on Linux and Mac OS X
+machines.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{...}{Further arguments used to fine tune the sampling process. Accepted
+additional arguments include:
+\itemize{
+  \item \code{epsilon} which should be a value between 0 and 1.
+    \strong{epsilon} controls the extent to which the covariance matrix is
+    scaled when generating particles from the previous random effect.
+  \item \code{mix} controls the mixture of different sources for particles.
+    The function \code{\link{numbers_from_proportion}} is passed this value
+    and includes extra details on what is accepted.
+  \item \code{n_unique} is a number representing the number of unique
+    samples to check for on each iteration of the sampler. Only used during
+    the \code{'adapt'} stage.
+}}
 }
 \value{
 A pmwgs object with the newly generated samples in place.
 }
 \description{
-Run one of burnin, adaptation of sampling phase from the PMwG
+Run one of burnin, adaptation or sampling phase from the PMwG
 sampler. Each stage involves slightly different processes, so for the
-full PMwG we need to run this three times.
+full PMwG sampling we need to run this three times.
+}
+\details{
+The \strong{burnin} stage by default selects 50% of particles from the model
+parameter sample (selected through a Gibbs step) and 50% of particles from
+the previous random effect of each participant. It assesses each particle
+with the log-likelihood function and samples from all particles weighted by
+their log-likelihood.
+
+The \strong{adaptation} stage selects and assesses particle in the same was
+as burnin, however on each iteration it also checks whether each participant
+has enough unique random effect samples to attempt to create a conditional
+distribution for efficient sampling in the next stage. If the attempt at
+creating a conditional distribution fails, then the number of unique samples
+is increased and sampling continues. If the attempt succeeds then the stage
+is finished early.
+
+The \strong{final} stage (sampling) by default samples predominantly from the
+conditional distribution created at the end of adaptation. This is more
+efficient and allows the number of particles to be reduced whilst still
+getting a high enough acceptance rate of new samples.
+
+Once complete each stage will return a sampler object with the new samples
+stored within it.
 }
 \examples{
 # No example yet

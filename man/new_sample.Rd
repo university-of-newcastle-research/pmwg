@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampling.R
 \name{new_sample}
 \alias{new_sample}
-\title{Generate a new particle}
+\title{Generate particles and select one to be the new sample}
 \usage{
 new_sample(
   s,
@@ -11,45 +11,48 @@ new_sample(
   parameters,
   efficient_mu = NULL,
   efficient_sig2 = NULL,
-  mix_ratio = c(0.5, 0.5, 0),
+  mix_proportion = c(0.5, 0.5, 0),
   likelihood_func = NULL,
   epsilon = 1,
   subjects = NULL
 )
 }
 \arguments{
-\item{s}{A number - the index of the subject, also selects particles. For
-`s == 1` The first subject ID from the `data` subject column will be
-selected. For `s == 2` the second unique value for subject id will be used.}
+\item{s}{A number - the index of the subject. For \code{s == 1} The first
+subject ID from the \code{data} subject column will be selected. For
+\code{s == 2} the second unique value for subject id will be used.}
 
-\item{data}{A data.frame containing variables for
-response time (\code{rt}), trial condition (\code{condition}),
-accuracy (\code{correct}) and subject (\code{subject}) which
-contains the data against which the particles are assessed}
+\item{data}{A data.frame (or similar object) which contains the data against
+which the particles are assessed. The only strict requirement is that
+it contains a subject column named as such to allow for the splitting
+of the data by unique subject id. The provided log likelihood function
+is the only other contact with the data.}
 
 \item{num_particles}{The total number of particles to generate using a
 combination of the three methods.}
 
 \item{parameters}{A list containing:
-* the vector of means for the multivariate normal (gm),
-* A covariate matrix for the multivariate normal (gv)
-* An array of individual subject means (re proposals for latent
-  variables) (sm)}
+\describe{
+  \item{\code{tmu}}{The vector of means for the multivariate normal}
+  \item{\code{tsig}}{A covariate matrix for the multivariate normal}
+  \item{\code{alpha}}{An array of individual subject random effects}
+}}
 
 \item{efficient_mu}{The mu value for the efficient proposals}
 
 \item{efficient_sig2}{The sigma value for the efficient proposals}
 
-\item{mix_ratio}{A vector of floats betwen 0 and 1 and summing to 1 which
-give the ratio of particles to generate from the population level
-parameters, the individual random effects and the conditional parameters
-repectively}
+\item{mix_proportion}{A vector of floats between 0 and 1 and summing to 1
+which give the proportion of particles to generate from the population
+level parameters, the individual random effects and the conditional
+parameters respectively}
 
 \item{likelihood_func}{A likelihood function for calculating log likelihood
-of samples}
+of samples. Usually provided internally in \code{run_stage} from the pmwgs
+object.}
 
-\item{epsilon}{A scaling factor to reduce the variance on individual level
-parameter samples.}
+\item{epsilon}{A scaling factor to reduce the variance on the distribution
+based on subject random effects when generating particles.}
 
 \item{subjects}{A list of unique subject ids in the order they appear in
 the data.frame}
@@ -58,12 +61,24 @@ the data.frame}
 A single sample from the new proposals
 }
 \description{
-Generate samples from either the initial proposal or from the last
-iteration of the particles (according to a mixing value) and return
-a weighted random sample from the new proposals
-This uses the simplest, and slowest, proposals: a mixture of the
-the population distribution and Gaussian around current random effect.
+Generate a new sample for a particular subject given their data and the
+new model parameter estimates. This should not be called directly, rather it
+is used internally to run_stage.
 }
-\examples{
-# No example yet
+\details{
+The function that controls the generation of new samples for the Particle
+Metropolis within Gibbs sampler. It generates samples from either the initial
+proposal or from the last iteration of the sampler. This function should not
+usually need to be called, as the \code{run_stage} function uses this
+internally.
+
+The way it selects a new sample is by generating proposal particles from up
+to three different distributions (according to a mixing proportion).
+
+The first distribution is based on the current model parameter sample values.
+The second distribution is based on the last random effects for the subject.
+The third distribution is only used in the final sampling phase and is based
+on the conditional distribution built from accepted particles in the adapt
+phase of the sampler.
 }
+\keyword{internal}

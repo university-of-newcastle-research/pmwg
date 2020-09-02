@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Check for efficient proposals if necessary — check_efficient • psamplers</title>
+<title>Check for efficient proposals if necessary — check_efficient • pmwg</title>
 
 
 <!-- jquery -->
@@ -40,9 +40,10 @@
 
 
 <meta property="og:title" content="Check for efficient proposals if necessary — check_efficient" />
-<meta property="og:description" content="Takes a mix ratio vector (3 x float) and the efficient proposal mu and sigma
-If efficient proposals are to be used (mix_ratio[3] &amp;gt; 0) then test the
-efficient proposal values to see whether they are not null and appropriate." />
+<meta property="og:description" content="Takes a mix proportion vector (3 x float) and the efficient proposal mu and
+sigma. If efficient proposals are to be used (mix_proportion[3] &amp;gt; 0) then
+test the efficient proposal values to see whether they are not null and
+appropriate." />
 
 
 
@@ -73,8 +74,8 @@ efficient proposal values to see whether they are not null and appropriate." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <a class="navbar-link" href="../index.html">pmwg</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -89,10 +90,13 @@ efficient proposal values to see whether they are not null and appropriate." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/samplers/">
+  <a href="https://github.com/newcastlecl/pmwg/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -111,27 +115,28 @@ efficient proposal values to see whether they are not null and appropriate." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Check for efficient proposals if necessary</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/helpers.R'><code>R/helpers.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/efficient.R'><code>R/efficient.R</code></a></small>
     <div class="hidden name"><code>check_efficient.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Takes a mix ratio vector (3 x float) and the efficient proposal mu and sigma
-If efficient proposals are to be used (mix_ratio[3] &gt; 0) then test the
-efficient proposal values to see whether they are not null and appropriate.</p>
+    <p>Takes a mix proportion vector (3 x float) and the efficient proposal mu and
+sigma. If efficient proposals are to be used (mix_proportion[3] &gt; 0) then
+test the efficient proposal values to see whether they are not null and
+appropriate.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check_efficient</span>(<span class='no'>mix_ratio</span>, <span class='no'>efficient_mu</span>, <span class='no'>efficient_sig2</span>)</pre>
+    <pre class="usage"><span class='fu'>check_efficient</span>(<span class='no'>mix_proportion</span>, <span class='no'>efficient_mu</span>, <span class='no'>efficient_sig2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mix_ratio</th>
-      <td><p>A vector of floats betwen 0 and 1 and summing to 1 which
-give the ratio of particles to generate from the population level
-parameters, the individual random effects and the conditional parameters
-repectively</p></td>
+      <th>mix_proportion</th>
+      <td><p>A vector of floats between 0 and 1 and summing to 1
+which give the proportion of particles to generate from the population
+level parameters, the individual random effects and the conditional
+parameters respectively</p></td>
     </tr>
     <tr>
       <th>efficient_mu</th>
@@ -145,10 +150,10 @@ repectively</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>nothing, stops operation on incorrect combiation of parameters.</p>
+    <p>nothing, stops operation on incorrect combination of parameters.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw pkg'>psamplers</span><span class='kw ns'>:::</span><span class='fu'>check_efficient</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>, <span class='fl'>0.0</span>), <span class='kw'>NULL</span>, <span class='kw'>NULL</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='kw pkg'>pmwg</span><span class='kw ns'>:::</span><span class='fu'>check_efficient</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>, <span class='fl'>0.0</span>), <span class='kw'>NULL</span>, <span class='kw'>NULL</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -160,7 +165,7 @@ repectively</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">

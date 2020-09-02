@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a new list for storage samples in the pmwgs object — sample_store • psamplers</title>
+<title>Create a new list for storage samples in the pmwgs object — sample_store • pmwg</title>
 
 
 <!-- jquery -->
@@ -71,8 +71,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <a class="navbar-link" href="../index.html">pmwg</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -87,10 +87,13 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/samplers/">
+  <a href="https://github.com/newcastlecl/pmwg/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -109,7 +112,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create a new list for storage samples in the pmwgs object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/samplers/blob/release/R/helpers.R'><code>R/helpers.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/store.R'><code>R/store.R</code></a></small>
     <div class="hidden name"><code>sample_store.Rd</code></div>
     </div>
 
@@ -117,7 +120,7 @@
     <p>Create a new list for storage samples in the pmwgs object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sample_store</span>(<span class='no'>par_names</span>, <span class='no'>n_subjects</span>, <span class='kw'>iters</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>stage</span> <span class='kw'>=</span> <span class='st'>"init"</span>)</pre>
+    <pre class="usage"><span class='fu'>sample_store</span>(<span class='no'>par_names</span>, <span class='no'>subject_ids</span>, <span class='kw'>iters</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>stage</span> <span class='kw'>=</span> <span class='st'>"init"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -127,17 +130,17 @@
       <td><p>The names of each parameter as a character vector</p></td>
     </tr>
     <tr>
-      <th>n_subjects</th>
-      <td><p>The number of subjects for the subject mean storage.</p></td>
-    </tr>
-    <tr>
       <th>iters</th>
       <td><p>The number of iterations to be pre-allocated</p></td>
     </tr>
     <tr>
       <th>stage</th>
       <td><p>The stage for which the samples will be created. Should be one
-of `c("init", "burn", "adapt", "sample")`</p></td>
+of <code><a href='https://rdrr.io/r/base/c.html'>c("init", "burn", "adapt", "sample")</a></code></p></td>
+    </tr>
+    <tr>
+      <th>subjects_ids</th>
+      <td><p>The unique ID of each subjects as a character vector</p></td>
     </tr>
     </table>
 
@@ -159,7 +162,7 @@ of `c("init", "burn", "adapt", "sample")`</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">

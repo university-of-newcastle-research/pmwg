@@ -2,7 +2,7 @@
 % Please edit documentation in R/particle_sampler.R
 \name{is.pmwgs}
 \alias{is.pmwgs}
-\title{Test whether object is pmwgs}
+\title{Test whether object is a pmwgs}
 \usage{
 is.pmwgs(x)
 }
@@ -13,5 +13,5 @@ is.pmwgs(x)
 logical, whether object inherits from pmwgs
 }
 \description{
-Checks whether object is a Particle Metrolpolis with Gibbs sampler
+Checks whether object is a Particle Metropolis with Gibbs sampler
 }

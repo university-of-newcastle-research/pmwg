@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • psamplers</title>
+<title>Function reference • pmwg</title>
 
 
 <!-- jquery -->
@@ -70,8 +70,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">psamplers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <a class="navbar-link" href="../index.html">pmwg</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
       </span>
     </div>
 
@@ -86,10 +86,13 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/newcastlecl/samplers/">
+  <a href="https://github.com/newcastlecl/pmwg/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -121,8 +124,83 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-package" class="hasAnchor"><a href="#section-package" class="anchor"></a>Package</h2>
+          <p class="section-desc"><p>Top level package documentation</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="pmwg-package.html">pmwg-package</a></code> </p>
+        </td>
+        <td><p>pmwg: Particle Metropolis Within Gibbs.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sampling" class="hasAnchor"><a href="#section-sampling" class="anchor"></a>Sampling</h2>
+          <p class="section-desc"><p>Functions for creating a sampler object and running the Particle Metropolis within Gibbs estimation methods.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="pmwgs.html">pmwgs()</a></code> </p>
+        </td>
+        <td><p>Create a PMwG sampler and return the created object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="is.pmwgs.html">is.pmwgs()</a></code> </p>
+        </td>
+        <td><p>Test whether object is a pmwgs</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="run_stage.html">run_stage()</a></code> </p>
+        </td>
+        <td><p>Run a stage of the PMwG sampler</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="init.html">init()</a></code> </p>
+        </td>
+        <td><p>Initialise values for the random effects</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data-access" class="hasAnchor"><a href="#section-data-access" class="anchor"></a>Data Access</h2>
+          <p class="section-desc"><p>Functions for accessing and exporting samples in easy to work with formats.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="as_mcmc.html">as_mcmc()</a></code> </p>
+        </td>
+        <td><p>Return a CODA mcmc object with the required samples</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h2>
+          <p class="section-desc"><p>Data included in the package</p></p>
         </th>
       </tr>
       
@@ -135,43 +213,7 @@
         <td>
           <p><code><a href="forstmann.html">forstmann</a></code> </p>
         </td>
-        <td><p>Forstmann et al.'s data.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="init.html">init()</a></code> </p>
-        </td>
-        <td><p>Initialise values for the random effects</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is.pmwgs.html">is.pmwgs()</a></code> </p>
-        </td>
-        <td><p>Test whether object is pmwgs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="new_sample.html">new_sample()</a></code> </p>
-        </td>
-        <td><p>Generate a new particle</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pmwgs.html">pmwgs()</a></code> </p>
-        </td>
-        <td><p>Initialise a PMwG sampler and return a pmwgs object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="psamplers.html">psamplers</a></code> </p>
-        </td>
-        <td><p>The psamplers Package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="run_stage.html">run_stage()</a></code> </p>
-        </td>
-        <td><p>Run a stage of the PMwG sampler</p></td>
+        <td><p>Forstmann et al.'s data</p></td>
       </tr>
     </tbody>
     </table>
@@ -187,7 +229,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gavin Cooper.</p>
+  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
 </div>
 
 <div class="pkgdown">
