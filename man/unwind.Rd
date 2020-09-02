@@ -16,7 +16,4 @@ The unwound matrix as a vector
 Takes a variance matrix and unwind to a vector via Cholesky decomposition
 then take the log of the diagonal.
 }
-\examples{
-pmwg:::unwind(diag(rep(1, 7)))
-}
 \keyword{internal}

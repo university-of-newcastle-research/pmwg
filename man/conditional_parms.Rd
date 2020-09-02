@@ -17,7 +17,4 @@ A list containing the conditional mean and variances for this subject
 \description{
 Obtain the efficent mu and sigma from the adaptation phase draws
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

@@ -16,7 +16,4 @@ A vector with the acceptance rate for each subject
 \description{
 Return the acceptance rate for all subjects
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

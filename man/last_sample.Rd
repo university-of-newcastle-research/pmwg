@@ -16,7 +16,4 @@ A list containing the last sample of group mean and variance and
 \description{
 Create a list with the last samples in the pmwgs object
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

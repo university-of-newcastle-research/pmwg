@@ -7,8 +7,6 @@
 #' @param stage The stage, or list of stages from which you want the samples
 #'
 #' @return A list containing only appropriate samples (non init/burnin samples)
-#' @examples
-#' # No example yet
 #' @keywords internal
 extract_samples <- function(sampler, stage = c("adapt", "sample")) {
   samples <- sampler$samples
@@ -29,8 +27,6 @@ extract_samples <- function(sampler, stage = c("adapt", "sample")) {
 #' @param var_matrix A variance matrix
 #'
 #' @return The unwound matrix as a vector
-#' @examples
-#' pmwg:::unwind(diag(rep(1, 7)))
 #' @keywords internal
 unwind <- function(var_matrix, ...) {
   y <- t(chol(var_matrix))
@@ -46,8 +42,6 @@ unwind <- function(var_matrix, ...) {
 #' @param var_vector A variance vector
 #'
 #' @return The wound vector as a matrix
-#' @examples
-#' pmwg:::wind(diag(rep(1, 7)))
 #' @keywords internal
 wind <- function(var_vector, ...) {
   n <- sqrt(2 * length(var_vector) + 0.25) - 0.5 ## Dim of matrix.
@@ -68,8 +62,6 @@ wind <- function(var_vector, ...) {
 #'   of \code{c("init", "burn", "adapt", "sample")}
 #'
 #' @return A list containing the conditional mean and variances for this subject
-#' @examples
-#' # No example yet
 #' @keywords internal
 sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
   n_pars <- length(par_names)
@@ -111,8 +103,6 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
 #' @param store The sample storage stage just run
 #'
 #' @return The pmwgs object with the new samples concatenated to the old
-#' @examples
-#' # No example yet
 #' @keywords internal
 update_sampler <- function(sampler, store) {
   old_tmu <- sampler$samples$theta_mu
@@ -163,8 +153,6 @@ update_sampler <- function(sampler, store) {
 #'
 #' @return A list containing the last sample of group mean and variance and
 #'   subject means.
-#' @examples
-#' # No example yet
 #' @keywords internal
 last_sample <- function(store) {
   list(

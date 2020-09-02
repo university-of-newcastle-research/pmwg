@@ -117,8 +117,6 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
 #'
 #' @return A new sample for \code{theta_mu}, \code{theta_sig} and some new
 #'   mixing weights in a list for use in the Particle Metropolis step.
-#' @examples
-#' # No example yet
 #' @keywords internal
 gibbs_step <- function(samples, sampler) {
   # Get single iter versions, tmu = theta_mu, tsig = theta_sig

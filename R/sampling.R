@@ -203,8 +203,6 @@ run_stage <- function(pmwgs,
 #'   the data.frame
 #'
 #' @return A single sample from the new proposals
-#' @examples
-#' # No example yet
 #' @keywords internal
 new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
@@ -290,8 +288,6 @@ new_sample <- function(s, data, num_particles, parameters,
 #'   factor
 #'
 #' @return The new proposals
-#' @examples
-#' pmwg:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
 #' @keywords internal
 gen_particles <- function(num_particles,
                           mu,
@@ -331,8 +327,6 @@ gen_particles <- function(num_particles,
 #'   combination of the three methods.
 #'
 #' @return The wound vector as a matrix
-#' @examples
-#' pmwg:::numbers_from_proportion(c(0.1, 0.3, 0.6))
 #' @keywords internal
 numbers_from_proportion <- function(mix_proportion, num_particles = 1000) {
   numbers <- stats::rbinom(n = 2, size = num_particles, prob = mix_proportion)
@@ -359,9 +353,6 @@ numbers_from_proportion <- function(mix_proportion, num_particles = 1000) {
 #'
 #' @return If n > 0 returns n draws from the multivariate normal with mean and
 #'   sigma, otherwise returns NULL
-#' @examples
-#' pmwg:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
-#' pmwg:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
 #' @keywords internal
 particle_draws <- function(n, mu, covar) {
   if (n <= 0) {
@@ -500,8 +491,6 @@ check_run_stage_args <- function(pmwgs,
 #'   working
 #'
 #' @return A vector with the acceptance rate for each subject
-#' @examples
-#' # No example yet
 #' @keywords internal
 accept_rate <- function(store) {
   if (is.null(store$idx) || store$idx < 3) {

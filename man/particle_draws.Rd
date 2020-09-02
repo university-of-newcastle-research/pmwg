@@ -23,8 +23,4 @@ as the number of particles to generate and return random draws from the
 multivariate normal if the numbers of particles is > 0, otherwise return
 NULL. At least one of mean or sigma must be provided.
 }
-\examples{
-pmwg:::particle_draws(100, rep(0.2, 7), diag(rep(7)))
-pmwg:::particle_draws(0, rep(0.2, 7), diag(rep(7)))
-}
 \keyword{internal}

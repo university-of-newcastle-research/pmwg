@@ -17,7 +17,4 @@ The pmwgs object with the new samples concatenated to the old
 \description{
 Update the main data store with the results of the last stage
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

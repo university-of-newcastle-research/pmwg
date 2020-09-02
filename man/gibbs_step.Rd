@@ -20,7 +20,4 @@ A new sample for \code{theta_mu}, \code{theta_sig} and some new
 \description{
 Samples new \code{theta_mu} and \code{theta_sig} using Gibbs sampling
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

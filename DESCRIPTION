@@ -2,19 +2,20 @@ Package: pmwg
 Title: Particle Metropolis Within Gibbs
 Version: 0.1.9
 Authors@R: c(
-	person("Gavin", "Cooper", email = "gavin@gavincooper.net", role = c("aut", "cre", "trl"), comment = "Package creator and maintainer"),
-	person("Reilly", "Innes", email = "Reilly.Innes@uon.edu.au", role = c("aut")),
-	person("Caroline", "Kuhne", email = "caroline.kuhne@newcastle.edu.au", role = c("aut")),
-	person("Jon-Paul", "Cavallaro", email = "jon-paul.cavallaro@uon.edu.au", role = c("aut")),
-	person("David", "Gunawan", email = "dgunawan@uow.edu.au", role = c("aut"), comment = "Author of original MATLAB code"),
-	person("Guy", "Hawkins", email = "guy.hawkins@newcastle.edu.au", role = c("aut")),
-	person("Scott", "Brown", email = "scott.brown@newcastle.edu.au", role = c("aut", "trl"), comment = "Original translation from MATLAB to R"))
+    person("Gavin", "Cooper", email = "gavin@gavincooper.net", role = c("aut", "cre", "trl"), comment = "Package creator and maintainer"),
+    person("Reilly", "Innes", email = "Reilly.Innes@uon.edu.au", role = c("aut")),
+    person("Caroline", "Kuhne", email = "caroline.kuhne@newcastle.edu.au", role = c("aut")),
+    person("Jon-Paul", "Cavallaro", email = "jon-paul.cavallaro@uon.edu.au", role = c("aut")),
+    person("David", "Gunawan", email = "dgunawan@uow.edu.au", role = c("aut"), comment = "Author of original MATLAB code"),
+    person("Guy", "Hawkins", email = "guy.hawkins@newcastle.edu.au", role = c("aut")),
+    person("Scott", "Brown", email = "scott.brown@newcastle.edu.au", role = c("aut", "trl"), comment = "Original translation from MATLAB to R"))
 Description: Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter, covariance matrix and random effect
     estimation. A more general implementation of the sampler based on the paper
-    at <doi:10.1016/j.jmp.2020.102368>. An HTML tutorial document describing the
-    package is available at	<https://newcastlecl.github.io/samplerDoc/> and
-    includes several detailed	examples, some background and troubleshooting
+    by Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D.
+    (2020) <doi:10.1016/j.jmp.2020.102368>. An HTML tutorial document describing
+    the package is available at <https://newcastlecl.github.io/samplerDoc/> and
+    includes several detailed examples, some background and troubleshooting
     steps.
 License: GPL-3
 URL: https://github.com/newcastlecl/pmwg

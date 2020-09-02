@@ -16,7 +16,4 @@ A list containing the mu and sigma for the proposal distribution.
 From the existing samples, create a proposal distribution for drawing
 efficient samples from.
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

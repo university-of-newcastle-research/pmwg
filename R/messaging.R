@@ -91,8 +91,6 @@ update_progress_bar <- function(pb, value, extra = 0) {
 #' @param store The samples store (containing random effects) with which we
 #'   are working in the current stage.
 #'
-#' @examples
-#' # No example yet
 #' @keywords internal
 gibbs_step_err <- function(pmwgs, store) {
   store_tmp <- tempfile(

@@ -22,7 +22,4 @@ A list containing the conditional mean and variances for this subject
 \description{
 Create a new list for storage samples in the pmwgs object
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

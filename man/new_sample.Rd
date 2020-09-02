@@ -81,7 +81,4 @@ The third distribution is only used in the final sampling phase and is based
 on the conditional distribution built from accepted particles in the adapt
 phase of the sampler.
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

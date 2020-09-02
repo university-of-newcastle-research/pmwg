@@ -16,3 +16,4 @@
 ^codecov\.yml$
 ^\.github$
 ^media/
+^CRAN-RELEASE$

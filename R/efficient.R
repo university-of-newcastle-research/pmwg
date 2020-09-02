@@ -13,8 +13,6 @@
 #'   parameters respectively
 #'
 #' @return nothing, stops operation on incorrect combination of parameters.
-#' @examples
-#' pmwg:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
 #' @keywords internal
 check_efficient <- function(mix_proportion, efficient_mu, efficient_sig2) {
   if (mix_proportion[3] != 0) {
@@ -38,8 +36,6 @@ check_efficient <- function(mix_proportion, efficient_mu, efficient_sig2) {
 #' @param x The current pmwgs object
 #'
 #' @return A list containing the mu and sigma for the proposal distribution.
-#' @examples
-#' # No example yet
 #' @keywords internal
 create_efficient <- function(x) {
   proposal_means <- array(dim = c(x$n_pars, x$n_subjects))
@@ -65,8 +61,6 @@ create_efficient <- function(x) {
 #' @param samples A list containing previous samples
 #'
 #' @return A list containing the conditional mean and variances for this subject
-#' @examples
-#' # No example yet
 #' @keywords internal
 conditional_parms <- function(s, samples) {
   tmudim <- dim(samples$theta_mu)
@@ -142,8 +136,6 @@ test_sampler_adapted <- function(stage_samples, pmwgs, n_unique, i) {
 #' @param unq_vals The number of unique values for each subject
 #'
 #' @return A boolean TRUE or FALSE depending on the result of the test
-#' @examples
-#' # No example yet
 #' @keywords internal
 check_adapted <- function(samples, unq_vals = 20) {
   # Only need to check uniqueness for one parameter

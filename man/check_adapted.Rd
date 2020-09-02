@@ -17,7 +17,4 @@ A boolean TRUE or FALSE depending on the result of the test
 \description{
 Check whether the adaptation phase has successfully completed
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

@@ -25,7 +25,4 @@ sigma. If efficient proposals are to be used (mix_proportion[3] > 0) then
 test the efficient proposal values to see whether they are not null and
 appropriate.
 }
-\examples{
-pmwg:::check_efficient(c(0.1, 0.9, 0.0), NULL, NULL)
-}
 \keyword{internal}

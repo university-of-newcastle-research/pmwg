@@ -18,7 +18,4 @@ A list containing only appropriate samples (non init/burnin samples)
 From the sampler, extract relevant samples for the creation of
 the proposal distribution.
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

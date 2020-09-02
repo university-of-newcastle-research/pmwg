@@ -17,7 +17,4 @@ If an error was detected when generating new values in Gibbs step this
 function is called to generate the error message and save the state of the
 samples at that moment to help with debugging.
 }
-\examples{
-# No example yet
-}
 \keyword{internal}

@@ -49,7 +49,4 @@ particles, a more efficient proposal method.
 This function is used in burnin, adaptation and sampling using various
 combinations of the arguments.
 }
-\examples{
-pmwg:::gen_particles(100, rep(0.2, 7), diag(rep(0.1, 7)), rep(0.3, 7))
-}
 \keyword{internal}
