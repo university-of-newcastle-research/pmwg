@@ -7,11 +7,15 @@
 
 ## Installation
 
-To install the currently recommended method is via devtools.
+To install the latest stable version you can use the following command to install from CRAN:
 
-`devtools::install_github('newcastlecl/pmwg', ref="release")`
+`install.packages("pmwg")`
 
-Instructions on installing to an earlier version of R are included below.
+If you want the (possibly unstable) development version, you can also install the package using devtools as follows:
+
+`devtools::install_github('newcastlecl/pmwg', ref="develop")`
+
+This package is tested and should work on all versions of R > 3.5, however instructions on installing to an earlier version of R are included below.
 
 ## Using the package
 
@@ -49,7 +53,7 @@ sampler <- run_stage(sampler, stage="sample")
 
 The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others. For a full list see [the description in the PMwG Tutorial Book](https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
 
-## Installing to an older version of R (< 3.6)
+## Installing to an older version of R (< 3.5)
 
 **Terminal**
 
