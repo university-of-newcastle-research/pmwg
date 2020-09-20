@@ -75,6 +75,10 @@ run_stage <- function(pmwgs,
   }
   apply_fn <- clean_args$apply_fn
 
+  #If we are debugging
+  if (clean_args$sample_args$debug) {
+    proposals <- list()
+  }
   # Display stage to screen
   msgs <- list(
     burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
@@ -121,6 +125,10 @@ run_stage <- function(pmwgs,
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, "ll"))
+    if (clean_args$sample_args$debug) {
+      props <- unlist(lapply(tmp, attr, "prop"))
+      proposals[[i]] <- props
+    }
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
 
     # Store results locally.
@@ -153,7 +161,9 @@ run_stage <- function(pmwgs,
       ))
     }
   }
-  update_sampler(pmwgs, stage_samples)
+  updated_sampler <- update_sampler(pmwgs, stage_samples)
+  attr(updated_sampler, "proposals") <- proposals
+  updated_sampler
 }
 
 
@@ -208,7 +218,7 @@ new_sample <- function(s, data, num_particles, parameters,
                        efficient_mu = NULL, efficient_sig2 = NULL,
                        mix_proportion = c(0.5, 0.5, 0.0),
                        likelihood_func = NULL,
-                       epsilon = 1, subjects = NULL) {
+                       epsilon = 1, subjects = NULL, debug = FALSE) {
   # Check for efficient proposal values if necessary
   check_efficient(mix_proportion, efficient_mu, efficient_sig2)
   e_mu <- efficient_mu[, s]
@@ -264,6 +274,9 @@ new_sample <- function(s, data, num_particles, parameters,
   idx <- sample(x = num_particles, size = 1, prob = weights)
   winner <- proposals[idx, ]
   attr(winner, "ll") <- lw[idx]
+  if (debug) {
+    attr(winner, "prop") <- proposals
+  }
   winner
 }
 
@@ -397,7 +410,7 @@ check_run_stage_args <- function(pmwgs,
     }
   )
 
-  acceptable_extras <- c("n_unique", "epsilon", "mix")
+  acceptable_extras <- c("n_unique", "epsilon", "mix", "debug")
   dots <- list(...)
   for (argname in names(dots)) {
     if (!argname %in% acceptable_extras) {
@@ -430,6 +443,16 @@ check_run_stage_args <- function(pmwgs,
     )
     message(paste("Epsilon has been set automatically to:", sargs$epsilon))
     message("This is based on the number of parameters")
+  }
+
+  if (is.null(dots$debug)) {
+    sargs$debug <- FALSE
+  } else {
+    if (dots$debug %in% c(TRUE, FALSE)) {
+      sargs$debug <- dots$debug
+    } else {
+      stop("Parameter `debug` must be set to TRUE or FALSE")
+    }
   }
 
   # Create efficient proposal distribution if we are in sampling phase

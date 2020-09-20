@@ -14,7 +14,8 @@ new_sample(
   mix_proportion = c(0.5, 0.5, 0),
   likelihood_func = NULL,
   epsilon = 1,
-  subjects = NULL
+  subjects = NULL,
+  debug = FALSE
 )
 }
 \arguments{
