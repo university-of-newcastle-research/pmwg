@@ -162,7 +162,9 @@ run_stage <- function(pmwgs,
     }
   }
   updated_sampler <- update_sampler(pmwgs, stage_samples)
-  attr(updated_sampler, "proposals") <- proposals
+  if (clean_args$sample_args$debug) {
+    attr(updated_sampler, "proposals") <- proposals
+  }
   updated_sampler
 }
 
