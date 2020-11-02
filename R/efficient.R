@@ -140,10 +140,10 @@ test_sampler_adapted <- function(stage_samples, pmwgs, n_unique, i) {
 check_adapted <- function(samples, unq_vals = 20) {
   # Only need to check uniqueness for one parameter
   first_par <- samples[1, , ]
-  all(
-    lapply(
-      apply(first_par, 1, unique),
-      length
-    ) > unq_vals
-  )
+  # Split the matrix into a list of vectors by subject
+  # Needed for the case where every sample is unique for all subjects
+  first_par_list <- split(first_par, seq(NROW(first_par)))
+  # Get unique pars (new accepted particles) and check length for
+  # all subjects is greater than unq_vals
+  all(lapply(lapply(first_par_list, unique), length) > unq_vals)
 }
