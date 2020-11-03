@@ -88,11 +88,9 @@ update_progress_bar <- function(pb, value, extra = 0) {
 #' samples at that moment to help with debugging.
 #'
 #' @param pmwgs The pmwgs object for the current run.
-#' @param store The samples store (containing random effects) with which we
-#'   are working in the current stage.
 #'
 #' @keywords internal
-gibbs_step_err <- function(pmwgs, store) {
+gibbs_step_err <- function(pmwgs) {
   store_tmp <- tempfile(
     pattern = "pmwg_stage_samples_",
     tmpdir = ".",
@@ -106,7 +104,5 @@ gibbs_step_err <- function(pmwgs, store) {
   message("Error while generating new group level parameters")
   message("Saving current state of pmwgs object: ", sampler_tmp)
   saveRDS(pmwgs, file = sampler_tmp)
-  message("Saving current state of stage sample storage", store_tmp)
-  saveRDS(store, file = store_tmp)
   stop("Stopping execution")
 }

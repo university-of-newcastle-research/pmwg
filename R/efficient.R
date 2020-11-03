@@ -104,8 +104,11 @@ conditional_parms <- function(s, samples) {
 #'
 #' @keywords internal
 test_sampler_adapted <- function(pmwgs, n_unique, i) {
+  if (i < n_unique) {
+    return("continue")
+  }
   test_samples <- extract_samples(pmwgs, stage = "adapt")
-  if (check_adapted(test_samples, unq_vals = n_unique)) {
+  if (check_adapted(test_samples$alpha, unq_vals = n_unique)) {
     message("Enough unique values detected: ", n_unique)
     message("Testing proposal distribution creation")
     attempt <- try({
