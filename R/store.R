@@ -10,11 +10,13 @@
 #' @keywords internal
 extract_samples <- function(sampler, stage = c("adapt", "sample")) {
   samples <- sampler$samples
-  sample_filter <- samples$stage %in% stage
+  stage_filter <- samples$stage %in% stage
+  sampled_filter <- 1:length(samples$stage) <= samples$idx
+  
   list(
-    theta_mu = samples$theta_mu[, sample_filter],
-    theta_sig = samples$theta_sig[, , sample_filter],
-    alpha = samples$alpha[, , sample_filter]
+    theta_mu = samples$theta_mu[, stage_filter & sampled_filter],
+    theta_sig = samples$theta_sig[, , stage_filter & sampled_filter],
+    alpha = samples$alpha[, , stage_filter & sampled_filter]
   )
 }
 
