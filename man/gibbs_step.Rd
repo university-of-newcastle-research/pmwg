@@ -4,12 +4,9 @@
 \alias{gibbs_step}
 \title{Gibbs step of the Particle Metropolis within Gibbs sampler}
 \usage{
-gibbs_step(samples, sampler)
+gibbs_step(sampler)
 }
 \arguments{
-\item{samples}{The list containing the samples from the current run, or from
-the main storage in the sampler}
-
 \item{sampler}{The pmwgs object from which to generate the new group
 parameters.}
 }
