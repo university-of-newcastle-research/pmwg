@@ -10,11 +10,13 @@
 #' @keywords internal
 extract_samples <- function(sampler, stage = c("adapt", "sample")) {
   samples <- sampler$samples
-  sample_filter <- samples$stage %in% stage
+  stage_filter <- samples$stage %in% stage
+  sampled_filter <- 1:length(samples$stage) <= samples$idx
+  
   list(
-    theta_mu = samples$theta_mu[, sample_filter],
-    theta_sig = samples$theta_sig[, , sample_filter],
-    alpha = samples$alpha[, , sample_filter]
+    theta_mu = samples$theta_mu[, stage_filter & sampled_filter],
+    theta_sig = samples$theta_sig[, , stage_filter & sampled_filter],
+    alpha = samples$alpha[, , stage_filter & sampled_filter]
   )
 }
 
@@ -94,6 +96,55 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
       dimnames = list(par_names, NULL)
     )
   )
+}
+
+#' Extend the main data store with empty space for new samples
+#'
+#' @param sampler The pmwgs object that we are adding the new samples to
+#' @param n_samples The number of new samples to increase by
+#' @param stage The name of the stage from which the new samples will be drawn
+#'
+#' @return The pmwgs object with the space for new samples added
+#' @keywords internal
+extend_sampler <- function(sampler, n_samples, stage) {
+  old <- sampler$samples
+  par_names <- sampler$par_names
+  subject_ids <- sampler$subjects
+  start <- old$idx + 1
+  end <- old$idx + n_samples
+
+  new_tmu <- array(NA_real_,
+                   dim = dim(old$theta_mu) + c(0, n_samples),
+                   dimnames = list(par_names, NULL))
+  new_tmu[, - (start:end)] <- old$theta_mu
+  sampler$samples$theta_mu <- new_tmu
+
+  new_tsig <- array(NA_real_,
+                    dim = dim(old$theta_sig) + c(0, 0, n_samples),
+                    dimnames = list(par_names, par_names, NULL))
+  new_tsig[, , - (start:end)] <- old$theta_sig
+  sampler$samples$theta_sig <- new_tsig
+
+  new_alph <- array(NA_real_,
+                    dim = dim(old$alpha) + c(0, 0, n_samples),
+                    dimnames = list(par_names, subject_ids, NULL))
+  new_alph[, , - (start:end)] <- old$alpha
+  sampler$samples$alpha <- new_alph
+
+  new_sll <- array(NA_real_,
+                   dim = dim(old$subj_ll) + c(0, n_samples),
+                   dimnames = list(subject_ids, NULL))
+  new_sll[, - (start:end)] <- old$subj_ll
+  sampler$samples$subj_ll <- new_sll
+
+  new_ahalf <- array(NA_real_,
+                     dim = dim(old$a_half) + c(0, n_samples),
+                     dimnames = list(par_names, NULL))
+  new_ahalf[, - (start:end)] <- old$a_half
+  sampler$samples$a_half <- new_ahalf
+
+  sampler$samples$stage <- c(old$stage, rep(stage, n_samples))
+  sampler
 }
 
 

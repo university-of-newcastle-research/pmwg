@@ -4,14 +4,17 @@
 \alias{accept_rate}
 \title{Return the acceptance rate for all subjects}
 \usage{
-accept_rate(store)
+accept_rate(pmwgs, window_size = 200)
 }
 \arguments{
-\item{store}{The samples store (containing random effects) with which we are
+\item{pmwgs}{The sampler object (containing random effects) with which we are
 working}
+
+\item{window_size}{The size of the window to calculate acceptance rate over}
 }
 \value{
-A vector with the acceptance rate for each subject
+A vector with the acceptance rate for each subject for the last X
+  samples
 }
 \description{
 Return the acceptance rate for all subjects

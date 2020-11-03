@@ -4,13 +4,10 @@
 \alias{gibbs_step_err}
 \title{Error handler for the gibbs_step call}
 \usage{
-gibbs_step_err(pmwgs, store)
+gibbs_step_err(pmwgs)
 }
 \arguments{
 \item{pmwgs}{The pmwgs object for the current run.}
-
-\item{store}{The samples store (containing random effects) with which we
-are working in the current stage.}
 }
 \description{
 If an error was detected when generating new values in Gibbs step this

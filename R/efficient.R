@@ -94,8 +94,7 @@ conditional_parms <- function(s, samples) {
 
 #' Test that the sampler has successfully adapted
 #'
-#' @param stage_samples The samples store for the currently running stage.
-#' @param pmwgs The full pmwgs object with all samples from previous runs.
+#' @param pmwgs The full pmwgs object with all samples
 #' @param n_unique The number of unique samples to look for in random effects
 #'   for each participant.
 #' @param i The number for the current iteration of the sampler
@@ -104,25 +103,28 @@ conditional_parms <- function(s, samples) {
 #'   of c("success", "continue", "increase")
 #'
 #' @keywords internal
-test_sampler_adapted <- function(stage_samples, pmwgs, n_unique, i) {
-  if (check_adapted(stage_samples$alpha, unq_vals = n_unique)) {
+test_sampler_adapted <- function(pmwgs, n_unique, i) {
+  if (i < n_unique) {
+    return("continue")
+  }
+  test_samples <- extract_samples(pmwgs, stage = "adapt")
+  if (check_adapted(test_samples$alpha, unq_vals = n_unique)) {
     message("Enough unique values detected: ", n_unique)
     message("Testing proposal distribution creation")
     attempt <- try({
-      tmp_sampler <- update_sampler(pmwgs, stage_samples)
       lapply(
-        X = 1:tmp_sampler$n_subjects,
+        X = 1:pmwgs$n_subjects,
         FUN = conditional_parms,
-        samples = extract_samples(tmp_sampler)
+        samples = test_samples
       )
     })
     if (class(attempt) == "try-error") {
-      warning("An error was encountered creating proposal distribution")
-      warning("Increasing required unique values")
+      warning("An problem was encountered creating proposal distribution")
+      warning("Increasing required unique values and continuing adaptation")
       return("increase")
     }
     else {
-      message("Adapted after ", i, "iterations - stopping early")
+      message("Successfully adapted after ", i, "iterations - stopping early")
       return("success")
     }
   }

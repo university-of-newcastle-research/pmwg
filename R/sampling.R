@@ -83,26 +83,23 @@ run_stage <- function(pmwgs,
   cat(msgs[[stage]])
 
   # Build new sample storage
-  stage_samples <- sample_store(
-    pmwgs$par_names, pmwgs$subjects,
-    iters = iter, stage = stage
-  )
+  pmwgs <- extend_sampler(pmwgs, iter, stage)
   # create progress bar
   if (display_progress) {
     pb <- accept_progress_bar(min = 0, max = iter)
   }
+  start_iter <- pmwgs$samples$idx
 
   # Main iteration loop
   for (i in 1:iter) {
     if (display_progress) {
-      update_progress_bar(pb, i, extra = mean(accept_rate(stage_samples)))
+      update_progress_bar(pb, i, extra = mean(accept_rate(pmwgs)))
     }
 
-    if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
-      pars <- gibbs_step(store, pmwgs),
+      pars <- gibbs_step(pmwgs),
       error = function(err_cond) {
-        gibbs_step_err(pmwgs, store)
+        gibbs_step_err(pmwgs)
       }
     )
 
@@ -124,16 +121,17 @@ run_stage <- function(pmwgs,
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
 
     # Store results locally.
-    stage_samples$theta_mu[, i] <- pars$tmu
-    stage_samples$theta_sig[, , i] <- pars$tsig
-    stage_samples$last_theta_sig_inv <- pars$tsinv
-    stage_samples$alpha[, , i] <- alpha
-    stage_samples$idx <- i
-    stage_samples$subj_ll[, i] <- ll
-    stage_samples$a_half[, i] <- pars$a_half
+    j <- start_iter + i
+    pmwgs$samples$theta_mu[, j] <- pars$tmu
+    pmwgs$samples$theta_sig[, , j] <- pars$tsig
+    pmwgs$samples$last_theta_sig_inv <- pars$tsinv
+    pmwgs$samples$alpha[, , j] <- alpha
+    pmwgs$samples$idx <- j
+    pmwgs$samples$subj_ll[, j] <- ll
+    pmwgs$samples$a_half[, j] <- pars$a_half
 
     if (stage == "adapt") {
-      res <- test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
+      res <- test_sampler_adapted(pmwgs, n_unique, i)
       if (res == "success") {
         break
       } else if (res == "increase") {
@@ -153,7 +151,7 @@ run_stage <- function(pmwgs,
       ))
     }
   }
-  update_sampler(pmwgs, stage_samples)
+  pmwgs
 }
 
 
@@ -487,16 +485,26 @@ check_run_stage_args <- function(pmwgs,
 
 #' Return the acceptance rate for all subjects
 #'
-#' @param store The samples store (containing random effects) with which we are
+#' @param pmwgs The sampler object (containing random effects) with which we are
 #'   working
+#' @param window_size The size of the window to calculate acceptance rate over
 #'
-#' @return A vector with the acceptance rate for each subject
+#' @return A vector with the acceptance rate for each subject for the last X
+#'   samples
 #' @keywords internal
-accept_rate <- function(store) {
-  if (is.null(store$idx) || store$idx < 3) {
-    return(array(0, dim(store$alpha)[2]))
+accept_rate <- function(pmwgs, window_size = 200) {
+  n_samples <- pmwgs$samples$idx
+  if (is.null(n_samples) || n_samples < 3) {
+    return(array(0, dim(pmwgs$samples$alpha)[2]))
   }
-  vals <- store$alpha[1, , 1:store$idx]
+  if (n_samples <= window_size) {
+    start <- 1
+    end <- n_samples
+  } else {
+    start <- n_samples - window_size
+    end <- n_samples
+  }
+  vals <- pmwgs$samples$alpha[1, , start:end]
   apply(
     apply(vals, 1, diff) != 0, # If diff != 0
     2,
