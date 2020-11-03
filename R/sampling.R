@@ -484,16 +484,26 @@ check_run_stage_args <- function(pmwgs,
 
 #' Return the acceptance rate for all subjects
 #'
-#' @param store The samples store (containing random effects) with which we are
+#' @param pmwgs The sampler object (containing random effects) with which we are
 #'   working
+#' @param window_size The size of the window to calculate acceptance rate over
 #'
-#' @return A vector with the acceptance rate for each subject
+#' @return A vector with the acceptance rate for each subject for the last X
+#'   samples
 #' @keywords internal
-accept_rate <- function(store) {
-  if (is.null(store$idx) || store$idx < 3) {
-    return(array(0, dim(store$alpha)[2]))
+accept_rate <- function(pmwgs, window_size = 200) {
+  n_samples <- pmwgs$samples$idx
+  if (is.null(n_samples) || n_samples < 3) {
+    return(array(0, dim(pmwgs$samples$alpha)[2]))
   }
-  vals <- store$alpha[1, , 1:store$idx]
+  if (n_samples <= window_size) {
+    start <- 1
+    end <- n_samples
+  } else {
+    start <- n_samples - window_size
+    end <- n_samples
+  }
+  vals <- pmwgs$samples$alpha[1, , start:end]
   apply(
     apply(vals, 1, diff) != 0, # If diff != 0
     2,
