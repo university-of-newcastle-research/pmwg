@@ -83,10 +83,7 @@ run_stage <- function(pmwgs,
   cat(msgs[[stage]])
 
   # Build new sample storage
-  stage_samples <- sample_store(
-    pmwgs$par_names, pmwgs$subjects,
-    iters = iter, stage = stage
-  )
+  pmwgs <- extend_sampler(pmwgs, iter, stage)
   # create progress bar
   if (display_progress) {
     pb <- accept_progress_bar(min = 0, max = iter)
