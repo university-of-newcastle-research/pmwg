@@ -92,14 +92,13 @@ run_stage <- function(pmwgs,
   # Main iteration loop
   for (i in 1:iter) {
     if (display_progress) {
-      update_progress_bar(pb, i, extra = mean(accept_rate(stage_samples)))
+      update_progress_bar(pb, i, extra = mean(accept_rate(pmwgs)))
     }
 
-    if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
-      pars <- gibbs_step(store, pmwgs),
+      pars <- gibbs_step(pmwgs),
       error = function(err_cond) {
-        gibbs_step_err(pmwgs, store)
+        gibbs_step_err(pmwgs)
       }
     )
 
