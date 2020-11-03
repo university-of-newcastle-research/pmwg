@@ -88,6 +88,7 @@ run_stage <- function(pmwgs,
   if (display_progress) {
     pb <- accept_progress_bar(min = 0, max = iter)
   }
+  start_iter <- pmwgs$samples$idx
 
   # Main iteration loop
   for (i in 1:iter) {
@@ -120,16 +121,17 @@ run_stage <- function(pmwgs,
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
 
     # Store results locally.
-    stage_samples$theta_mu[, i] <- pars$tmu
-    stage_samples$theta_sig[, , i] <- pars$tsig
-    stage_samples$last_theta_sig_inv <- pars$tsinv
-    stage_samples$alpha[, , i] <- alpha
-    stage_samples$idx <- i
-    stage_samples$subj_ll[, i] <- ll
-    stage_samples$a_half[, i] <- pars$a_half
+    j <- start_iter + i
+    pmwgs$samples$theta_mu[, j] <- pars$tmu
+    pmwgs$samples$theta_sig[, , j] <- pars$tsig
+    pmwgs$samples$last_theta_sig_inv <- pars$tsinv
+    pmwgs$samples$alpha[, , j] <- alpha
+    pmwgs$samples$idx <- j
+    pmwgs$samples$subj_ll[, j] <- ll
+    pmwgs$samples$a_half[, j] <- pars$a_half
 
     if (stage == "adapt") {
-      res <- test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
+      res <- test_sampler_adapted(pmwgs, n_unique, i)
       if (res == "success") {
         break
       } else if (res == "increase") {
@@ -149,7 +151,7 @@ run_stage <- function(pmwgs,
       ))
     }
   }
-  update_sampler(pmwgs, stage_samples)
+  pmwgs
 }
 
 
