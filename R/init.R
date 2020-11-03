@@ -110,17 +110,15 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
 #'
 #' Samples new \code{theta_mu} and \code{theta_sig} using Gibbs sampling
 #'
-#' @param samples The list containing the samples from the current run, or from
-#'   the main storage in the sampler
 #' @param sampler The pmwgs object from which to generate the new group
 #'   parameters.
 #'
 #' @return A new sample for \code{theta_mu}, \code{theta_sig} and some new
 #'   mixing weights in a list for use in the Particle Metropolis step.
 #' @keywords internal
-gibbs_step <- function(samples, sampler) {
+gibbs_step <- function(sampler) {
   # Get single iter versions, tmu = theta_mu, tsig = theta_sig
-  last <- last_sample(samples)
+  last <- last_sample(sampler$samples)
   hyper <- attributes(sampler)
   prior <- sampler$prior
 
