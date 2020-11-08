@@ -41,3 +41,6 @@ Meta
 
 #Cran submission
 pmwg.Rcheck/
+
+#Ignore ctags file
+R/tags
