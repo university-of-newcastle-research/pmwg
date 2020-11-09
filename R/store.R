@@ -167,6 +167,43 @@ trim_na <- function(sampler) {
 }
 
 
+#' Relabel requested burn-in samples as adaptation
+#'
+#' Given a sampler object and a vector of sample indices, relabel the given
+#' samples to be adaptation samples. This will allow them to be used in the
+#' calculation of the conditional distribution for efficient sampling.
+#'
+#' @section Further information
+#'
+#' This should not usually be needed, however if you have a model that is slow
+#' to fit, and upon visual inspection and/or trace analysis you determine that
+#' during burn-in the samples had already approached the posterior distribution
+#' then you can use this function to re-label samples from that point onwards
+#' to be classed as adaptation samples.
+#'
+#' This will allow them to be used in tests that check for the number of unique
+#' samples, and in the building of the conditional distribution (which is used
+#' for efficient sampling)
+#'
+#' If all old samples do not match `from` then an error will be raised.
+#'
+#' @param sampler The pmwgs object that we are relabelling samples from
+#' @param indices The sample iterations from burn-in to relabel
+#' @param from The stage you want to re-label from. Default is "burn"
+#' @param to The stage you want to relabel to. Default is "adapt"
+#'
+#' @return The pmwgs object with re-labelled samples
+#' @export
+relabel_samples <- function(sampler, indices, from="burn", to="adapt") {
+  old_stage <- sampler$samples$stage
+  if (!all(old_stage[indices] %in% from)) {
+    stop(paste("Not all samples were from the", from, "stage"))
+  }
+  sampler$samples$stage[indices] <- to
+  sampler
+}
+
+
 #' Create a list with the last samples in the pmwgs object
 #'
 #' @param store The list containing samples from which to grab the last.
@@ -210,7 +247,7 @@ last_sample <- function(store) {
 #'   \item An integer vector, usually a sequence of integers, that must fall
 #'         within the range 1:end.
 #'   \item A character vector, where each element corresponds to a stage of the
-#'         sampling process, ie one or more of "init", "burn", "adapt" or
+#'         sampling process, i.e. one or more of "init", "burn", "adapt" or
 #'         "sample".
 #' }
 #' The default value for \code{filter} is all stages.
