@@ -149,6 +149,24 @@ extend_sampler <- function(sampler, n_samples, stage) {
 }
 
 
+#' Trim the unneeded NA values from the end of the sampler
+#'
+#' @param sampler The pmwgs object that we are adding the new samples to
+#'
+#' @return The pmwgs object without NA values added during extend_sampler
+#' @keywords internal
+trim_na <- function(sampler) {
+  idx <- sampler$samples$idx
+  sampler$samples$theta_mu <- sampler$samples$theta_mu[, 1:idx]
+  sampler$samples$theta_sig <- sampler$samples$theta_sig[, , 1:idx]
+  sampler$samples$alpha <- sampler$samples$alpha[, , 1:idx]
+  sampler$samples$subj_ll <- sampler$samples$subj_ll[, 1:idx]
+  sampler$samples$a_half <- sampler$samples$a_half[, 1:idx]
+  sampler$samples$stage <- sampler$samples$stage[1:idx]
+  sampler
+}
+
+
 #' Create a list with the last samples in the pmwgs object
 #'
 #' @param store The list containing samples from which to grab the last.

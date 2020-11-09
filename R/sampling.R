@@ -149,6 +149,8 @@ run_stage <- function(pmwgs,
         "run).\nYou should examine your samples and perhaps start",
         "a longer adaptation run."
       ))
+    } else {
+      pmwgs <- trim_na(pmwgs)
     }
   }
   pmwgs
