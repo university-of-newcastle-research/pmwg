@@ -88,9 +88,10 @@ update_progress_bar <- function(pb, value, extra = 0) {
 #' samples at that moment to help with debugging.
 #'
 #' @param pmwgs The pmwgs object for the current run.
+#' @param err_cond The original error condition that prompted this.
 #'
 #' @keywords internal
-gibbs_step_err <- function(pmwgs) {
+gibbs_step_err <- function(pmwgs, err_cond) {
   store_tmp <- tempfile(
     pattern = "pmwg_stage_samples_",
     tmpdir = ".",
@@ -101,8 +102,10 @@ gibbs_step_err <- function(pmwgs) {
     tmpdir = ".",
     fileext = ".RDS"
   )
-  message("Error while generating new group level parameters")
-  message("Saving current state of pmwgs object: ", sampler_tmp)
+  message("\nError while generating new group level parameters")
+  message(err_cond)
+  traceback()
+  message("\nSaving current state of pmwgs object: ", sampler_tmp)
   saveRDS(pmwgs, file = sampler_tmp)
   stop("Stopping execution")
 }

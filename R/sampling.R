@@ -99,7 +99,7 @@ run_stage <- function(pmwgs,
     tryCatch(
       pars <- gibbs_step(pmwgs),
       error = function(err_cond) {
-        gibbs_step_err(pmwgs)
+        gibbs_step_err(pmwgs, err_cond)
       }
     )
 
