@@ -173,7 +173,7 @@ trim_na <- function(sampler) {
 #' samples to be adaptation samples. This will allow them to be used in the
 #' calculation of the conditional distribution for efficient sampling.
 #'
-#' @section Further information
+#' @section Further information:
 #'
 #' This should not usually be needed, however if you have a model that is slow
 #' to fit, and upon visual inspection and/or trace analysis you determine that
