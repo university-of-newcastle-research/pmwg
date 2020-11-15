@@ -386,6 +386,9 @@ check_run_stage_args <- function(pmwgs,
   if (!pmwgs$init) stop("pmwgs object has not been initialised")
 
   # Test stage argument
+  # Object stages here is defined in the particle_samplers.R file, and contains
+  # valid names for each stage and the "init" stage used during object
+  # initialisation
   valid_stages <- stages[2:length(stages)]
   stage_err <- paste(c("Argument `stage` should be one of -", valid_stages),
                      collapse = " ",
