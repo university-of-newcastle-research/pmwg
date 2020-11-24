@@ -506,7 +506,7 @@ accept_rate <- function(pmwgs, window_size = 200) {
     start <- 1
     end <- n_samples
   } else {
-    start <- n_samples - window_size
+    start <- n_samples - window_size + 1
     end <- n_samples
   }
   vals <- pmwgs$samples$alpha[1, , start:end]
