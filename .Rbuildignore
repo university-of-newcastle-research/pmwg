@@ -17,3 +17,4 @@
 ^\.github$
 ^media/
 ^CRAN-RELEASE$
+^data-raw$
