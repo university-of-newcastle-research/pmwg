@@ -98,7 +98,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   pmwgs$samples$theta_mu[, 1] <- start_mu
   pmwgs$samples$theta_sig[, , 1] <- start_sig
   pmwgs$samples$alpha[, , 1] <- alpha
-  pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(start_sig)
+  pmwgs$samples$last_theta_sig_inv<- MASS::ginv(start_sig)
   pmwgs$samples$subj_ll[, 1] <- likelihoods
   pmwgs$samples$a_half[, 1] <- a_half
   pmwgs$samples$idx <- 1
