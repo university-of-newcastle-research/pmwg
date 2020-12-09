@@ -1,4 +1,4 @@
-library(pmwg)
+devtools::load_all()
 library(rtdists)
 set.seed(24061795) # Weber birthday
 
