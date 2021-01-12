@@ -490,6 +490,10 @@ check_run_stage_args <- function(pmwgs,
 
 #' Return the acceptance rate for all subjects
 #'
+#' Here the acceptance rate is defined as the rate of accepting newly generated
+#' particles for individuals random effects. That is the number of samples where
+#' a newly generated particle was accepted / the number of samples.
+#'
 #' @param pmwgs The sampler object (containing random effects) with which we are
 #'   working
 #' @param window_size The size of the window to calculate acceptance rate over
