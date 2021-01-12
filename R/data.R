@@ -33,7 +33,7 @@
 #' to fully replicate the full object (ie to run more sampling stages) you will
 #' need to add the data back in, via sampled_forstmann$data <- forstmann
 #'
-#' @section Samples Element
+#' @section Samples Element:
 #'
 #' The samples element of a PMwG object contains the different types of samples
 #' estimated by PMwG. These include the three main types of samples
@@ -54,6 +54,7 @@
 #'   \item{last_theta_sig_inv}{The inverse of the last samples covariance
 #'     matrix}
 #'   \item{idx}{The index of the last sample drawn}
+#' }
 #'
 #' @format A pmwgs object minus the data. A pmwgs opbject is a list with a
 #' specific structure and elements, as outlined below.

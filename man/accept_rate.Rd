@@ -17,6 +17,8 @@ A vector with the acceptance rate for each subject for the last X
   samples
 }
 \description{
-Return the acceptance rate for all subjects
+Here the acceptance rate is defined as the rate of accepting newly generated
+particles for individuals random effects. That is the number of samples where
+a newly generated particle was accepted / the number of samples.
 }
 \keyword{internal}

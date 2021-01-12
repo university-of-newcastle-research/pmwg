@@ -36,8 +36,29 @@ The pmwgs object is missing one aspect, the pmwgs$data element. In order
 to fully replicate the full object (ie to run more sampling stages) you will
 need to add the data back in, via sampled_forstmann$data <- forstmann
 }
-\section{}{
-NA
+\section{Samples Element}{
+
+
+The samples element of a PMwG object contains the different types of samples
+estimated by PMwG. These include the three main types of samples
+\code{theta_mu}, \code{theta_sig} and \code{alpha} as well as a number of
+other items which are detailed here.
+\describe{
+  \item{theta_mu}{samples used for estimating the model parameters (group
+    level), an array of size (n_pars x n_samples)}
+  \item{theta_sig}{samples used for estimating the parameter covariance
+    matrix, an array of size (n_pars x n_pars x n_samples)}
+  \item{alpha}{samples used for estimating the subject random effects, an
+    array of size (n_pars x n_subjects x n_samples)}
+  \item{stage}{A vector containing what PMwG stage each sample was drawn in}
+  \item{subj_ll}{The winning particles log-likelihood for each subject and
+    sample}
+  \item{a_half}{Mixing weights used during the Gibbs step when creating a
+    new sample for the covariance matrix}
+  \item{last_theta_sig_inv}{The inverse of the last samples covariance
+    matrix}
+  \item{idx}{The index of the last sample drawn}
+}
 }
 
 \keyword{datasets}

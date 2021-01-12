@@ -73,5 +73,5 @@ sampler <- pmwgs(
   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
   lba_ll
 )
-sampler <- init(sampler, start_mu = rnorm(7), start_sig = diag(rep(0.01, 7)))
+sampler <- init(sampler)
 }
