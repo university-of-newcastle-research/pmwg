@@ -81,5 +81,7 @@ Once complete each stage will return a sampler object with the new samples
 stored within it.
 }
 \examples{
-# No example yet
+library(rtdists)
+sampled_forstmann$data <- forstmann
+run_stage(sampled_forstmann, "sample", iter = 2, particles = 50)
 }

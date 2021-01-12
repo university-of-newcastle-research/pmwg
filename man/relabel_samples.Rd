@@ -39,3 +39,6 @@ for efficient sampling)
 If all old samples do not match `from` then an error will be raised.
 }
 
+\examples{
+new_pmwgs <- relabel_samples(sampled_forstmann, 17:21)
+}

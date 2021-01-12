@@ -193,6 +193,8 @@ trim_na <- function(sampler) {
 #' @param to The stage you want to relabel to. Default is "adapt"
 #'
 #' @return The pmwgs object with re-labelled samples
+#' @examples
+#' new_pmwgs <- relabel_samples(sampled_forstmann, 17:21)
 #' @export
 relabel_samples <- function(sampler, indices, from="burn", to="adapt") {
   old_stage <- sampler$samples$stage
@@ -258,7 +260,13 @@ last_sample <- function(store) {
 #'
 #' @return An mcmc object or list containing the selected samples.
 #' @examples
-#' # No example yet
+#' par_estimates <- as_mcmc(sampled_forstmann)
+#' par_estimates_sample_stage <- as_mcmc(sampled_forstmann, filter = "sample")
+#' rand_eff <- as_mcmc(
+#'   sampled_forstmann,
+#'   selection = "alpha",
+#'   filter = "sample"
+#' )
 #' @export
 as_mcmc <- function(sampler, selection = "theta_mu", filter = stages) {
   if (all(filter %in% stages)) {

@@ -15,3 +15,8 @@ logical, whether object inherits from pmwgs
 \description{
 Checks whether object is a Particle Metropolis with Gibbs sampler
 }
+\examples{
+if (is.pmwgs(sampled_forstmann)) {
+  print("sampled_forstmann object is a pmwgs")
+}
+}

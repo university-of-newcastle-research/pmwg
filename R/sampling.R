@@ -56,7 +56,9 @@
 #'
 #' @return A pmwgs object with the newly generated samples in place.
 #' @examples
-#' # No example yet
+#' library(rtdists)
+#' sampled_forstmann$data <- forstmann
+#' run_stage(sampled_forstmann, "sample", iter = 2, particles = 50)
 #' @export
 run_stage <- function(pmwgs,
                       stage,
