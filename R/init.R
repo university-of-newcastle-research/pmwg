@@ -1,6 +1,6 @@
 #' Initialise values for the random effects
 #'
-#' Initialise the random effects for each participant using MCMC.
+#' Initialise the random effects for each subject using MCMC.
 #'
 #' Before sampling can start the Particle Metropolis within Gibbs sampler needs
 #' initial values for the random effects. The \code{init} function generates

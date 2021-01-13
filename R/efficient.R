@@ -96,7 +96,7 @@ conditional_parms <- function(s, samples) {
 #'
 #' @param pmwgs The full pmwgs object with all samples
 #' @param n_unique The number of unique samples to look for in random effects
-#'   for each participant.
+#'   for each subject.
 #' @param i The number for the current iteration of the sampler
 #'
 #' @return A string representing successful/unsuccessful adaptation. Can be one

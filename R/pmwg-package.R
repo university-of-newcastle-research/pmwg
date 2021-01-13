@@ -17,7 +17,7 @@
 #' @section User input:
 #' The user is expected to provide a data source in a format that is compatible
 #' with R data.frame methods. This data must have at least one column named
-#' `subject` that has a unique identifier for each participants data.
+#' `subject` that has a unique identifier for each subject's data.
 #'
 #' Additionally the user should provide a function that when given a set of
 #' parameter estimates and the data for a single subject return the log of the

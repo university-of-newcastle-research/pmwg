@@ -6,13 +6,13 @@
 #'
 #' The \strong{burnin} stage by default selects 50% of particles from the model
 #' parameter sample (selected through a Gibbs step) and 50% of particles from
-#' the previous random effect of each participant. It assesses each particle
-#' with the log-likelihood function and samples from all particles weighted by
-#' their log-likelihood.
+#' the previous random effect of each subject. It assesses each particle with
+#' the log-likelihood function and samples from all particles weighted by their
+#' log-likelihood.
 #'
 #' The \strong{adaptation} stage selects and assesses particle in the same was
-#' as burnin, however on each iteration it also checks whether each participant
-#' has enough unique random effect samples to attempt to create a conditional
+#' as burnin, however on each iteration it also checks whether each subject has
+#' enough unique random effect samples to attempt to create a conditional
 #' distribution for efficient sampling in the next stage. If the attempt at
 #' creating a conditional distribution fails, then the number of unique samples
 #' is increased and sampling continues. If the attempt succeeds then the stage
