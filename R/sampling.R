@@ -48,20 +48,18 @@
 #' @param n_cores Set to more than 1 to use \code{mclapply}. Setting
 #'   \code{n_cores} greater than 1 is only permitted on Linux and Mac OS X
 #'   machines.
-#' @param ... Further arguments used to fine tune the sampling process. Accepted
-#'   additional arguments include:
-#'   \itemize{
-#'     \item \code{epsilon} which should be a value between 0 and 1.
-#'       \strong{epsilon} controls the extent to which the covariance matrix is
-#'       scaled when generating particles from the previous random effect.
-#'     \item \code{mix} controls the mixture of different sources for particles.
-#'       The function \code{\link{numbers_from_proportion}} is passed this value
-#'       and includes extra details on what is accepted.
-#'     \item \code{n_unique} is a number representing the number of unique
-#'       samples to check for on each iteration of the sampler. Only used during
-#'       the \code{'adapt'} stage.
-#'   }
-#'
+#' @param n_unique A number representing the number of unique samples to check
+#'   for on each iteration of the sampler (An initial test for the generation
+#'   of the proposal distribution). Only used during the \code{'adapt'} stage.
+#' @param epsilon A value between 0 and 1 that controls the extent to which the
+#'   covariance matrix is scaled when generating particles from the previous
+#'   random effect. The default will be chosen based on the number of random
+#'   effects in the model.
+#' @param mix A vector of floats that controls the mixture of different sources
+#'   for particles. The function \code{\link{numbers_from_proportion}} is
+#'   passed this value and includes extra details on what is accepted.
+#' @param pdist_update_n The number of iterations in the sample stage after
+#'   which the proposal distribution will be recomputed.
 #' @return A pmwgs object with the newly generated samples in place.
 #' @examples
 #' library(rtdists)
@@ -74,16 +72,26 @@ run_stage <- function(pmwgs,
                       particles = 1000,
                       display_progress = TRUE,
                       n_cores = 1,
-                      ...) {
-  # Check the passed arguments and return cleaned - extract relevant arguments
-  .args <- as.list(match.call()[-1])
-  clean_args <- do.call(check_run_stage_args, .args)
-  stage <- clean_args$stage
-  if (stage == "adapt") {
-    .n_unique <- clean_args$.n_unique
-    n_unique <- clean_args$n_unique
+                      n_unique = ifelse(stage == "adapt", 20, NA),
+                      epsilon = NULL,
+                      mix = NULL,
+                      pdist_update_n = ifelse(stage == "sample", 500, NA)) {
+  # Set defaults for NULL values
+  epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
+  mix <- set_mix(stage, mix)
+  # Test passed arguments/defaults for correctness
+  do.call(check_run_stage_args, as.list(environment()))
+  # Set necessary local variables
+  .n_unique <- n_unique
+  apply_fn <- lapply
+  sample_args <- list()
+  if (n_cores > 1) {
+    apply_fn <- parallel::mclapply
+    sample_args$mc.cores <- n_cores # nolint
   }
-  apply_fn <- clean_args$apply_fn
+
+  # Create efficient proposal distribution if we are in sampling phase
+  sample_args <- c(sample_args, set_proposal(stage, pmwgs))
 
   # Display stage to screen
   msgs <- list(
@@ -124,7 +132,7 @@ run_stage <- function(pmwgs,
       likelihood_func = pmwgs$ll_func,
       subjects = pmwgs$subjects
     )
-    fn_args <- c(pmwgs_args, clean_args$sample_args)
+    fn_args <- c(pmwgs_args, sample_args)
     tmp <- do.call(apply_fn, fn_args)
 
     ll <- unlist(lapply(tmp, attr, "ll"))
@@ -148,7 +156,6 @@ run_stage <- function(pmwgs,
         n_unique <- n_unique + .n_unique
       }
     }
-
   }
   if (display_progress) close(pb)
   if (stage == "adapt") {
@@ -372,129 +379,151 @@ particle_draws <- function(n, mu, covar) {
 }
 
 
+#' Set default values for epsilon
+#'
+#' Takes the number of parameters and the epsilon arg value and sets a default
+#' if necessary.
+#'
+#' @param n_pars The number of parameters for the model
+#' @param epsilon The value of epsilon set in the call to `run_stage` or NULL.
+#'
+#' @keywords internal
+set_epsilon <- function(n_pars, epsilon) {
+  if (checkmate::test_null(epsilon)) {
+    if (n_pars > 15) {
+      epsilon <- 0.1
+    } else if (n_pars > 10) {
+      epsilon <- 0.3
+    } else {
+      epsilon <- 0.5
+    }
+    message(
+      sprintf(
+        "Epsilon has been set to %.1f based on number of parameters",
+        epsilon
+      )
+    )
+  }
+  epsilon
+}
+
+
+#' Set default values for mix
+#'
+#' Takes the current stage and the mix arg value and sets a default if
+#' necessary.
+#'
+#' @param stage The stage being run by the sampler.
+#' @param mix The value of mix set in the call to `run_stage` or NULL.
+#'
+#' @keywords internal
+set_mix <- function(stage, mix) {
+  if (checkmate::test_null(mix)) {
+    if (stage == "sample") {
+      mix <- c(0.1, 0.2, 0.7)
+    } else {
+      mix <- c(0.5, 0.5, 0.0)
+    }
+    message(
+      sprintf(
+        "mix has been set to c(%s) based on number of parameters",
+        paste(mix, collapse = ", ")
+      )
+    )
+  }
+  mix
+}
+
+
+#' Setup the proposal distribution arguments (if in sample stage)
+#'
+#' Takes the current stage and the mix arg value and sets a default if
+#' necessary.
+#'
+#' @param stage The stage being run by the sampler.
+#' @param pmwgs The pmwgs object from which to attempt to create the proposal
+#'   distribution
+#'
+#' @keywords internal
+set_proposal <- function(stage, pmwgs) {
+  if (stage != "sample") {
+    return(list())
+  }
+
+  tryCatch(
+    prop_args <- try(create_efficient(pmwgs)),
+    error = function(err_cond) {
+      outfile <- tempfile(
+        pattern = "PMwG_err_",
+        tmpdir = ".",
+        fileext = ".RData"
+      )
+      msg <- paste(
+        "An error was detected whilst creating conditional",
+        "distribution.\n",
+        "Saving current state of environment in file:",
+        outfile
+      )
+      save.image(outfile)
+      stop(msg)
+    }
+  )
+  prop_args
+}
+
+
 #' Test the arguments to the run_stage function for correctness
 #'
 #' Takes the arguments to run_stage and checks them for completeness and
 #' correctness. Returns a list of cleaned/checked arguments to the caller.
 #'
+#' @import checkmate
 #' @inheritParams run_stage
 #'
 #' @keywords internal
 check_run_stage_args <- function(pmwgs,
                                  stage,
-                                 iter = 1000,
-                                 particles = 1000,
-                                 display_progress = TRUE,
-                                 n_cores = 1,
-                                 ...) {
-  # Two lists of arguments used in different places to return
-  sargs <- list()
-  # Check pmwgs object is correct type and has been initialised
-  if (!is.pmwgs(pmwgs)) {
-    stop("`run_stage` function Requires an object of type <pmwgs>")
-  }
-  if (!pmwgs$init) stop("pmwgs object has not been initialised")
+                                 iter,
+                                 particles,
+                                 display_progress,
+                                 n_cores,
+                                 n_unique,
+                                 epsilon,
+                                 mix,
+                                 pdist_update_n) {
+  asserts <- makeAssertCollection()
+  assert_class(pmwgs, "pmwgs", add = asserts)
+  assert_true(pmwgs$init, .var.name = "pmwgs$init", add = asserts)
+  assert_choice(stage, stages[2:length(stages)], add = asserts)
+  assert_count(iter, positive = TRUE, add = asserts)
+  assert_count(particles, positive = TRUE, add = asserts)
+  assert_logical(display_progress, add = asserts)
+  assert_count(n_cores, positive = TRUE, add = asserts)
 
-  # Test stage argument
-  # Object stages here is defined in the particle_samplers.R file, and contains
-  # valid names for each stage and the "init" stage used during object
-  # initialisation
-  valid_stages <- stages[2:length(stages)]
-  stage_err <- paste(c("Argument `stage` should be one of -", valid_stages),
-                     collapse = " ",
-                     sep = ",")
-  tryCatch(
-    stage <- match.arg(stage, valid_stages),
-    error = function(err_cond) {
-      stop(stage_err)
+  check_cores <- function(x) {
+    if (test_os("windows") && test_true(x != 1)) {
+      return("`n_cores` cannot be greater than 1 on Windows systems.")
     }
-  )
-
-  acceptable_extras <- c("n_unique", "epsilon", "mix")
-  dots <- list(...)
-  for (argname in names(dots)) {
-    if (!argname %in% acceptable_extras) {
-      stop(paste("Unexpected argument", argname, "passed to run_stage"))
-    }
+    check_count(x, positive = TRUE)
   }
-  # Extract n_unique argument
+  assert_cores <- makeAssertionFunction(check_cores)
+  assert_cores(n_cores, add = asserts)
+
   if (stage == "adapt") {
-    adapt_args <- list()
-    if (is.null(dots$n_unique)) {
-      adapt_args$.n_unique <- 20
-    } else {
-      adapt_args$.n_unique <- dots$n_unique
-      dots$n_unique <- NULL
-    }
-    adapt_args$n_unique <- adapt_args$.n_unique
+    assert_count(n_unique, positive = TRUE, add = asserts)
   } else {
-    adapt_args <- list()
-    if (!is.null(dots$n_unique)) {
-      dots$n_unique <- NULL
-      warning("Argument `n_unique` unused for any stage other than adapt")
-    }
+    assert_scalar_na(n_unique, add = asserts)
   }
 
-  # Set a default value for epsilon if it does not exist
-  if (is.null(dots$epsilon)) {
-    sargs$epsilon <- ifelse(pmwgs$n_pars > 15,
-      0.1,
-      ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
-    )
-    message(paste("Epsilon has been set automatically to:", sargs$epsilon))
-    message("This is based on the number of parameters")
-  }
+  assert_double(epsilon, lower = 0.0, upper = 1.0, len = 1, add = asserts)
+  assert_double(mix, lower = 0.0, upper = 1.0, len = 3, add = asserts)
+  assert_true(all.equal(sum(mix), 1), add = asserts)
 
-  # Create efficient proposal distribution if we are in sampling phase
   if (stage == "sample") {
-    tryCatch(
-      prop_args <- try(create_efficient(pmwgs)),
-      error = function(err_cond) {
-        outfile <- tempfile(
-          pattern = "PMwG_err_",
-          tmpdir = ".",
-          fileext = ".RData"
-        )
-        msg <- paste(
-          "An error was detected whilst creating conditional",
-          "distribution.\n",
-          "Saving current state of environment in file:",
-          outfile
-        )
-        save.image(outfile)
-        stop(msg)
-      }
-    )
-    sargs <- c(sargs, prop_args)
-  }
-
-  # Set default values for the mix_proportion parameter if not passed in as arg,
-  # and perform checks on its values/length
-  if (is.null(dots$mix)) {
-    if (stage == "sample") {
-      sargs$mix <- c(0.1, 0.2, 0.7)
-    } else {
-      sargs$mix <- c(0.5, 0.5, 0.0)
-    }
+    assert_count(pdist_update_n, positive = TRUE, add = asserts)
   } else {
-    sargs$mix <- dots$mix
+    assert_scalar_na(pdist_update_n, add = asserts)
   }
-  if (!isTRUE(all.equal(sum(sargs$mix), 1))) {
-    stop("The elements of the `mix` proportion vector must sum to 1")
-  }
-  if (length(sargs$mix) != 3) {
-    stop("`mix` proportion vector must have three elements which sum to 1")
-  }
-
-  apply_fn <- lapply
-  if (n_cores > 1) {
-    if (Sys.info()[["sysname"]] == "Windows") {
-      stop("`n_cores` cannot be greater than 1 on Windows systems.")
-    }
-    apply_fn <- parallel::mclapply
-    sargs$mc.cores <- n_cores #nolint
-  }
-  c(adapt_args, list(stage = stage, sample_args = sargs, apply_fn = apply_fn))
 }
 
 

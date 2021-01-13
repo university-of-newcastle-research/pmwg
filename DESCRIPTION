@@ -23,6 +23,7 @@ BugReports: https://github.com/newcastlecl/pmwg/issues
 Depends: 
     R (>= 3.5.0)
 Imports:
+    checkmate,
     coda,
     condMVNorm,
     MASS,

@@ -11,7 +11,10 @@ run_stage(
   particles = 1000,
   display_progress = TRUE,
   n_cores = 1,
-  ...
+  n_unique = ifelse(stage == "adapt", 20, NA),
+  epsilon = NULL,
+  mix = NULL,
+  pdist_update_n = ifelse(stage == "sample", 500, NA)
 )
 }
 \arguments{
@@ -35,19 +38,21 @@ iteration, however during the sample phase this should be reduced.}
 \code{n_cores} greater than 1 is only permitted on Linux and Mac OS X
 machines.}
 
-\item{...}{Further arguments used to fine tune the sampling process. Accepted
-additional arguments include:
-\itemize{
-  \item \code{epsilon} which should be a value between 0 and 1.
-    \strong{epsilon} controls the extent to which the covariance matrix is
-    scaled when generating particles from the previous random effect.
-  \item \code{mix} controls the mixture of different sources for particles.
-    The function \code{\link{numbers_from_proportion}} is passed this value
-    and includes extra details on what is accepted.
-  \item \code{n_unique} is a number representing the number of unique
-    samples to check for on each iteration of the sampler. Only used during
-    the \code{'adapt'} stage.
-}}
+\item{n_unique}{A number representing the number of unique samples to check
+for on each iteration of the sampler (An initial test for the generation
+of the proposal distribution). Only used during the \code{'adapt'} stage.}
+
+\item{epsilon}{A value between 0 and 1 that controls the extent to which the
+covariance matrix is scaled when generating particles from the previous
+random effect. The default will be chosen based on the number of random
+effects in the model.}
+
+\item{mix}{A vector of floats that controls the mixture of different sources
+for particles. The function \code{\link{numbers_from_proportion}} is
+passed this value and includes extra details on what is accepted.}
+
+\item{pdist_update_n}{The number of iterations in the sample stage after
+which the proposal distribution will be recomputed.}
 }
 \value{
 A pmwgs object with the newly generated samples in place.
