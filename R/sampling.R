@@ -26,6 +26,14 @@
 #' Once complete each stage will return a sampler object with the new samples
 #' stored within it.
 #'
+#' The progress bar (which is displayed by default) shows the number of
+#' iterations out of those requested which have been completed. It also contains
+#' additional information at the end about the number of newly generated
+#' particles that have been accepted. This is show as New(XXX%), and is the
+#' average across subjects of newly sampled random effects accept rate. See
+#' \code{\link{accept_rate}} for more detail on getting individual accept rate
+#' values per subject.
+#'
 #' @param pmwgs A Particle Metropolis within Gibbs sampler which has been set
 #'   up and initialised
 #' @param stage The sampling stage to run. Must be one of \code{'burn'},
@@ -490,7 +498,7 @@ check_run_stage_args <- function(pmwgs,
 }
 
 
-#' Return the acceptance rate for all subjects
+#' Return the acceptance rate for new particles across all subjects
 #'
 #' Here the acceptance rate is defined as the rate of accepting newly generated
 #' particles for individuals random effects. That is the number of samples where
