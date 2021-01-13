@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampling.R
 \name{accept_rate}
 \alias{accept_rate}
-\title{Return the acceptance rate for all subjects}
+\title{Return the acceptance rate for new particles across all subjects}
 \usage{
 accept_rate(pmwgs, window_size = 200)
 }

@@ -11,8 +11,8 @@
 extract_samples <- function(sampler, stage = c("adapt", "sample")) {
   samples <- sampler$samples
   stage_filter <- samples$stage %in% stage
-  sampled_filter <- 1:length(samples$stage) <= samples$idx
-  
+  sampled_filter <- seq_along(samples$stage) <= samples$idx
+
   list(
     theta_mu = samples$theta_mu[, stage_filter & sampled_filter],
     theta_sig = samples$theta_sig[, , stage_filter & sampled_filter],

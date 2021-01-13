@@ -28,7 +28,7 @@ The sampler object but with initial values set for \code{theta_mu},
   \code{theta_sig}, \code{alpha} and other values for the first sample.
 }
 \description{
-Initialise the random effects for each participant using MCMC.
+Initialise the random effects for each subject using MCMC.
 }
 \details{
 Before sampling can start the Particle Metropolis within Gibbs sampler needs
