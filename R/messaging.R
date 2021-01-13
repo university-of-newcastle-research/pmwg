@@ -1,5 +1,9 @@
-
 #' An altered version of the utils:txtProgressBar that shows acceptance rate
+#'
+#' The progress bar displays several elements, the progress visually as a bar
+#' being filled and the percentage complete as per the standard
+#' utils::txtProgressBar and additionally the average across subjects of the
+#' rate of accepting newly generated particles.
 #'
 #' @param min The minimum of the value being updated for the progress bar
 #' @param max The maximum of the value being updated for the progress bar
@@ -13,29 +17,46 @@ accept_progress_bar <- function(min = 0, max = 1) {
   .nb <- 0L
   .pc <- -1L # This ensures the initial value is displayed
   .ex <- 0
-  nw <- nchar("=", "w")
-  width <- trunc(getOption("width") - 22L / nw)
+  component <- list(
+    pchar = "=",
+    prog_start = " |",
+    prog_end = "| ",
+    percent = "%3d%%",
+    acc_sep = " | ",
+    acc_msg = "New(%3d%%)"
+  )
+  width <- nchar(lapply(component, gettextf, 100), "w")
+  width <- split(unname(width), names(component))
+  width$extras <- sum(unlist(width)) - width$pchar
+  width$term <- getOption("width")
+  width$progress <- trunc((width$term - width$extras) / width$pchar)
+
   if (max <= min) stop("must have 'max' > 'min'")
 
+  # Handles an update to the progress bar
   up <- function(value, extra = 0) {
     if (!is.finite(value) || value < min || value > max) {
       return()
     }
     .val <<- value
-    nb <- round(width * (value - min) / (max - min))
+    nb <- round(width$progress * (value - min) / (max - min))
     pc <- round(100 * (value - min) / (max - min))
     extra <- round(100 * extra)
     if (nb == .nb && pc == .pc && .ex == extra) {
       return()
     }
-    cat(paste0("\r  |", strrep(" ", nw * width + 6)))
-    cat(paste(c(
-      "\r  |",
-      rep.int("=", nb),
-      rep.int(" ", nw * (width - nb)),
-      sprintf("| %3d%%", pc),
-      sprintf(" | Acc(%3d%%)", extra)
-    ), collapse = ""))
+    # Clear the current progress bar
+    cat(paste0("\r", strrep(" ", width$term)))
+    # Write the updated progress bar
+    cat(paste0(
+      "\r",
+      component$prog_start,
+      strrep(component$pchar, nb),
+      strrep(" ", width$pchar * (width$progress - nb)),
+      component$prog_end,
+      sprintf(component$percent, pc),
+      component$acc_sep,
+      sprintf(component$acc_msg, extra)))
     utils::flush.console()
     .nb <<- nb
     .pc <<- pc

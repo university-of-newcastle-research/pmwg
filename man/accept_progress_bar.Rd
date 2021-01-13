@@ -16,6 +16,9 @@ A structure matching the structure of a txtProgresBar with additional
   info
 }
 \description{
-An altered version of the utils:txtProgressBar that shows acceptance rate
+The progress bar displays several elements, the progress visually as a bar
+being filled and the percentage complete as per the standard
+utils::txtProgressBar and additionally the average across subjects of the
+rate of accepting newly generated particles.
 }
 \keyword{internal}
