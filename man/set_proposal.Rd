@@ -4,13 +4,18 @@
 \alias{set_proposal}
 \title{Setup the proposal distribution arguments (if in sample stage)}
 \usage{
-set_proposal(stage, pmwgs)
+set_proposal(i, stage, pmwgs, pdist_update_n)
 }
 \arguments{
+\item{i}{The current iteration of the stage being run.}
+
 \item{stage}{The stage being run by the sampler.}
 
 \item{pmwgs}{The pmwgs object from which to attempt to create the proposal
 distribution}
+
+\item{pdist_update_n}{The number of iterations to run before recomputing the
+proposal distribution (NA to never update or for burnin/adaptation stages)}
 }
 \description{
 Takes the current stage and the mix arg value and sets a default if

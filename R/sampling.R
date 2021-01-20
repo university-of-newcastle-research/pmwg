@@ -90,12 +90,11 @@ run_stage <- function(pmwgs,
     sample_args$mc.cores <- n_cores # nolint
   }
 
-  # Create efficient proposal distribution if we are in sampling phase
-  sample_args <- c(sample_args, set_proposal(stage, pmwgs))
 
   # Display stage to screen
   msgs <- list(
-    burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
+    burn = "Phase 1: Burn in\n",
+    adapt = "Phase 2: Adaptation\n",
     sample = "Phase 3: Sampling\n"
   )
   cat(msgs[[stage]])
@@ -113,6 +112,11 @@ run_stage <- function(pmwgs,
     if (display_progress) {
       update_progress_bar(pb, i, extra = mean(accept_rate(pmwgs)))
     }
+    # Create efficient proposal distribution if we are in sampling phase.
+    sample_args <- utils::modifyList(
+      sample_args,
+      set_proposal(i, stage, pmwgs, pdist_update_n)
+    )
 
     tryCatch(
       pars <- gibbs_step(pmwgs),
@@ -440,13 +444,22 @@ set_mix <- function(stage, mix) {
 #' Takes the current stage and the mix arg value and sets a default if
 #' necessary.
 #'
+#' @param i The current iteration of the stage being run.
 #' @param stage The stage being run by the sampler.
 #' @param pmwgs The pmwgs object from which to attempt to create the proposal
 #'   distribution
+#' @param pdist_update_n The number of iterations to run before recomputing the
+#'   proposal distribution (NA to never update or for burnin/adaptation stages)
 #'
 #' @keywords internal
-set_proposal <- function(stage, pmwgs) {
+set_proposal <- function(i, stage, pmwgs, pdist_update_n) {
   if (stage != "sample") {
+    return(list())
+  }
+  if (is.na(i %% pdist_update_n) && (i != 1)) {
+    return(list())
+  }
+  if ((i != 1) && ((i %% pdist_update_n) != 0)) {
     return(list())
   }
 
