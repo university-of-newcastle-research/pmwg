@@ -426,7 +426,7 @@ set_mix <- function(stage, mix) {
     }
     message(
       sprintf(
-        "mix has been set to c(%s) based on number of parameters",
+        "mix has been set to c(%s) based on the stage being run",
         paste(mix, collapse = ", ")
       )
     )
