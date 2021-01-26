@@ -1,4 +1,4 @@
-# pmwg (development version)
+# pmwg 0.2.0
 
 # pmwg 0.1.9
 
