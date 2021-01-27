@@ -1,12 +1,11 @@
 #' pmwg: Particle Metropolis Within Gibbs.
 #'
 #' The pmwg package provides a general purpose implementation of the
-#' sampling techniques outlined in
-#' \href{https://doi.org/10.1016/j.jmp.2020.102368}{Gunawan et al. (2020)}.
-#' The user of this package is required to provide their own log likelihood
-#' function, but given this the functions provided can estimate model
-#' parameters, the full covariance matrix and subject random effects in a
-#' hierarchical Bayesian way.
+#' sampling techniques outlined in Gunawan et al. (2020)
+#' \doi{10.1016/j.jmp.2020.102368}. The user of this package is required to
+#' provide their own log likelihood function, but given this the functions
+#' provided can estimate model parameters, the full covariance matrix and
+#' subject random effects in a hierarchical Bayesian way.
 #'
 #' @section Documentation:
 #' The documentation found at \url{https://newcastlecl.github.io/samplerDoc/}
