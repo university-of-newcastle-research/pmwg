@@ -64,7 +64,7 @@
 #' @examples
 #' library(rtdists)
 #' sampled_forstmann$data <- forstmann
-#' run_stage(sampled_forstmann, "sample", iter = 2, particles = 50)
+#' run_stage(sampled_forstmann, "sample", iter = 1, particles = 20)
 #' @export
 run_stage <- function(pmwgs,
                       stage,
