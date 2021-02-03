@@ -84,12 +84,23 @@ run_stage <- function(pmwgs,
   # Set necessary local variables
   .n_unique <- n_unique
   apply_fn <- lapply
-  sample_args <- list()
+  # Set stable (fixed) new_sample argument for this run
+  stable_args <- list(
+    X = 1:pmwgs$n_subjects,
+    FUN = new_sample,
+    data = pmwgs$data,
+    num_particles = particles,
+    # parameters argument  will be generated each iteration below
+    # efficient arguments will be generated if needed below
+    mix_proportion = mix,
+    likelihood_func = pmwgs$ll_func,
+    epsilon = epsilon,
+    subjects = pmwgs$subjects
+  )
   if (n_cores > 1) {
     apply_fn <- parallel::mclapply
-    sample_args$mc.cores <- n_cores # nolint
+    stable_args$mc.cores <- n_cores # nolint
   }
-
 
   # Display stage to screen
   msgs <- list(
@@ -112,9 +123,9 @@ run_stage <- function(pmwgs,
     if (display_progress) {
       update_progress_bar(pb, i, extra = mean(accept_rate(pmwgs)))
     }
-    # Create efficient proposal distribution if we are in sampling phase.
-    sample_args <- utils::modifyList(
-      sample_args,
+    # Create/update efficient proposal distribution if we are in sampling phase.
+    stable_args <- utils::modifyList(
+      stable_args,
       set_proposal(i, stage, pmwgs, pdist_update_n)
     )
 
@@ -125,19 +136,10 @@ run_stage <- function(pmwgs,
       }
     )
 
-    # Sample new particles for random effects.
-    # Send new_sample the "index" of the subject id - not subject id itself.
-    pmwgs_args <- list(
-      X = 1:pmwgs$n_subjects,
-      FUN = new_sample,
-      data = pmwgs$data,
-      num_particles = particles,
-      parameters = pars,
-      likelihood_func = pmwgs$ll_func,
-      subjects = pmwgs$subjects
+    iter_args <- list(
+      parameters = pars
     )
-    fn_args <- c(pmwgs_args, sample_args)
-    tmp <- do.call(apply_fn, fn_args)
+    tmp <- do.call(apply_fn, c(stable_args, iter_args))
 
     ll <- unlist(lapply(tmp, attr, "ll"))
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
