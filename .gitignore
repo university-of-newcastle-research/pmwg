@@ -44,3 +44,6 @@ pmwg.Rcheck/
 
 #Ignore ctags file
 R/tags
+
+#Ignore reverse dependency check folder
+revdep/
