@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -114,9 +114,40 @@
       <small>Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="pmwg-0-2-0" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.0">
+<a href="#pmwg-0-2-0" class="anchor"></a>pmwg 0.2.0<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>The proposal distribution used in the sample stage will now be updated after a specified number of iterations, controlled by the new <code>run_stage</code> argument: <code>pdist_update_n</code>. By default this is set to 500, so after 500 iterations the proposal distribution will be regenerated and used for subsequent iterations of the sampler.</li>
+<li>The internal function <code>accept_rate</code> now operates over the entire sampler data store, and by default will return the rate of accepted newly generated random effects over a window covering the last 200 iterations. This will effect how the acceptance rate progress bar display progress, being more responsive to local changes in acceptance rate. This also means secondary runs of the adaptation stage can take into account unique random effect samples from previous runs for it’s internal testing.</li>
+<li>New function, <code>relabel_samples</code>, added to allow a user to change the label indicating the samples stage of origin. This function takes a pmwg samplers object, a set of indices corresponding to the samples you wish to relabel and two arguments detailing to expected value for the current stage (default “burn”) and the stage to would like to relabel the samples to (default “adapt”). The goal for the function is to take samples generated in a burn in stage that after visualising appear to have successfully converged around the posterior and make them available for internal function that check for adaptation and generate the proposal distribution used in the final sampling stage.</li>
+<li>New included data object <code>sampled_forstmann</code>, a pmwgs object with a simple LBA model (requires rtdists package) applied to the previously included <code>forstmann</code> dataset. Includes 3 runs of the sampler with low numbers of iterations and particles. It has the data element stripped so see the Details in the documentation for the object (<code><a href="../reference/sampled_forstmann.html">?sampled_forstmann</a></code>) for advice on using the object.</li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
+<li>BUGFIX: If all random effects were unique the previous version would not test the ability to create the proposal distribution and leave adaptation stage early. Now fixed by explicitly splitting the first parameter matrix to a list before testing.</li>
+<li>Improved error messages from the <code>gibbs_step</code> internal function</li>
+<li>Changed Acc to New in progress bar to focus that it is the rate of newly generated particles being accepted.</li>
+<li>Documentation improvements:</li>
+<li>Addition of some examples using the sampled_forstmann object</li>
+<li>Updates to accept_progress_bar documentation</li>
+<li>Minor edits to documentation elsewhere.</li>
+<li>New dependency <code>checkmate</code> used for testing arguments to <code>run_stage</code>
+</li>
+</ul>
+</div>
+</div>
     <div id="pmwg-0-1-9" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.9">
-<a href="#pmwg-0-1-9" class="anchor"></a>pmwg 0.1.9</h1>
+<a href="#pmwg-0-1-9" class="anchor"></a>pmwg 0.1.9<small> 2020-09-02 </small>
+</h1>
 <ul>
 <li>Clean up documentation ready for CRAN submission</li>
 <li>Add extra argument to as_mcmc to filter specific samples</li>
@@ -124,7 +155,8 @@
 </div>
     <div id="pmwg-0-1-8" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.8">
-<a href="#pmwg-0-1-8" class="anchor"></a>pmwg 0.1.8</h1>
+<a href="#pmwg-0-1-8" class="anchor"></a>pmwg 0.1.8<small> Unreleased </small>
+</h1>
 <ul>
 <li>Fixes: Non-zero mean in prior was not applied in the sampling algorithm</li>
 <li>Updated author/creator information.</li>
@@ -132,7 +164,8 @@
 </div>
     <div id="pmwg-0-1-7" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.7">
-<a href="#pmwg-0-1-7" class="anchor"></a>pmwg 0.1.7</h1>
+<a href="#pmwg-0-1-7" class="anchor"></a>pmwg 0.1.7<small> Unreleased </small>
+</h1>
 <ul>
 <li>Inform users of the default epsilon value chosen by the package if no explicit value is given.</li>
 <li>Rename list elements for the prior distribution on theta_mu to increase clarity over their purpose.</li>
@@ -140,7 +173,8 @@
 </div>
     <div id="pmwg-0-1-6" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.6">
-<a href="#pmwg-0-1-6" class="anchor"></a>pmwg 0.1.6</h1>
+<a href="#pmwg-0-1-6" class="anchor"></a>pmwg 0.1.6<small> Unreleased </small>
+</h1>
 <ul>
 <li>Add <code>as_mcmc</code> function to export mcmc objects (from coda package) or a list of mcmc objects for the covariance matrix and subject random effects.</li>
 <li>Add unique subject identifiers as the appropriate dimnension names in sample storage (ie for random effects)</li>
@@ -150,7 +184,8 @@
 </div>
     <div id="pmwg-0-1-5" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.5">
-<a href="#pmwg-0-1-5" class="anchor"></a>pmwg 0.1.5</h1>
+<a href="#pmwg-0-1-5" class="anchor"></a>pmwg 0.1.5<small> Unreleased </small>
+</h1>
 <ul>
 <li>Closes Issue <a href='https://github.com/newcastlecl/pmwg/issues/16'>#16</a> - Better errors on incorrect arguments to run_stage</li>
 <li>Closes Issue <a href='https://github.com/newcastlecl/pmwg/issues/26'>#26</a> - Detect and raise error on missing subject column in data frame</li>
@@ -158,7 +193,8 @@
 </div>
     <div id="pmwg-0-1-4" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.4">
-<a href="#pmwg-0-1-4" class="anchor"></a>pmwg 0.1.4</h1>
+<a href="#pmwg-0-1-4" class="anchor"></a>pmwg 0.1.4<small> Unreleased </small>
+</h1>
 <ul>
 <li>Update package name internally to pmwg</li>
 <li>Separate adaptation check code to new function</li>
@@ -166,7 +202,8 @@
 </div>
     <div id="pmwg-0-1-2" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.2">
-<a href="#pmwg-0-1-2" class="anchor"></a>pmwg 0.1.2</h1>
+<a href="#pmwg-0-1-2" class="anchor"></a>pmwg 0.1.2<small> Unreleased </small>
+</h1>
 <ul>
 <li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Initial version in preparation for CRAN submission</li>
@@ -189,7 +226,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

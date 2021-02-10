@@ -15,7 +15,9 @@ reference:
   desc: Functions for accessing and exporting samples in easy to work with formats.
 - contents:
   - as_mcmc
+  - relabel_samples
 - title: Datasets
   desc: Data included in the package
 - contents:
   - forstmann
+  - sampled_forstmann
