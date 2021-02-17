@@ -10,11 +10,13 @@
 #' @keywords internal
 extract_samples <- function(sampler, stage = c("adapt", "sample")) {
   samples <- sampler$samples
-  sample_filter <- samples$stage %in% stage
+  stage_filter <- samples$stage %in% stage
+  sampled_filter <- seq_along(samples$stage) <= samples$idx
+
   list(
-    theta_mu = samples$theta_mu[, sample_filter],
-    theta_sig = samples$theta_sig[, , sample_filter],
-    alpha = samples$alpha[, , sample_filter]
+    theta_mu = samples$theta_mu[, stage_filter & sampled_filter],
+    theta_sig = samples$theta_sig[, , stage_filter & sampled_filter],
+    alpha = samples$alpha[, , stage_filter & sampled_filter]
   )
 }
 
@@ -97,52 +99,109 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
 }
 
 
-#' Update the main data store with the results of the last stage
+#' Extend the main data store with empty space for new samples
 #'
 #' @param sampler The pmwgs object that we are adding the new samples to
-#' @param store The sample storage stage just run
+#' @param n_samples The number of new samples to increase by
+#' @param stage The name of the stage from which the new samples will be drawn
 #'
-#' @return The pmwgs object with the new samples concatenated to the old
+#' @return The pmwgs object with the space for new samples added
 #' @keywords internal
-update_sampler <- function(sampler, store) {
-  old_tmu <- sampler$samples$theta_mu
-  old_tsig <- sampler$samples$theta_sig
-  old_alpha <- sampler$samples$alpha
-  old_stage <- sampler$samples$stage
-  old_sll <- sampler$samples$subj_ll
-  old_a_half <- sampler$samples$a_half
-  li <- store$idx
+extend_sampler <- function(sampler, n_samples, stage) {
+  old <- sampler$samples
   par_names <- sampler$par_names
   subject_ids <- sampler$subjects
+  start <- old$idx + 1
+  end <- old$idx + n_samples
 
-  sampler$samples$theta_mu <- array(
-    c(old_tmu, store$theta_mu[, 1:li]),
-    dim = dim(old_tmu) + c(0, li),
-    dimnames = list(par_names, NULL)
-  )
-  sampler$samples$theta_sig <- array(
-    c(old_tsig, store$theta_sig[, , 1:li]),
-    dim = dim(old_tsig) + c(0, 0, li),
-    dimnames = list(par_names, par_names, NULL)
-  )
-  sampler$samples$alpha <- array(
-    c(old_alpha, store$alpha[, , 1:li]),
-    dim = dim(old_alpha) + c(0, 0, li),
-    dimnames = list(par_names, subject_ids, NULL)
-  )
-  sampler$samples$idx <- ncol(sampler$samples$theta_mu)
-  sampler$samples$last_theta_sig_inv <- store$last_theta_sig_inv
-  sampler$samples$stage <- c(old_stage, store$stage[1:li])
-  sampler$samples$subj_ll <- array(
-    c(old_sll, store$subj_ll[, 1:li]),
-    dim = dim(old_sll) + c(0, li),
-    dimnames = list(subject_ids, NULL)
-  )
-  sampler$samples$a_half <- array(
-    c(old_a_half, store$a_half[, 1:li]),
-    dim = dim(old_a_half) + c(0, li),
-    dimnames = list(par_names, NULL)
-  )
+  new_tmu <- array(NA_real_,
+                   dim = dim(old$theta_mu) + c(0, n_samples),
+                   dimnames = list(par_names, NULL))
+  new_tmu[, - (start:end)] <- old$theta_mu
+  sampler$samples$theta_mu <- new_tmu
+
+  new_tsig <- array(NA_real_,
+                    dim = dim(old$theta_sig) + c(0, 0, n_samples),
+                    dimnames = list(par_names, par_names, NULL))
+  new_tsig[, , - (start:end)] <- old$theta_sig
+  sampler$samples$theta_sig <- new_tsig
+
+  new_alph <- array(NA_real_,
+                    dim = dim(old$alpha) + c(0, 0, n_samples),
+                    dimnames = list(par_names, subject_ids, NULL))
+  new_alph[, , - (start:end)] <- old$alpha
+  sampler$samples$alpha <- new_alph
+
+  new_sll <- array(NA_real_,
+                   dim = dim(old$subj_ll) + c(0, n_samples),
+                   dimnames = list(subject_ids, NULL))
+  new_sll[, - (start:end)] <- old$subj_ll
+  sampler$samples$subj_ll <- new_sll
+
+  new_ahalf <- array(NA_real_,
+                     dim = dim(old$a_half) + c(0, n_samples),
+                     dimnames = list(par_names, NULL))
+  new_ahalf[, - (start:end)] <- old$a_half
+  sampler$samples$a_half <- new_ahalf
+
+  sampler$samples$stage <- c(old$stage, rep(stage, n_samples))
+  sampler
+}
+
+
+#' Trim the unneeded NA values from the end of the sampler
+#'
+#' @param sampler The pmwgs object that we are adding the new samples to
+#'
+#' @return The pmwgs object without NA values added during extend_sampler
+#' @keywords internal
+trim_na <- function(sampler) {
+  idx <- sampler$samples$idx
+  sampler$samples$theta_mu <- sampler$samples$theta_mu[, 1:idx]
+  sampler$samples$theta_sig <- sampler$samples$theta_sig[, , 1:idx]
+  sampler$samples$alpha <- sampler$samples$alpha[, , 1:idx]
+  sampler$samples$subj_ll <- sampler$samples$subj_ll[, 1:idx]
+  sampler$samples$a_half <- sampler$samples$a_half[, 1:idx]
+  sampler$samples$stage <- sampler$samples$stage[1:idx]
+  sampler
+}
+
+
+#' Relabel requested burn-in samples as adaptation
+#'
+#' Given a sampler object and a vector of sample indices, relabel the given
+#' samples to be adaptation samples. This will allow them to be used in the
+#' calculation of the conditional distribution for efficient sampling.
+#'
+#' @section Further information:
+#'
+#' This should not usually be needed, however if you have a model that is slow
+#' to fit, and upon visual inspection and/or trace analysis you determine that
+#' during burn-in the samples had already approached the posterior distribution
+#' then you can use this function to re-label samples from that point onwards
+#' to be classed as adaptation samples.
+#'
+#' This will allow them to be used in tests that check for the number of unique
+#' samples, and in the building of the conditional distribution (which is used
+#' for efficient sampling)
+#'
+#' If all old samples do not match `from` then an error will be raised.
+#'
+#' @param sampler The pmwgs object that we are relabelling samples from
+#' @param indices The sample iterations from burn-in to relabel
+#' @param from The stage you want to re-label from. Default is "burn"
+#' @param to The stage you want to relabel to. Default is "adapt"
+#'
+#' @return The pmwgs object with re-labelled samples
+#' @examples
+#' new_pmwgs <- relabel_samples(sampled_forstmann, 17:21)
+#' @export
+relabel_samples <- function(sampler, indices, from="burn", to="adapt") {
+  old_stage <- sampler$samples$stage
+  if (!all(old_stage[indices] %in% from)) {
+    stop(paste("Not all samples were from the", from, "stage"))
+  }
+  sampler$samples$stage[indices] <- to
   sampler
 }
 
@@ -190,7 +249,7 @@ last_sample <- function(store) {
 #'   \item An integer vector, usually a sequence of integers, that must fall
 #'         within the range 1:end.
 #'   \item A character vector, where each element corresponds to a stage of the
-#'         sampling process, ie one or more of "init", "burn", "adapt" or
+#'         sampling process, i.e. one or more of "init", "burn", "adapt" or
 #'         "sample".
 #' }
 #' The default value for \code{filter} is all stages.
@@ -201,7 +260,13 @@ last_sample <- function(store) {
 #'
 #' @return An mcmc object or list containing the selected samples.
 #' @examples
-#' # No example yet
+#' par_estimates <- as_mcmc(sampled_forstmann)
+#' par_estimates_sample_stage <- as_mcmc(sampled_forstmann, filter = "sample")
+#' rand_eff <- as_mcmc(
+#'   sampled_forstmann,
+#'   selection = "alpha",
+#'   filter = "sample"
+#' )
 #' @export
 as_mcmc <- function(sampler, selection = "theta_mu", filter = stages) {
   if (all(filter %in% stages)) {

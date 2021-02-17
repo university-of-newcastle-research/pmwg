@@ -17,3 +17,7 @@
 ^\.github$
 ^media/
 ^CRAN-RELEASE$
+^data-raw$
+^FAQ.md$
+^R/tags$
+^revdep/

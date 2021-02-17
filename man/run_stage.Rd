@@ -11,7 +11,10 @@ run_stage(
   particles = 1000,
   display_progress = TRUE,
   n_cores = 1,
-  ...
+  n_unique = ifelse(stage == "adapt", 20, NA),
+  epsilon = NULL,
+  mix = NULL,
+  pdist_update_n = ifelse(stage == "sample", 500, NA)
 )
 }
 \arguments{
@@ -35,19 +38,21 @@ iteration, however during the sample phase this should be reduced.}
 \code{n_cores} greater than 1 is only permitted on Linux and Mac OS X
 machines.}
 
-\item{...}{Further arguments used to fine tune the sampling process. Accepted
-additional arguments include:
-\itemize{
-  \item \code{epsilon} which should be a value between 0 and 1.
-    \strong{epsilon} controls the extent to which the covariance matrix is
-    scaled when generating particles from the previous random effect.
-  \item \code{mix} controls the mixture of different sources for particles.
-    The function \code{\link{numbers_from_proportion}} is passed this value
-    and includes extra details on what is accepted.
-  \item \code{n_unique} is a number representing the number of unique
-    samples to check for on each iteration of the sampler. Only used during
-    the \code{'adapt'} stage.
-}}
+\item{n_unique}{A number representing the number of unique samples to check
+for on each iteration of the sampler (An initial test for the generation
+of the proposal distribution). Only used during the \code{'adapt'} stage.}
+
+\item{epsilon}{A value between 0 and 1 that controls the extent to which the
+covariance matrix is scaled when generating particles from the previous
+random effect. The default will be chosen based on the number of random
+effects in the model.}
+
+\item{mix}{A vector of floats that controls the mixture of different sources
+for particles. The function \code{\link{numbers_from_proportion}} is
+passed this value and includes extra details on what is accepted.}
+
+\item{pdist_update_n}{The number of iterations in the sample stage after
+which the proposal distribution will be recomputed.}
 }
 \value{
 A pmwgs object with the newly generated samples in place.
@@ -60,13 +65,13 @@ full PMwG sampling we need to run this three times.
 \details{
 The \strong{burnin} stage by default selects 50% of particles from the model
 parameter sample (selected through a Gibbs step) and 50% of particles from
-the previous random effect of each participant. It assesses each particle
-with the log-likelihood function and samples from all particles weighted by
-their log-likelihood.
+the previous random effect of each subject. It assesses each particle with
+the log-likelihood function and samples from all particles weighted by their
+log-likelihood.
 
 The \strong{adaptation} stage selects and assesses particle in the same was
-as burnin, however on each iteration it also checks whether each participant
-has enough unique random effect samples to attempt to create a conditional
+as burnin, however on each iteration it also checks whether each subject has
+enough unique random effect samples to attempt to create a conditional
 distribution for efficient sampling in the next stage. If the attempt at
 creating a conditional distribution fails, then the number of unique samples
 is increased and sampling continues. If the attempt succeeds then the stage
@@ -79,7 +84,17 @@ getting a high enough acceptance rate of new samples.
 
 Once complete each stage will return a sampler object with the new samples
 stored within it.
+
+The progress bar (which is displayed by default) shows the number of
+iterations out of those requested which have been completed. It also contains
+additional information at the end about the number of newly generated
+particles that have been accepted. This is show as New(XXX%), and is the
+average across subjects of newly sampled random effects accept rate. See
+\code{\link{accept_rate}} for more detail on getting individual accept rate
+values per subject.
 }
 \examples{
-# No example yet
+library(rtdists)
+sampled_forstmann$data <- forstmann
+run_stage(sampled_forstmann, "sample", iter = 1, particles = 20)
 }

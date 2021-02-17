@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return the acceptance rate for all subjects — accept_rate • pmwg</title>
+<title>Return the acceptance rate for new particles across all subjects — accept_rate • pmwg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Return the acceptance rate for all subjects — accept_rate" />
-<meta property="og:description" content="Return the acceptance rate for all subjects" />
+<meta property="og:title" content="Return the acceptance rate for new particles across all subjects — accept_rate" />
+<meta property="og:description" content="Here the acceptance rate is defined as the rate of accepting newly generated
+particles for individuals random effects. That is the number of samples where
+a newly generated particle was accepted / the number of samples." />
 
 
 
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -85,10 +87,30 @@
   </a>
 </li>
 <li>
+  <a href="../articles/pmwg.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../FAQ.html">FAQ</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html">pmwg 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -111,34 +133,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return the acceptance rate for all subjects</h1>
+    <h1>Return the acceptance rate for new particles across all subjects</h1>
     <small class="dont-index">Source: <a href='https://github.com/newcastlecl/pmwg/blob/master/R/sampling.R'><code>R/sampling.R</code></a></small>
     <div class="hidden name"><code>accept_rate.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Return the acceptance rate for all subjects</p>
+    <p>Here the acceptance rate is defined as the rate of accepting newly generated
+particles for individuals random effects. That is the number of samples where
+a newly generated particle was accepted / the number of samples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>accept_rate</span>(<span class='no'>store</span>)</pre>
+    <pre class="usage"><span class='fu'>accept_rate</span><span class='op'>(</span><span class='va'>pmwgs</span>, window_size <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>store</th>
-      <td><p>The samples store (containing random effects) with which we are
+      <th>pmwgs</th>
+      <td><p>The sampler object (containing random effects) with which we are
 working</p></td>
+    </tr>
+    <tr>
+      <th>window_size</th>
+      <td><p>The size of the window to calculate acceptance rate over</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector with the acceptance rate for each subject</p>
+    <p>A vector with the acceptance rate for each subject for the last X
+  samples</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># No example yet
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -154,7 +180,7 @@ working</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

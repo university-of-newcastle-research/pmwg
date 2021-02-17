@@ -41,12 +41,12 @@
 
 <meta property="og:title" content="pmwg: Particle Metropolis Within Gibbs. — pmwg-package" />
 <meta property="og:description" content="The pmwg package provides a general purpose implementation of the
-sampling techniques outlined in
-Gunawan et al. (2020).
-The user of this package is required to provide their own log likelihood
-function, but given this the functions provided can estimate model
-parameters, the full covariance matrix and subject random effects in a
-hierarchical Bayesian way." />
+sampling techniques outlined in Gunawan et al. (2020)
+doi: 10.1016/j.jmp.2020.102368
+. The user of this package is required to
+provide their own log likelihood function, but given this the functions
+provided can estimate model parameters, the full covariance matrix and
+subject random effects in a hierarchical Bayesian way." />
 
 
 
@@ -78,7 +78,7 @@ hierarchical Bayesian way." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -91,10 +91,30 @@ hierarchical Bayesian way." />
   </a>
 </li>
 <li>
+  <a href="../articles/pmwg.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../FAQ.html">FAQ</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html">pmwg 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -124,12 +144,12 @@ hierarchical Bayesian way." />
 
     <div class="ref-description">
     <p>The pmwg package provides a general purpose implementation of the
-sampling techniques outlined in
-<a href='https://doi.org/10.1016/j.jmp.2020.102368'>Gunawan et al. (2020)</a>.
-The user of this package is required to provide their own log likelihood
-function, but given this the functions provided can estimate model
-parameters, the full covariance matrix and subject random effects in a
-hierarchical Bayesian way.</p>
+sampling techniques outlined in Gunawan et al. (2020)
+doi: <a href='https://doi.org/10.1016/j.jmp.2020.102368'>10.1016/j.jmp.2020.102368</a>
+. The user of this package is required to
+provide their own log likelihood function, but given this the functions
+provided can estimate model parameters, the full covariance matrix and
+subject random effects in a hierarchical Bayesian way.</p>
     </div>
 
 
@@ -148,7 +168,7 @@ includes a list of common problems and associated troubleshooting steps.</p>
 
 <p>The user is expected to provide a data source in a format that is compatible
 with R data.frame methods. This data must have at least one column named
-`subject` that has a unique identifier for each participants data.</p>
+`subject` that has a unique identifier for each subject's data.</p>
 <p>Additionally the user should provide a function that when given a set of
 parameter estimates and the data for a single subject return the log of the
 likelihood of that data given the parameter estimates.</p>
@@ -169,6 +189,19 @@ model. <em>Journal of Mathematical Psychology, 96</em>, 102368.</p>
 </ul>
 
 </div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><strong>Maintainer</strong>: Gavin Cooper <a href='mailto:gavin@gavincooper.net'>gavin@gavincooper.net</a> (Package creator and maintainer) [translator]</p>
+<p>Authors:</p><ul>
+<li><p>Reilly Innes <a href='mailto:Reilly.Innes@uon.edu.au'>Reilly.Innes@uon.edu.au</a></p></li>
+<li><p>Caroline Kuhne <a href='mailto:caroline.kuhne@newcastle.edu.au'>caroline.kuhne@newcastle.edu.au</a></p></li>
+<li><p>Jon-Paul Cavallaro <a href='mailto:jon-paul.cavallaro@uon.edu.au'>jon-paul.cavallaro@uon.edu.au</a></p></li>
+<li><p>David Gunawan <a href='mailto:dgunawan@uow.edu.au'>dgunawan@uow.edu.au</a> (Author of original MATLAB code)</p></li>
+<li><p>Guy Hawkins <a href='mailto:guy.hawkins@newcastle.edu.au'>guy.hawkins@newcastle.edu.au</a></p></li>
+<li><p>Scott Brown <a href='mailto:scott.brown@newcastle.edu.au'>scott.brown@newcastle.edu.au</a> (Original translation from MATLAB to R) [translator]</p></li>
+</ul>
+
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -185,7 +218,7 @@ model. <em>Journal of Mathematical Psychology, 96</em>, 102368.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

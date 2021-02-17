@@ -6,13 +6,13 @@
 #'
 #' The \strong{burnin} stage by default selects 50% of particles from the model
 #' parameter sample (selected through a Gibbs step) and 50% of particles from
-#' the previous random effect of each participant. It assesses each particle
-#' with the log-likelihood function and samples from all particles weighted by
-#' their log-likelihood.
+#' the previous random effect of each subject. It assesses each particle with
+#' the log-likelihood function and samples from all particles weighted by their
+#' log-likelihood.
 #'
 #' The \strong{adaptation} stage selects and assesses particle in the same was
-#' as burnin, however on each iteration it also checks whether each participant
-#' has enough unique random effect samples to attempt to create a conditional
+#' as burnin, however on each iteration it also checks whether each subject has
+#' enough unique random effect samples to attempt to create a conditional
 #' distribution for efficient sampling in the next stage. If the attempt at
 #' creating a conditional distribution fails, then the number of unique samples
 #' is increased and sampling continues. If the attempt succeeds then the stage
@@ -25,6 +25,14 @@
 #'
 #' Once complete each stage will return a sampler object with the new samples
 #' stored within it.
+#'
+#' The progress bar (which is displayed by default) shows the number of
+#' iterations out of those requested which have been completed. It also contains
+#' additional information at the end about the number of newly generated
+#' particles that have been accepted. This is show as New(XXX%), and is the
+#' average across subjects of newly sampled random effects accept rate. See
+#' \code{\link{accept_rate}} for more detail on getting individual accept rate
+#' values per subject.
 #'
 #' @param pmwgs A Particle Metropolis within Gibbs sampler which has been set
 #'   up and initialised
@@ -40,23 +48,23 @@
 #' @param n_cores Set to more than 1 to use \code{mclapply}. Setting
 #'   \code{n_cores} greater than 1 is only permitted on Linux and Mac OS X
 #'   machines.
-#' @param ... Further arguments used to fine tune the sampling process. Accepted
-#'   additional arguments include:
-#'   \itemize{
-#'     \item \code{epsilon} which should be a value between 0 and 1.
-#'       \strong{epsilon} controls the extent to which the covariance matrix is
-#'       scaled when generating particles from the previous random effect.
-#'     \item \code{mix} controls the mixture of different sources for particles.
-#'       The function \code{\link{numbers_from_proportion}} is passed this value
-#'       and includes extra details on what is accepted.
-#'     \item \code{n_unique} is a number representing the number of unique
-#'       samples to check for on each iteration of the sampler. Only used during
-#'       the \code{'adapt'} stage.
-#'   }
-#'
+#' @param n_unique A number representing the number of unique samples to check
+#'   for on each iteration of the sampler (An initial test for the generation
+#'   of the proposal distribution). Only used during the \code{'adapt'} stage.
+#' @param epsilon A value between 0 and 1 that controls the extent to which the
+#'   covariance matrix is scaled when generating particles from the previous
+#'   random effect. The default will be chosen based on the number of random
+#'   effects in the model.
+#' @param mix A vector of floats that controls the mixture of different sources
+#'   for particles. The function \code{\link{numbers_from_proportion}} is
+#'   passed this value and includes extra details on what is accepted.
+#' @param pdist_update_n The number of iterations in the sample stage after
+#'   which the proposal distribution will be recomputed.
 #' @return A pmwgs object with the newly generated samples in place.
 #' @examples
-#' # No example yet
+#' library(rtdists)
+#' sampled_forstmann$data <- forstmann
+#' run_stage(sampled_forstmann, "sample", iter = 1, particles = 20)
 #' @export
 run_stage <- function(pmwgs,
                       stage,
@@ -64,83 +72,96 @@ run_stage <- function(pmwgs,
                       particles = 1000,
                       display_progress = TRUE,
                       n_cores = 1,
-                      ...) {
-  # Check the passed arguments and return cleaned - extract relevant arguments
-  .args <- as.list(match.call()[-1])
-  clean_args <- do.call(check_run_stage_args, .args)
-  stage <- clean_args$stage
-  if (stage == "adapt") {
-    .n_unique <- clean_args$.n_unique
-    n_unique <- clean_args$n_unique
+                      n_unique = ifelse(stage == "adapt", 20, NA),
+                      epsilon = NULL,
+                      mix = NULL,
+                      pdist_update_n = ifelse(stage == "sample", 500, NA)) {
+  # Set defaults for NULL values
+  epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
+  mix <- set_mix(stage, mix)
+  # Test passed arguments/defaults for correctness
+  do.call(check_run_stage_args, as.list(environment()))
+  # Set necessary local variables
+  .n_unique <- n_unique
+  apply_fn <- lapply
+  # Set stable (fixed) new_sample argument for this run
+  stable_args <- list(
+    X = 1:pmwgs$n_subjects,
+    FUN = new_sample,
+    data = pmwgs$data,
+    num_particles = particles,
+    # parameters argument  will be generated each iteration below
+    # efficient arguments will be generated if needed below
+    mix_proportion = mix,
+    likelihood_func = pmwgs$ll_func,
+    epsilon = epsilon,
+    subjects = pmwgs$subjects
+  )
+  if (n_cores > 1) {
+    apply_fn <- parallel::mclapply
+    stable_args$mc.cores <- n_cores # nolint
   }
-  apply_fn <- clean_args$apply_fn
 
   # Display stage to screen
   msgs <- list(
-    burn = "Phase 1: Burn in\n", adapt = "Phase 2: Adaptation\n",
+    burn = "Phase 1: Burn in\n",
+    adapt = "Phase 2: Adaptation\n",
     sample = "Phase 3: Sampling\n"
   )
   cat(msgs[[stage]])
 
   # Build new sample storage
-  stage_samples <- sample_store(
-    pmwgs$par_names, pmwgs$subjects,
-    iters = iter, stage = stage
-  )
+  pmwgs <- extend_sampler(pmwgs, iter, stage)
   # create progress bar
   if (display_progress) {
     pb <- accept_progress_bar(min = 0, max = iter)
   }
+  start_iter <- pmwgs$samples$idx
 
   # Main iteration loop
   for (i in 1:iter) {
     if (display_progress) {
-      update_progress_bar(pb, i, extra = mean(accept_rate(stage_samples)))
+      update_progress_bar(pb, i, extra = mean(accept_rate(pmwgs)))
     }
+    # Create/update efficient proposal distribution if we are in sampling phase.
+    stable_args <- utils::modifyList(
+      stable_args,
+      set_proposal(i, stage, pmwgs, pdist_update_n)
+    )
 
-    if (i == 1) store <- pmwgs$samples else store <- stage_samples
     tryCatch(
-      pars <- gibbs_step(store, pmwgs),
+      pars <- gibbs_step(pmwgs),
       error = function(err_cond) {
-        gibbs_step_err(pmwgs, store)
+        gibbs_step_err(pmwgs, err_cond)
       }
     )
 
-    # Sample new particles for random effects.
-    # Send new_sample the "index" of the subject id - not subject id itself.
-    pmwgs_args <- list(
-      X = 1:pmwgs$n_subjects,
-      FUN = new_sample,
-      data = pmwgs$data,
-      num_particles = particles,
-      parameters = pars,
-      likelihood_func = pmwgs$ll_func,
-      subjects = pmwgs$subjects
+    iter_args <- list(
+      parameters = pars
     )
-    fn_args <- c(pmwgs_args, clean_args$sample_args)
-    tmp <- do.call(apply_fn, fn_args)
+    tmp <- do.call(apply_fn, c(stable_args, iter_args))
 
     ll <- unlist(lapply(tmp, attr, "ll"))
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
 
     # Store results locally.
-    stage_samples$theta_mu[, i] <- pars$tmu
-    stage_samples$theta_sig[, , i] <- pars$tsig
-    stage_samples$last_theta_sig_inv <- pars$tsinv
-    stage_samples$alpha[, , i] <- alpha
-    stage_samples$idx <- i
-    stage_samples$subj_ll[, i] <- ll
-    stage_samples$a_half[, i] <- pars$a_half
+    j <- start_iter + i
+    pmwgs$samples$theta_mu[, j] <- pars$tmu
+    pmwgs$samples$theta_sig[, , j] <- pars$tsig
+    pmwgs$samples$last_theta_sig_inv <- pars$tsinv
+    pmwgs$samples$alpha[, , j] <- alpha
+    pmwgs$samples$idx <- j
+    pmwgs$samples$subj_ll[, j] <- ll
+    pmwgs$samples$a_half[, j] <- pars$a_half
 
     if (stage == "adapt") {
-      res <- test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
+      res <- test_sampler_adapted(pmwgs, n_unique, i)
       if (res == "success") {
         break
       } else if (res == "increase") {
         n_unique <- n_unique + .n_unique
       }
     }
-
   }
   if (display_progress) close(pb)
   if (stage == "adapt") {
@@ -151,9 +172,11 @@ run_stage <- function(pmwgs,
         "run).\nYou should examine your samples and perhaps start",
         "a longer adaptation run."
       ))
+    } else {
+      pmwgs <- trim_na(pmwgs)
     }
   }
-  update_sampler(pmwgs, stage_samples)
+  pmwgs
 }
 
 
@@ -362,141 +385,189 @@ particle_draws <- function(n, mu, covar) {
 }
 
 
+#' Set default values for epsilon
+#'
+#' Takes the number of parameters and the epsilon arg value and sets a default
+#' if necessary.
+#'
+#' @param n_pars The number of parameters for the model
+#' @param epsilon The value of epsilon set in the call to `run_stage` or NULL.
+#'
+#' @keywords internal
+set_epsilon <- function(n_pars, epsilon) {
+  if (checkmate::test_null(epsilon)) {
+    if (n_pars > 15) {
+      epsilon <- 0.1
+    } else if (n_pars > 10) {
+      epsilon <- 0.3
+    } else {
+      epsilon <- 0.5
+    }
+    message(
+      sprintf(
+        "Epsilon has been set to %.1f based on number of parameters",
+        epsilon
+      )
+    )
+  }
+  epsilon
+}
+
+
+#' Set default values for mix
+#'
+#' Takes the current stage and the mix arg value and sets a default if
+#' necessary.
+#'
+#' @param stage The stage being run by the sampler.
+#' @param mix The value of mix set in the call to `run_stage` or NULL.
+#'
+#' @keywords internal
+set_mix <- function(stage, mix) {
+  if (checkmate::test_null(mix)) {
+    if (stage == "sample") {
+      mix <- c(0.1, 0.2, 0.7)
+    } else {
+      mix <- c(0.5, 0.5, 0.0)
+    }
+    message(
+      sprintf(
+        "mix has been set to c(%s) based on the stage being run",
+        paste(mix, collapse = ", ")
+      )
+    )
+  }
+  mix
+}
+
+
+#' Setup the proposal distribution arguments (if in sample stage)
+#'
+#' Takes the current stage and the mix arg value and sets a default if
+#' necessary.
+#'
+#' @param i The current iteration of the stage being run.
+#' @param stage The stage being run by the sampler.
+#' @param pmwgs The pmwgs object from which to attempt to create the proposal
+#'   distribution
+#' @param pdist_update_n The number of iterations to run before recomputing the
+#'   proposal distribution (NA to never update or for burnin/adaptation stages)
+#'
+#' @keywords internal
+set_proposal <- function(i, stage, pmwgs, pdist_update_n) {
+  if (stage != "sample") {
+    return(list())
+  }
+  if (is.na(i %% pdist_update_n) && (i != 1)) {
+    return(list())
+  }
+  if ((i != 1) && ((i %% pdist_update_n) != 0)) {
+    return(list())
+  }
+
+  tryCatch(
+    prop_args <- try(create_efficient(pmwgs)),
+    error = function(err_cond) {
+      outfile <- tempfile(
+        pattern = "PMwG_err_",
+        tmpdir = ".",
+        fileext = ".RData"
+      )
+      msg <- paste(
+        "An error was detected whilst creating conditional",
+        "distribution.\n",
+        "Saving current state of environment in file:",
+        outfile
+      )
+      save.image(outfile)
+      stop(msg)
+    }
+  )
+  prop_args
+}
+
+
 #' Test the arguments to the run_stage function for correctness
 #'
 #' Takes the arguments to run_stage and checks them for completeness and
 #' correctness. Returns a list of cleaned/checked arguments to the caller.
 #'
+#' @import checkmate
 #' @inheritParams run_stage
 #'
 #' @keywords internal
 check_run_stage_args <- function(pmwgs,
                                  stage,
-                                 iter = 1000,
-                                 particles = 1000,
-                                 display_progress = TRUE,
-                                 n_cores = 1,
-                                 ...) {
-  # Two lists of arguments used in different places to return
-  sargs <- list()
-  # Check pmwgs object is correct type and has been initialised
-  if (!is.pmwgs(pmwgs)) {
-    stop("`run_stage` function Requires an object of type <pmwgs>")
-  }
-  if (!pmwgs$init) stop("pmwgs object has not been initialised")
+                                 iter,
+                                 particles,
+                                 display_progress,
+                                 n_cores,
+                                 n_unique,
+                                 epsilon,
+                                 mix,
+                                 pdist_update_n) {
+  asserts <- makeAssertCollection()
+  assert_class(pmwgs, "pmwgs", add = asserts)
+  assert_true(pmwgs$init, .var.name = "pmwgs$init", add = asserts)
+  assert_choice(stage, stages[2:length(stages)], add = asserts)
+  assert_count(iter, positive = TRUE, add = asserts)
+  assert_count(particles, positive = TRUE, add = asserts)
+  assert_logical(display_progress, add = asserts)
+  assert_count(n_cores, positive = TRUE, add = asserts)
 
-  # Test stage argument
-  valid_stages <- stages[2:length(stages)]
-  stage_err <- paste(c("Argument `stage` should be one of -", valid_stages),
-                     collapse = " ",
-                     sep = ",")
-  tryCatch(
-    stage <- match.arg(stage, valid_stages),
-    error = function(err_cond) {
-      stop(stage_err)
+  check_cores <- function(x) {
+    if (test_os("windows") && test_true(x != 1)) {
+      return("`n_cores` cannot be greater than 1 on Windows systems.")
     }
-  )
-
-  acceptable_extras <- c("n_unique", "epsilon", "mix")
-  dots <- list(...)
-  for (argname in names(dots)) {
-    if (!argname %in% acceptable_extras) {
-      stop(paste("Unexpected argument", argname, "passed to run_stage"))
-    }
+    check_count(x, positive = TRUE)
   }
-  # Extract n_unique argument
+  assert_cores <- makeAssertionFunction(check_cores)
+  assert_cores(n_cores, add = asserts)
+
   if (stage == "adapt") {
-    adapt_args <- list()
-    if (is.null(dots$n_unique)) {
-      adapt_args$.n_unique <- 20
-    } else {
-      adapt_args$.n_unique <- dots$n_unique
-      dots$n_unique <- NULL
-    }
-    adapt_args$n_unique <- adapt_args$.n_unique
+    assert_count(n_unique, positive = TRUE, add = asserts)
   } else {
-    adapt_args <- list()
-    if (!is.null(dots$n_unique)) {
-      dots$n_unique <- NULL
-      warning("Argument `n_unique` unused for any stage other than adapt")
-    }
+    assert_scalar_na(n_unique, add = asserts)
   }
 
-  # Set a default value for epsilon if it does not exist
-  if (is.null(dots$epsilon)) {
-    sargs$epsilon <- ifelse(pmwgs$n_pars > 15,
-      0.1,
-      ifelse(pmwgs$n_pars > 10, 0.3, 0.5)
-    )
-    message(paste("Epsilon has been set automatically to:", sargs$epsilon))
-    message("This is based on the number of parameters")
-  }
+  assert_double(epsilon, lower = 0.0, upper = 1.0, len = 1, add = asserts)
+  assert_double(mix, lower = 0.0, upper = 1.0, len = 3, add = asserts)
+  assert_true(all.equal(sum(mix), 1), add = asserts)
 
-  # Create efficient proposal distribution if we are in sampling phase
   if (stage == "sample") {
-    tryCatch(
-      prop_args <- try(create_efficient(pmwgs)),
-      error = function(err_cond) {
-        outfile <- tempfile(
-          pattern = "PMwG_err_",
-          tmpdir = ".",
-          fileext = ".RData"
-        )
-        msg <- paste(
-          "An error was detected whilst creating conditional",
-          "distribution.\n",
-          "Saving current state of environment in file:",
-          outfile
-        )
-        save.image(outfile)
-        stop(msg)
-      }
-    )
-    sargs <- c(sargs, prop_args)
-  }
-
-  # Set default values for the mix_proportion parameter if not passed in as arg,
-  # and perform checks on its values/length
-  if (is.null(dots$mix)) {
-    if (stage == "sample") {
-      sargs$mix <- c(0.1, 0.2, 0.7)
-    } else {
-      sargs$mix <- c(0.5, 0.5, 0.0)
-    }
+    assert_count(pdist_update_n, positive = TRUE, add = asserts)
   } else {
-    sargs$mix <- dots$mix
+    assert_scalar_na(pdist_update_n, add = asserts)
   }
-  if (!isTRUE(all.equal(sum(sargs$mix), 1))) {
-    stop("The elements of the `mix` proportion vector must sum to 1")
-  }
-  if (length(sargs$mix) != 3) {
-    stop("`mix` proportion vector must have three elements which sum to 1")
-  }
-
-  apply_fn <- lapply
-  if (n_cores > 1) {
-    if (Sys.info()[["sysname"]] == "Windows") {
-      stop("`n_cores` cannot be greater than 1 on Windows systems.")
-    }
-    apply_fn <- parallel::mclapply
-    sargs$mc.cores <- n_cores #nolint
-  }
-  c(adapt_args, list(stage = stage, sample_args = sargs, apply_fn = apply_fn))
 }
 
 
-#' Return the acceptance rate for all subjects
+#' Return the acceptance rate for new particles across all subjects
 #'
-#' @param store The samples store (containing random effects) with which we are
+#' Here the acceptance rate is defined as the rate of accepting newly generated
+#' particles for individuals random effects. That is the number of samples where
+#' a newly generated particle was accepted / the number of samples.
+#'
+#' @param pmwgs The sampler object (containing random effects) with which we are
 #'   working
+#' @param window_size The size of the window to calculate acceptance rate over
 #'
-#' @return A vector with the acceptance rate for each subject
+#' @return A vector with the acceptance rate for each subject for the last X
+#'   samples
 #' @keywords internal
-accept_rate <- function(store) {
-  if (is.null(store$idx) || store$idx < 3) {
-    return(array(0, dim(store$alpha)[2]))
+accept_rate <- function(pmwgs, window_size = 200) {
+  n_samples <- pmwgs$samples$idx
+  if (is.null(n_samples) || n_samples < 3) {
+    return(array(0, dim(pmwgs$samples$alpha)[2]))
   }
-  vals <- store$alpha[1, , 1:store$idx]
+  if (n_samples <= window_size) {
+    start <- 1
+    end <- n_samples
+  } else {
+    start <- n_samples - window_size + 1
+    end <- n_samples
+  }
+  vals <- pmwgs$samples$alpha[1, , start:end]
   apply(
     apply(vals, 1, diff) != 0, # If diff != 0
     2,

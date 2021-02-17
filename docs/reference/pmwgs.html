@@ -74,7 +74,7 @@ a log likelihood function and optionally a prior for the model parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -87,10 +87,30 @@ a log likelihood function and optionally a prior for the model parameters." />
   </a>
 </li>
 <li>
+  <a href="../articles/pmwg.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../FAQ.html">FAQ</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    News
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Releases</li>
+    <li>
+      <a href="https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html">pmwg 0.2.0</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="../news/index.html">Changelog</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -124,7 +144,7 @@ Each pmwgs object is required to have a dataset, a list of parameter names,
 a log likelihood function and optionally a prior for the model parameters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pmwgs</span>(<span class='no'>data</span>, <span class='no'>pars</span>, <span class='no'>ll_func</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>pmwgs</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>pars</span>, <span class='va'>ll_func</span>, prior <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,45 +183,51 @@ the default (NULL) then the <code>theta_mu_mean</code> will be all zeroes and
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Specify the log likelihood function</span>
-<span class='no'>lba_loglike</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>data</span>) {
-  <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='no'>x</span>)
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span>(<span class='no'>data</span>$<span class='no'>rt</span> <span class='kw'>&lt;</span> <span class='no'>x</span>[<span class='st'>"t0"</span>])) {
-    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(-<span class='fl'>1e10</span>)
-  }
+<span class='va'>lba_loglike</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>data</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>rt</span> <span class='op'>&lt;</span> <span class='va'>x</span><span class='op'>[</span><span class='st'>"t0"</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1e10</span><span class='op'>)</span>
+  <span class='op'>}</span>
   <span class='co'># This is faster than "paste".</span>
-  <span class='no'>bs</span> <span class='kw'>&lt;-</span> <span class='no'>x</span>[<span class='st'>"A"</span>] + <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>)][<span class='no'>data</span>$<span class='no'>condition</span>]
+  <span class='va'>bs</span> <span class='op'>&lt;-</span> <span class='va'>x</span><span class='op'>[</span><span class='st'>"A"</span><span class='op'>]</span> <span class='op'>+</span> <span class='va'>x</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>[</span><span class='va'>data</span><span class='op'>$</span><span class='va'>condition</span><span class='op'>]</span>
 
-  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>rtdists</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rtdists/man/LBA.html'>dLBA</a></span>(
-    <span class='kw'>rt</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>rt</span>, <span class='co'># nolint</span>
-    <span class='kw'>response</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>correct</span>,
-    <span class='kw'>A</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"A"</span>],
-    <span class='kw'>b</span> <span class='kw'>=</span> <span class='no'>bs</span>,
-    <span class='kw'>t0</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='st'>"t0"</span>],
-    <span class='kw'>mean_v</span> <span class='kw'>=</span> <span class='no'>x</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v1"</span>, <span class='st'>"v2"</span>)],
-    <span class='kw'>sd_v</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>),
-    <span class='kw'>distribution</span> <span class='kw'>=</span> <span class='st'>"norm"</span>,
-    <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-  )
-  <span class='no'>bad</span> <span class='kw'>&lt;-</span> (<span class='no'>out</span> <span class='kw'>&lt;</span> <span class='fl'>1e-10</span>) <span class='kw'>|</span> (!<span class='fu'><a href='https://rdrr.io/r/base/is.finite.html'>is.finite</a></span>(<span class='no'>out</span>))
-  <span class='no'>out</span>[<span class='no'>bad</span>] <span class='kw'>&lt;-</span> <span class='fl'>1e-10</span>
-  <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='no'>out</span>))
-  <span class='no'>out</span>
-}
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'>rtdists</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rtdists/man/LBA.html'>dLBA</a></span><span class='op'>(</span>
+    rt <span class='op'>=</span> <span class='va'>data</span><span class='op'>$</span><span class='va'>rt</span>, <span class='co'># nolint</span>
+    response <span class='op'>=</span> <span class='va'>data</span><span class='op'>$</span><span class='va'>stim</span>,
+    A <span class='op'>=</span> <span class='va'>x</span><span class='op'>[</span><span class='st'>"A"</span><span class='op'>]</span>,
+    b <span class='op'>=</span> <span class='va'>bs</span>,
+    t0 <span class='op'>=</span> <span class='va'>x</span><span class='op'>[</span><span class='st'>"t0"</span><span class='op'>]</span>,
+    mean_v <span class='op'>=</span> <span class='va'>x</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v1"</span>, <span class='st'>"v2"</span><span class='op'>)</span><span class='op'>]</span>,
+    sd_v <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span>,
+    distribution <span class='op'>=</span> <span class='st'>"norm"</span>,
+    silent <span class='op'>=</span> <span class='cn'>TRUE</span>
+  <span class='op'>)</span>
+  <span class='va'>bad</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>out</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/is.finite.html'>is.finite</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='va'>out</span><span class='op'>[</span><span class='va'>bad</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1e-10</span>
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>out</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='va'>out</span>
+<span class='op'>}</span>
 
 <span class='co'># Specify parameter names and priors</span>
-<span class='no'>pars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span>)
-<span class='no'>priors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>theta_mu_mean</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)),
-  <span class='kw'>theta_mu_var</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>pars</span>)))
-)
+<span class='va'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"b1"</span>, <span class='st'>"b2"</span>, <span class='st'>"b3"</span>, <span class='st'>"A"</span>, <span class='st'>"v1"</span>, <span class='st'>"v2"</span>, <span class='st'>"t0"</span><span class='op'>)</span>
+<span class='va'>priors</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+  theta_mu_mean <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>pars</span><span class='op'>)</span><span class='op'>)</span>,
+  theta_mu_var <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>pars</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
 
 <span class='co'># Create the Particle Metropolis within Gibbs sampler object</span>
-<span class='no'>sampler</span> <span class='kw'>&lt;-</span> <span class='fu'>pmwgs</span>(
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>forstmann</span>,
-  <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>pars</span>,
-  <span class='kw'>ll_func</span> <span class='kw'>=</span> <span class='no'>lba_loglike</span>,
-  <span class='kw'>prior</span> <span class='kw'>=</span> <span class='no'>priors</span>
-)</div></pre>
+<span class='va'>sampler</span> <span class='op'>&lt;-</span> <span class='fu'>pmwgs</span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='va'>forstmann</span>,
+  pars <span class='op'>=</span> <span class='va'>pars</span>,
+  ll_func <span class='op'>=</span> <span class='va'>lba_loglike</span>,
+  prior <span class='op'>=</span> <span class='va'>priors</span>
+<span class='op'>)</span>
+
+<span class='va'>sampler</span> <span class='op'>=</span> <span class='fu'><a href='init.html'>init</a></span><span class='op'>(</span><span class='va'>sampler</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Sampling Initial values for random effects
+#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</div><div class='input'><span class='va'>sampler</span> <span class='op'>=</span> <span class='fu'><a href='run_stage.html'>run_stage</a></span><span class='op'>(</span><span class='va'>sampler</span>, stage<span class='op'>=</span><span class='st'>"burn"</span>, iter<span class='op'>=</span><span class='fl'>20</span>, particles<span class='op'>=</span><span class='fl'>20</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Epsilon has been set to 0.5 based on number of parameters</span></div><div class='output co'>#&gt; <span class='message'>mix has been set to c(0.5, 0.5, 0) based on the stage being run</span></div><div class='output co'>#&gt; Phase 1: Burn in
+#&gt;                                                                                  |                                                            |   0% | New(  0%)                                                                                 |===                                                         |   5% | New(  0%)                                                                                 |======                                                      |  10% | New(  0%)                                                                                 |=========                                                   |  15% | New(100%)                                                                                 |============                                                |  20% | New(100%)                                                                                 |===============                                             |  25% | New(100%)                                                                                 |==================                                          |  30% | New(100%)                                                                                 |=====================                                       |  35% | New(100%)                                                                                 |========================                                    |  40% | New(100%)                                                                                 |===========================                                 |  45% | New( 99%)                                                                                 |==============================                              |  50% | New( 99%)                                                                                 |=================================                           |  55% | New( 99%)                                                                                 |====================================                        |  60% | New(100%)                                                                                 |=======================================                     |  65% | New(100%)                                                                                 |==========================================                  |  70% | New(100%)                                                                                 |=============================================               |  75% | New(100%)                                                                                 |================================================            |  80% | New(100%)                                                                                 |===================================================         |  85% | New( 99%)                                                                                 |======================================================      |  90% | New( 99%)                                                                                 |=========================================================   |  95% | New( 97%)                                                                                 |============================================================| 100% | New( 96%)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -217,7 +243,7 @@ the default (NULL) then the <code>theta_mu_mean</code> will be all zeroes and
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -2,18 +2,23 @@
 % Please edit documentation in R/sampling.R
 \name{accept_rate}
 \alias{accept_rate}
-\title{Return the acceptance rate for all subjects}
+\title{Return the acceptance rate for new particles across all subjects}
 \usage{
-accept_rate(store)
+accept_rate(pmwgs, window_size = 200)
 }
 \arguments{
-\item{store}{The samples store (containing random effects) with which we are
+\item{pmwgs}{The sampler object (containing random effects) with which we are
 working}
+
+\item{window_size}{The size of the window to calculate acceptance rate over}
 }
 \value{
-A vector with the acceptance rate for each subject
+A vector with the acceptance rate for each subject for the last X
+  samples
 }
 \description{
-Return the acceptance rate for all subjects
+Here the acceptance rate is defined as the rate of accepting newly generated
+particles for individuals random effects. That is the number of samples where
+a newly generated particle was accepted / the number of samples.
 }
 \keyword{internal}

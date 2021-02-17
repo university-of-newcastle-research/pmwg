@@ -1,0 +1,134 @@
+---
+title: "Introduction to pmwg"
+description: >
+  A getting started guide for working with pmwg
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to pmwg}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+---
+
+pmwg is a package that implements an efficient and flexible Particle Metropolis within Gibbs sampler as outlined in the paper [@gunawan2020]. The sampler estimates group level parameter values, the covariance matrix related parameter estimates to each other and the individual level parameter estimates (random effects) in a two step process. The process consists of a Gibbs sampling step for group level/covariate estimates followed by a particle metropolis step for random effects for each iteration of the sampler.
+
+The sampling proceeds through three stages, burn in, adaptation and a final sampling stage. Burn in can be relatively short and should move the sample estimates from the start values to a plausible region of the parameter space relatively quickly. The adaptation stage is the same as burn in, however samples from this stage are used to generate a proposal distribution used to create samples more efficiently for the final sampling stage.
+
+
+## The data
+
+First we will load the pmwg package and explore the included dataset
+
+```{r}
+library(pmwg)
+
+head(forstmann)
+```
+
+The forstmann dataset is from [@forstmann2008] and is the cleaned data from an experiment that displayed a random dot motion task with one of three speed accuracy manipulations (respond accurately instructions, neutral instructions and respond quickly instructions).
+
+We can see that there are 5 columns:
+
+* `subject` - which gives an ID for each of the 19 participants
+* `condition` - the speed accuracy instructions for the trial
+* `stim` - whether dots were moving left or right
+* `resp` - whether the participant responded left or right
+* `rt` - the response time for the trial
+
+We will use the `rtdists` package to look at threshold differences between the three conditions to see whether there is evidence for different thresholds (the evidence required to trigger a response) in each of the three conditions. For a full explanation of the model please see the [full documentation](https://newcastlecl.github.io/samplerDoc/) in Chapter 3.
+
+## The log-likelihood function
+
+Now that we have the data we will need to specify the log-likelihood function.
+
+```{r}
+lba_loglike <- function(x, data) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  # This is faster than "paste".
+  bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition]
+
+  out <- rtdists::dLBA(
+    rt = data$rt, # nolint
+    response = data$stim,
+    A = x["A"],
+    b = bs,
+    t0 = x["t0"],
+    mean_v = x[c("v1", "v2")],
+    sd_v = c(1, 1),
+    distribution = "norm",
+    silent = TRUE
+  )
+  bad <- (out < 1e-10) | (!is.finite(out))
+  out[bad] <- 1e-10
+  out <- sum(log(out))
+  out
+}
+```
+
+This function contains the primary implementation of our model for the data. The `pmwgs` object that we run later in this example will pass two things:
+
+* A set of parameter values `x` that we will be assessing.
+* A subset of our dataset (`data`), the data for one subject.
+
+Our job then in the function is to take the parameter values and calculate the log-likelihood of the data given the parameter values.
+
+The overall process is as follows:
+
+* Take the exponent of the parameter values (that are stored in log-form
+* Test for improbable values of t0 (non-decision time) and return extremely low log-likelihood if they are unlikely.
+* Create a vector of b (threshold) parameter values for the call to rtdists
+* Use the rtdists `dLBA` function to calculate the likelihood of the data given our parameter estimates.
+* Clean extremely small of otherwise bad values from output vector.
+* Return the sum of the log of the likelihood of each row of the data.
+
+## Other necessary components
+
+There are a couple of other necessary components to running the sampler, a list of parameters and a prior for the group level parameter values.
+
+In this case the parameters consist of threshold parameters for each of the three conditions (`b1`, `b2` and `b3`), a upper limit on the range for accumulator start points (`A`), the drift rates for evidence accumulation for the two stimulus types (`v1` and `v2`) and non-decision time (`t0`).
+
+The prior for this model is uninformed and is just 0 for the mean of the group parameters and standard deviation of 1 for each parameter.
+
+```{r}
+pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
+
+priors <- list(
+  theta_mu_mean = rep(0, length(pars)),
+  theta_mu_var = diag(rep(1, length(pars)))
+)
+```
+
+## Creating and running the sampler
+
+Once we have these components we are ready to create and run the sampler.
+
+```{r}
+# Create the Particle Metropolis within Gibbs sampler object
+sampler <- pmwgs(
+  data = forstmann,
+  pars = pars,
+  ll_func = lba_loglike,
+  prior = priors
+)
+```
+
+Creation of the sampler object is done through a call to the `pmwgs` function, which creates the object and sets numerous precomputed values based on the number of parameters and other aspects of the included function arguments. Next steps are to initialise the sampler with start values for the random effects and then run the three stages of sampling.
+
+The stages can be long running, but once complete you will have
+
+```{r, eval = FALSE}
+# Initialise (generate first random effects for sampler)
+sampler <- init(sampler)  # Can also pass start points for sampler
+
+# Run each stage of the sampler, can adjust number of particles on each
+sampler <- run_stage(sampler, stage="burn")
+sampler <- run_stage(sampler, stage="adapt")
+sampler <- run_stage(sampler, stage="sample")
+```
+
+The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others and more. For a full list see [the description in the PMwG Tutorial Book](https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
+
+# References

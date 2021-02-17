@@ -1,6 +1,6 @@
 #' Initialise values for the random effects
 #'
-#' Initialise the random effects for each participant using MCMC.
+#' Initialise the random effects for each subject using MCMC.
 #'
 #' Before sampling can start the Particle Metropolis within Gibbs sampler needs
 #' initial values for the random effects. The \code{init} function generates
@@ -52,7 +52,7 @@
 #'   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
 #'   lba_ll
 #' )
-#' sampler <- init(sampler, start_mu = rnorm(7), start_sig = diag(rep(0.01, 7)))
+#' sampler <- init(sampler)
 #' @export
 init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
                  display_progress = TRUE, particles = 1000) {
@@ -98,7 +98,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   pmwgs$samples$theta_mu[, 1] <- start_mu
   pmwgs$samples$theta_sig[, , 1] <- start_sig
   pmwgs$samples$alpha[, , 1] <- alpha
-  pmwgs$samples$last_theta_sig_inverse <- MASS::ginv(start_sig)
+  pmwgs$samples$last_theta_sig_inv <- MASS::ginv(start_sig)
   pmwgs$samples$subj_ll[, 1] <- likelihoods
   pmwgs$samples$a_half[, 1] <- a_half
   pmwgs$samples$idx <- 1
@@ -110,17 +110,15 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
 #'
 #' Samples new \code{theta_mu} and \code{theta_sig} using Gibbs sampling
 #'
-#' @param samples The list containing the samples from the current run, or from
-#'   the main storage in the sampler
 #' @param sampler The pmwgs object from which to generate the new group
 #'   parameters.
 #'
 #' @return A new sample for \code{theta_mu}, \code{theta_sig} and some new
 #'   mixing weights in a list for use in the Particle Metropolis step.
 #' @keywords internal
-gibbs_step <- function(samples, sampler) {
+gibbs_step <- function(sampler) {
   # Get single iter versions, tmu = theta_mu, tsig = theta_sig
-  last <- last_sample(samples)
+  last <- last_sample(sampler$samples)
   hyper <- attributes(sampler)
   prior <- sampler$prior
 

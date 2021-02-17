@@ -95,6 +95,10 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
 #' @param x An object to test
 #'
 #' @return logical, whether object inherits from pmwgs
+#' @examples
+#' if (is.pmwgs(sampled_forstmann)) {
+#'   print("sampled_forstmann object is a pmwgs")
+#' }
 #' @export
 is.pmwgs <- function(x) inherits(x, "pmwgs")  # nolint
 

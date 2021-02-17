@@ -43,12 +43,18 @@ The \code{filter} argument can take one of two forms:
   \item An integer vector, usually a sequence of integers, that must fall
         within the range 1:end.
   \item A character vector, where each element corresponds to a stage of the
-        sampling process, ie one or more of "init", "burn", "adapt" or
+        sampling process, i.e. one or more of "init", "burn", "adapt" or
         "sample".
 }
 The default value for \code{filter} is all stages.
 }
 
 \examples{
-# No example yet
+par_estimates <- as_mcmc(sampled_forstmann)
+par_estimates_sample_stage <- as_mcmc(sampled_forstmann, filter = "sample")
+rand_eff <- as_mcmc(
+  sampled_forstmann,
+  selection = "alpha",
+  filter = "sample"
+)
 }

@@ -4,15 +4,13 @@
 \alias{test_sampler_adapted}
 \title{Test that the sampler has successfully adapted}
 \usage{
-test_sampler_adapted(stage_samples, pmwgs, n_unique, i)
+test_sampler_adapted(pmwgs, n_unique, i)
 }
 \arguments{
-\item{stage_samples}{The samples store for the currently running stage.}
-
-\item{pmwgs}{The full pmwgs object with all samples from previous runs.}
+\item{pmwgs}{The full pmwgs object with all samples}
 
 \item{n_unique}{The number of unique samples to look for in random effects
-for each participant.}
+for each subject.}
 
 \item{i}{The number for the current iteration of the sampler}
 }
