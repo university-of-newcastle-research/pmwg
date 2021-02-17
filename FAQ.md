@@ -1,10 +1,10 @@
 # Frequently Asked Questions (FAQ)
 
 * [General Questions](#general-questions)
-  * [I've found a problem with the package, what now?](#i've-found-a-problem-with-the-package,-what-now?)
+    * [I've found a problem with the package, what now?](#i've-found-a-problem-with-the-package,-what-now?)
 * [Data Problems](#data-problems)
-  * [My data are very complex, is there any way they can be stored as a list?](#my-data-are-very-complex,-is-there-any-way-they-can-be-stored-as-a-list?)
-  * [I'm getting a very low acceptance rate, how can I check acceptance for each subject?](#i'm-getting-a-very-low-acceptance-rate,-how-can-i-check-acceptance-for-each-subject?)
+    * [My data are very complex, is there any way they can be stored as a list?](#my-data-are-very-complex,-is-there-any-way-they-can-be-stored-as-a-list?)
+    * [I'm getting a very low acceptance rate, how can I check acceptance for each subject?](#i'm-getting-a-very-low-acceptance-rate,-how-can-i-check-acceptance-for-each-subject?)
 ## General Questions
 
 ### I've found a problem with the package, what now?
@@ -73,7 +73,7 @@ If you are getting low acceptance rates (as displayed in the progress bar) somet
 
 The internal function `accept_rate` will return an array of mean acceptance rates, where the acceptance rate is the number of new, unique, particles accepted by the sampler
 
-The default is to calculate this mean over the last 200 samples (or as many samples as exist if fewer than 200). The following two calls show how to do this for a custom windo, or for all samples.
+The default is to calculate this mean over the last 200 samples (or as many samples as exist if fewer than 200). The following two calls show how to do this for a custom window, or for all samples.
 
 ```r
 	# For a sampled object called sampler

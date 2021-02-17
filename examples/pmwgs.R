@@ -9,7 +9,7 @@ lba_loglike <- function(x, data) {
 
   out <- rtdists::dLBA(
     rt = data$rt, # nolint
-    response = data$correct,
+    response = data$stim,
     A = x["A"],
     b = bs,
     t0 = x["t0"],
@@ -38,3 +38,6 @@ sampler <- pmwgs(
   ll_func = lba_loglike,
   prior = priors
 )
+
+sampler = init(sampler)
+sampler = run_stage(sampler, stage="burn", iter=20, particles=20)

@@ -21,3 +21,22 @@ reference:
 - contents:
   - forstmann
   - sampled_forstmann
+news:
+ releases:
+ - text: "pmwg 0.2.0"
+   href: https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - faq
+    - news
+    right: github
+  components:
+    faq:
+      text: FAQ
+      href: FAQ.html
