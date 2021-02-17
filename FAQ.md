@@ -17,9 +17,11 @@ Head over to the [Issues](https://github.com/NewcastleCL/pmwg/issues) page and a
 
 If your data is particularly complex and you currently have it saved as a list then the following conversion should move it into a `pmwg` compatible format.
 
+In this first case you start with a list of subjects, and each subject has one or more data objects associated with it.
+
 ```r
-	# Play data - a list of data.frames in this case - but each list item should be able to be any object
-	data_list <- list(tulving = data.frame(group = c('high', 'low'), meanrt = c(0.8, 1.4)), tversky = data.frame(group = c('high', 'low'), meanrt = c(0.9, 1.1)))
+	# Play data - a list of data.frames associated with subject names in this case - but each list item should be able to be any object
+	data_list <- list(subject1 = data.frame(group = c('high', 'low'), meanrt = c(0.8, 1.4)), subject2 = data.frame(group = c('high', 'low'), meanrt = c(0.9, 1.1)))
 	# Turn that list into a tibble, which preserves the internal data.frame objects
 	data <- tibble(subject = names(data_list), df = data_list)
 	# Alternatively, use the I() function to interpret the list elements as is
@@ -30,10 +32,39 @@ If your data is particularly complex and you currently have it saved as a list t
 	# # A tibble: 1 x 2
 	#   subject df              
 	#   <chr>   <named list>    
-	# 1 tulving <df[,2] [2 × 2]>
+	# 1 subject1 <df[,2] [2 × 2]>
 	# So you will also need to extract the internal data.frame or other object in your log likelihood function, using something like:
 	df <- data$df[[data$subject]]
 	# Then you can work with the data.frame (or whever format your list elements are) from there within the rest of your log-likelihood function.
+```
+
+Alternatively if you have a list of studies, and each study has a subject column you can follow the following format to make your dataset compatible with `pmwg`
+
+```r
+    # Play data - a list of data.frames associated with task names in this case.
+	data_list <- list(task1 = data.frame(subject = c('A', 'B'), meanrt = c(0.8, 1.4)), task2 = data.frame(subject = c('A', 'B'), meanrt = c(0.9, 1.1)))
+	# We'll use this helper function to split a larger tibble by subject
+	split_tibble <- function(x) {
+	  lapply(x, function(x){
+		split(x, x$task)
+	  })
+	}
+	# Now we can rearrange the data_list above to be in the correct format. We first bind our list to a new data.frame with a task column, then split it by subject to get our top level subject column.
+	# Then we turn this list from the split operation into a tibble and turn each list in the df column to be a named list with the names representing the different tasks
+	data <- data_list %>%
+	  bind_rows(.id = "task") %>%
+	  split(.$subject) %>%
+	  tibble(subject = names(.), df = .) %>%
+	  mutate(df = split_tibble(df))
+
+	# The data passed into your log likelihood function would have the following form: (basically the output from either of the last two links above)
+	# # A tibble: 1 x 2
+	#   subject df
+	#   <chr>   <named list>
+	# 1 A       <named list [2]>
+	# So you will also need to extract the internal named list or other object in your log likelihood function, using something like:
+	data <- data$df[[data$subject]]
+	# From this point you can calculate the likelihood for task1 using the data.frame data$task1, and similarly for task2 and then sum the log-likelihoods to get the joint likelihood value to return to pmwg
 ```
 
 ### I'm getting a very low acceptance rate, how can I check acceptance for each subject?
