@@ -139,7 +139,15 @@ run_stage <- function(pmwgs,
     iter_args <- list(
       parameters = pars
     )
+
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
+    lapply(tmp, function(x) {
+      if (class(x) == "try-error") {
+        cat("At least 1 call to log likelihood method caused an error\n")
+        traceback(x)
+        stop()
+      }
+    })
 
     ll <- unlist(lapply(tmp, attr, "ll"))
     alpha <- array(unlist(tmp), dim = dim(pars$alpha))
