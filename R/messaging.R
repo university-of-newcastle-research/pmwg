@@ -18,11 +18,11 @@ accept_progress_bar <- function(min = 0, max = 1) {
   .pc <- -1L # This ensures the initial value is displayed
   .ex <- 0
   component <- list(
-    pchar = "=",
-    prog_start = " |",
-    prog_end = "| ",
+    pchar = "=%.0s",
+    prog_start = " |%.0s",
+    prog_end = "| %.0s",
     percent = "%3d%%",
-    acc_sep = " | ",
+    acc_sep = " | %.0s",
     acc_msg = "New(%3d%%)"
   )
   width <- nchar(lapply(component, gettextf, 100), "w")
