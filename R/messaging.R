@@ -18,15 +18,20 @@ accept_progress_bar <- function(min = 0, max = 1) {
   .pc <- -1L # This ensures the initial value is displayed
   .ex <- 0
   component <- list(
-    pchar = "=%.0s",
-    prog_start = " |%.0s",
-    prog_end = "| %.0s",
+    pchar = "=",
+    prog_start = " |",
+    prog_end = "| ",
     percent = "%3d%%",
-    acc_sep = " | %.0s",
+    acc_sep = " | ",
     acc_msg = "New(%3d%%)"
   )
-  width <- nchar(lapply(component, gettextf, 100), "w")
-  width <- split(unname(width), names(component))
+  width <- lapply(component, function(x) {
+    if (grepl("%3d", x)) {
+      nchar(gettextf(x, 100))
+    } else {
+      nchar(x)
+    }
+  })
   width$extras <- sum(unlist(width)) - width$pchar
   width$term <- getOption("width")
   width$progress <- trunc((width$term - width$extras) / width$pchar)
