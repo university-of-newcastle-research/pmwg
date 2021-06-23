@@ -1,9 +1,8 @@
 # pmwg - Particle Metropolis within Gibbs <img src="man/figures/hexlogo_small.png" align="right"/> #
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/NewcastleCL/pmwg.svg?branch=release)](https://travis-ci.com/NewcastleCL/pmwg)
-[![Codecov test coverage](https://codecov.io/gh/NewcastleCL/pmwg/branch/release/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/pmwg?branch=release)
 [![R build status](https://github.com/NewcastleCL/pmwg/workflows/R-CMD-check/badge.svg)](https://github.com/NewcastleCL/pmwg/actions)
+[![Codecov test coverage](https://codecov.io/gh/NewcastleCL/pmwg/branch/release/graph/badge.svg)](https://codecov.io/gh/NewcastleCL/pmwg?branch=release)
 <!-- badges: end -->
 
 ## Installation
