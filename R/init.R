@@ -146,7 +146,7 @@ gibbs_step <- function(sampler) {
   a_half <- 1 / stats::rgamma(
     n = sampler$n_pars,
     shape = hyper$v_shape,
-    scale = 1 / (hyper$v_half + diag(tsinv) + hyper$A_half)
+    scale = 1 / (hyper$v_half * diag(tsinv) + hyper$A_half)
   )
   list(
     tmu = tmu,
