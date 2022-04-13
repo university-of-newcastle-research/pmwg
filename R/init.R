@@ -87,20 +87,26 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
     pb <- utils::txtProgressBar(min = 0, max = pmwgs$n_subjects, style = 3)
   }
   likelihoods <- array(NA_real_, dim = c(pmwgs$n_subjects))
+  extras <- array(list(), dim = c(pmwgs$n_subjects))
   for (s in 1:pmwgs$n_subjects) {
     if (display_progress) utils::setTxtProgressBar(pb, s)
     particles <- mvtnorm::rmvnorm(n_particles, start_mu, start_sig)
     colnames(particles) <- rownames(pmwgs$samples$theta_mu) # preserve par names
-    lw <- apply(
+    lw_as_list <- apply(
       particles,
       1,
       pmwgs$ll_func,
-      data = pmwgs$data[pmwgs$data$subject == pmwgs$subjects[s], ]
+      data = pmwgs$data[pmwgs$data$subject == pmwgs$subjects[s], ],
+      simplify = FALSE
     )
+    lw = unlist(lw_as_list)
     weight <- exp(lw - max(lw))
     idx <- sample(x = n_particles, size = 1, prob = weight)
     alpha[, s] <- particles[idx, ]
     likelihoods[s] <- lw[idx]
+    extra <- attr(lw_as_list[[idx]], "extra_info")
+    if (is.null(extra)) extra <- NA
+    extras[s] <- extra
   }
   if (display_progress) close(pb)
   pmwgs$init <- TRUE
@@ -110,6 +116,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   pmwgs$samples$last_theta_sig_inv <- MASS::ginv(start_sig)
   pmwgs$samples$subj_ll[, 1] <- likelihoods
   pmwgs$samples$a_half[, 1] <- a_half
+  pmwgs$samples$extra_info[, 1] <- extras
   pmwgs$samples$idx <- 1
   pmwgs
 }

@@ -75,6 +75,6 @@ sampler <- pmwgs(
   prior = priors
 )
 
-sampler = init(sampler)
-sampler = run_stage(sampler, stage="burn", iter=20, particles=20)
+sampler <- init(sampler)
+sampler <- run_stage(sampler, stage="burn", iter=20, particles=20)
 }

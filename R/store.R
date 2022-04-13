@@ -99,6 +99,11 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
       NA_real_,
       dim = c(n_pars, iters),
       dimnames = list(par_names, NULL)
+    ),
+    extra_info = array(
+      list(),
+      dim = c(n_subjects, iters),
+      dimnames = list(subject_ids, NULL)
     )
   )
 }
@@ -155,6 +160,12 @@ extend_sampler <- function(sampler, n_samples, stage) {
   new_ahalf[, - (start:end)] <- old$a_half
   sampler$samples$a_half <- new_ahalf
 
+  new_ei <- array(list(),
+                  dim = dim(old$extra_info) + c(0, n_samples),
+                  dimnames = list(subject_ids, NULL))
+  new_ei[, - (start:end)] <- old$extra_info
+  sampler$samples$extra_info <- new_ei
+
   sampler$samples$stage <- c(old$stage, rep(stage, n_samples))
   sampler
 }
@@ -173,6 +184,7 @@ trim_na <- function(sampler) {
   sampler$samples$alpha <- sampler$samples$alpha[, , 1:idx]
   sampler$samples$subj_ll <- sampler$samples$subj_ll[, 1:idx]
   sampler$samples$a_half <- sampler$samples$a_half[, 1:idx]
+  sampler$samples$extra_info <- sampler$samples$extra_info[, 1:idx]
   sampler$samples$stage <- sampler$samples$stage[1:idx]
   sampler$samples$epsilon <- sampler$samples$epsilon[, 1:idx]
   sampler
