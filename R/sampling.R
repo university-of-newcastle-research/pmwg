@@ -300,13 +300,12 @@ new_sample <- function(s, data, num_particles, parameters,
 
   # Density of data given random effects proposal.
   # Do not simplify (as we will lose any attributes on the returned objects,
-  lw_as_list <- apply(
-    proposals,
-    1,
-    likelihood_func,
-    data = data[data$subject == subjects[s], ],
-    simplify = FALSE
-  )
+  # Simplify argument to apply only came in for R 4.1
+  lw_as_list <- lapply(seq_len(dim(proposals)[1]), FUN = function(idx) {
+    x <- proposals[idx, ]
+    subset <- data[data$subject == subjects[s], ]
+    likelihood_func(x, subset)
+  })
   # but simplify after the fact
   lw <- unlist(lw_as_list)
 

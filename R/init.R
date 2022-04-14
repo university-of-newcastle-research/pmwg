@@ -92,14 +92,12 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
     if (display_progress) utils::setTxtProgressBar(pb, s)
     particles <- mvtnorm::rmvnorm(n_particles, start_mu, start_sig)
     colnames(particles) <- rownames(pmwgs$samples$theta_mu) # preserve par names
-    lw_as_list <- apply(
-      particles,
-      1,
-      pmwgs$ll_func,
-      data = pmwgs$data[pmwgs$data$subject == pmwgs$subjects[s], ],
-      simplify = FALSE
-    )
-    lw = unlist(lw_as_list)
+    lw_as_list <- lapply(seq_len(dim(particles)[1]), FUN = function(idx) {
+      x <- particles[idx, ]
+      subset <- pmwgs$data[pmwgs$data$subject == pmwgs$subjects[s], ]
+      pmwgs$ll_func(x, subset)
+    })
+    lw <- unlist(lw_as_list)
     weight <- exp(lw - max(lw))
     idx <- sample(x = n_particles, size = 1, prob = weight)
     alpha[, s] <- particles[idx, ]
