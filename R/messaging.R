@@ -132,6 +132,8 @@ gibbs_step_err <- function(pmwgs, err_cond) {
   message(err_cond)
   traceback()
   message("\nSaving current state of pmwgs object: ", sampler_tmp)
+  # Remove NA values from the end of the sampler
+  pmwgs <- trim_na(pmwgs)
   saveRDS(pmwgs, file = sampler_tmp)
   stop("Stopping execution")
 }
