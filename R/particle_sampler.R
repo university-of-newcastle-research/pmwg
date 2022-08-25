@@ -43,7 +43,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
   # Checking and default priors
   prior_default <- list(
     theta_mu_mean = rep(0, n_pars),
-    theta_mu_var = diag(rep(1, n_pars))
+    theta_mu_var = diag(n_pars)
   )
   if (is.null(prior)) {
     prior <- prior_default
