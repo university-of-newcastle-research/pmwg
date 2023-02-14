@@ -92,7 +92,7 @@ run_stage <- function(pmwgs,
   do.call(check_run_stage_args, as.list(environment()))
 
   # Hyper parameters for epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
-  alpha_star <- -qnorm(p_accept / 2)
+  alpha_star <- -stats::qnorm(p_accept / 2)
   n0 <- round(5 / (p_accept * (1 - p_accept)))
   # Set necessary local variables
   .n_unique <- n_unique
@@ -155,7 +155,7 @@ run_stage <- function(pmwgs,
 
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
     lapply(tmp, function(x) {
-      if (class(x) == "try-error") {
+      if (inherits(x, "try-error")) {
         cat("At least 1 call to log likelihood method caused an error\n")
         traceback(x)
         stop()

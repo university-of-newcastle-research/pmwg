@@ -118,7 +118,7 @@ test_sampler_adapted <- function(pmwgs, n_unique, i) {
         samples = test_samples
       )
     })
-    if (class(attempt) == "try-error") {
+    if (inherits(attempt, "try-error")) {
       warning("An problem was encountered creating proposal distribution")
       warning("Increasing required unique values and continuing adaptation")
       return("increase")
