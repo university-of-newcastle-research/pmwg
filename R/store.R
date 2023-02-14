@@ -208,7 +208,7 @@ trim_na <- function(sampler) {
 #' @examples
 #' new_pmwgs <- relabel_samples(sampled_forstmann, 17:21)
 #' @export
-relabel_samples <- function(sampler, indices, from="burn", to="adapt") {
+relabel_samples <- function(sampler, indices, from = "burn", to = "adapt") {
   old_stage <- sampler$samples$stage
   if (!all(old_stage[indices] %in% from)) {
     stop(paste("Not all samples were from the", from, "stage"))

@@ -118,11 +118,6 @@ update_progress_bar <- function(pb, value, extra = 0) {
 #'
 #' @keywords internal
 gibbs_step_err <- function(pmwgs, err_cond) {
-  store_tmp <- tempfile(
-    pattern = "pmwg_stage_samples_",
-    tmpdir = ".",
-    fileext = ".RDS"
-  )
   sampler_tmp <- tempfile(
     pattern = "pmwg_obj_",
     tmpdir = ".",

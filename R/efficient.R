@@ -122,8 +122,7 @@ test_sampler_adapted <- function(pmwgs, n_unique, i) {
       warning("An problem was encountered creating proposal distribution")
       warning("Increasing required unique values and continuing adaptation")
       return("increase")
-    }
-    else {
+    } else {
       message("Successfully adapted after ", i, "iterations - stopping early")
       return("success")
     }

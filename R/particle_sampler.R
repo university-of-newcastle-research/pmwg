@@ -47,8 +47,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
   )
   if (is.null(prior)) {
     prior <- prior_default
-  }
-  else {
+  } else {
     if (!identical(names(prior), names(prior_default))) {
       stop(paste(
         "pmwgs prior should be a list with two elements,",
@@ -57,7 +56,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
         "that is the prior for the variance of the group-level mean",
         "parameters"))
     }
-    if (!identical(lapply(prior, dim), lapply(prior_default, dim)) |
+    if (!identical(lapply(prior, dim), lapply(prior_default, dim)) ||
         !identical(lapply(prior, length), lapply(prior_default, length))) {
       stop(paste(
         "pmwgs prior list elements specified with incorrect shape.",
@@ -81,7 +80,7 @@ pmwgs <- function(data, pars, ll_func, prior = NULL) {
     init = FALSE
   )
   attr(sampler, "v_half") <- v_half
-  attr(sampler, "A_half") <- A_half
+  attr(sampler, "A_half") <- A_half  #nolint
   attr(sampler, "k_half") <- k_half
   attr(sampler, "v_shape") <- v_shape
   class(sampler) <- "pmwgs"

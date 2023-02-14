@@ -91,7 +91,8 @@ run_stage <- function(pmwgs,
   # Test passed arguments/defaults for correctness
   do.call(check_run_stage_args, as.list(environment()))
 
-  # Hyper parameters for epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
+  # Hyper parameters for epsilon tuning.
+  # See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
   alpha_star <- -stats::qnorm(p_accept / 2)
   n0 <- round(5 / (p_accept * (1 - p_accept)))
   # Set necessary local variables
