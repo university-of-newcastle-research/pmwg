@@ -1,6 +1,7 @@
 # Ignore R associated files
 .Rproj.user
 .Rhistory
+.Rproj
 
 # ignore produced vignettes
 inst/doc/*

@@ -55,6 +55,8 @@
 #'   covariance matrix is scaled when generating particles from the previous
 #'   random effect. The default will be chosen based on the number of random
 #'   effects in the model.
+#' @param p_accept A value between 0 and 1 that will flexibly tune epsilon to achieve 
+#' an acceptance ratio close to what you set p_accept to. The default is set at 0.8.
 #' @param mix A vector of floats that controls the mixture of different sources
 #'   for particles. The function \code{\link{numbers_from_proportion}} is
 #'   passed this value and includes extra details on what is accepted.
@@ -69,18 +71,28 @@
 run_stage <- function(pmwgs,
                       stage,
                       iter = 1000,
-                      particles = 1000,
+                      particles = 100,
                       display_progress = TRUE,
                       n_cores = 1,
                       n_unique = ifelse(stage == "adapt", 20, NA),
                       epsilon = NULL,
+                      p_accept = .8,
                       mix = NULL,
-                      pdist_update_n = ifelse(stage == "sample", 500, NA)) {
+                      pdist_update_n = ifelse(stage == "sample", 50, NA)) {
   # Set defaults for NULL values
-  epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
+  subj_epsilon <- pmwgs$samples$epsilon[,pmwgs$samples$idx]
+  if(is.na(subj_epsilon[1])){
+    epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
+    subj_epsilon <- rep(epsilon, pmwgs$n_subjects)
+  }
+  
   mix <- set_mix(stage, mix)
   # Test passed arguments/defaults for correctness
   do.call(check_run_stage_args, as.list(environment()))
+  
+  # Hyper parameters for epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
+  alphaStar=-qnorm(p_accept/2) 
+  n0=round(5/(p_accept*(1-p_accept))) 
   # Set necessary local variables
   .n_unique <- n_unique
   apply_fn <- lapply
@@ -94,7 +106,6 @@ run_stage <- function(pmwgs,
     # efficient arguments will be generated if needed below
     mix_proportion = mix,
     likelihood_func = pmwgs$ll_func,
-    epsilon = epsilon,
     subjects = pmwgs$subjects
   )
   if (n_cores > 1) {
@@ -137,7 +148,8 @@ run_stage <- function(pmwgs,
     )
 
     iter_args <- list(
-      parameters = pars
+      parameters = pars,
+      epsilon = subj_epsilon
     )
 
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
@@ -161,7 +173,16 @@ run_stage <- function(pmwgs,
     pmwgs$samples$idx <- j
     pmwgs$samples$subj_ll[, j] <- ll
     pmwgs$samples$a_half[, j] <- pars$a_half
+    pmwgs$samples$epsilon[,j] <- subj_epsilon
 
+    # Epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
+    if(!is.null(p_accept)){
+      if(j > n0){
+        acc <-  pmwgs$samples$alpha[1,,j] != pmwgs$samples$alpha[1,,(j-1)]
+        subj_epsilon <-update_epsilon(subj_epsilon, acc, p_accept, j, pmwgs$n_pars, alphaStar)
+      }
+    }
+    
     if (stage == "adapt") {
       res <- test_sampler_adapted(pmwgs, n_unique, i)
       if (res == "success") {
@@ -247,6 +268,7 @@ new_sample <- function(s, data, num_particles, parameters,
   mu <- parameters$tmu
   sig2 <- parameters$tsig
   subj_mu <- parameters$alpha[, s]
+  subj_epsilon <- epsilon[s]
   if (is.null(likelihood_func)) stop("likelihood_func is a required argument")
 
   # Create proposals for new particles
@@ -255,7 +277,7 @@ new_sample <- function(s, data, num_particles, parameters,
     mix_proportion = mix_proportion,
     prop_mu = e_mu,
     prop_sig2 = e_sig2,
-    epsilon = epsilon
+    epsilon = subj_epsilon
   )
   # Put the current particle in slot 1.
   proposals[1, ] <- subj_mu
@@ -273,7 +295,7 @@ new_sample <- function(s, data, num_particles, parameters,
   prop_density <- mvtnorm::dmvnorm(
     x = proposals,
     mean = subj_mu,
-    sigma = sig2 * (epsilon^2)
+    sigma = sig2 * (subj_epsilon^2)
   )
   # Density of efficient proposals
   if (mix_proportion[3] != 0) {
@@ -512,6 +534,8 @@ check_run_stage_args <- function(pmwgs,
                                  n_cores,
                                  n_unique,
                                  epsilon,
+                                 subj_epsilon,
+                                 p_accept,
                                  mix,
                                  pdist_update_n) {
   asserts <- makeAssertCollection()
@@ -537,8 +561,9 @@ check_run_stage_args <- function(pmwgs,
   } else {
     assert_scalar_na(n_unique, add = asserts)
   }
-
   assert_double(epsilon, lower = 0.0, upper = 1.0, len = 1, add = asserts)
+  assert_double(subj_epsilon, lower = 0.0, upper = 1.0, len = 1, add = asserts)
+  assert_double(p_accept, lower = 0.0, upper = 1.0, len = 1, add = asserts)
   assert_double(mix, lower = 0.0, upper = 1.0, len = 3, add = asserts)
   assert_true(all.equal(sum(mix), 1), add = asserts)
 
@@ -581,4 +606,11 @@ accept_rate <- function(pmwgs, window_size = 200) {
     2,
     mean
   )
+}
+
+update_epsilon<- function(epsilon, acc, p, i, d, alpha) {
+  c=((1-1/d)*sqrt(2*pi)*exp(alpha^2/2)/(2*alpha) + 1/(d*p*(1-p)))
+  Theta=log(epsilon)
+  Theta=Theta+c*(acc-p)/max(200, i/d)
+  return(exp(Theta))
 }
