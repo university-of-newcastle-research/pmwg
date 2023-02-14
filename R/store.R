@@ -89,7 +89,7 @@ sample_store <- function(par_names, subject_ids, iters = 1, stage = "init") {
       NA_real_,
       dim = c(n_subjects, iters),
       dimnames = list(subject_ids, NULL)
-    ),    
+    ),
     subj_ll = array(
       NA_real_,
       dim = c(n_subjects, iters),
@@ -142,7 +142,7 @@ extend_sampler <- function(sampler, n_samples, stage) {
                    dimnames = list(subject_ids, NULL))
   new_epsilon[, - (start:end)] <- old$epsilon
   sampler$samples$epsilon <- new_epsilon
-  
+
   new_sll <- array(NA_real_,
                    dim = dim(old$subj_ll) + c(0, n_samples),
                    dimnames = list(subject_ids, NULL))

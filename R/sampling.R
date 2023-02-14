@@ -81,19 +81,19 @@ run_stage <- function(pmwgs,
                       mix = NULL,
                       pdist_update_n = ifelse(stage == "sample", 50, NA)) {
   # Set defaults for NULL values
-  subj_epsilon <- pmwgs$samples$epsilon[,pmwgs$samples$idx]
-  if(is.na(subj_epsilon[1])){
+  subj_epsilon <- pmwgs$samples$epsilon[, pmwgs$samples$idx]
+  if (is.na(subj_epsilon[1])) {
     epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
     subj_epsilon <- rep(epsilon, pmwgs$n_subjects)
   }
-  
+
   mix <- set_mix(stage, mix)
   # Test passed arguments/defaults for correctness
   do.call(check_run_stage_args, as.list(environment()))
-  
+
   # Hyper parameters for epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
-  alphaStar=-qnorm(p_accept/2) 
-  n0=round(5/(p_accept*(1-p_accept))) 
+  alpha_star <- -qnorm(p_accept / 2)
+  n0 <- round(5 / (p_accept * (1 - p_accept)))
   # Set necessary local variables
   .n_unique <- n_unique
   apply_fn <- lapply
@@ -174,16 +174,17 @@ run_stage <- function(pmwgs,
     pmwgs$samples$idx <- j
     pmwgs$samples$subj_ll[, j] <- ll
     pmwgs$samples$a_half[, j] <- pars$a_half
-    pmwgs$samples$epsilon[,j] <- subj_epsilon
+    pmwgs$samples$epsilon[, j] <- subj_epsilon
 
     # Epsilon tuning. See Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
-    if(!is.null(p_accept)){
-      if(j > n0){
-        acc <-  pmwgs$samples$alpha[1,,j] != pmwgs$samples$alpha[1,,(j-1)]
-        subj_epsilon <-update_epsilon(subj_epsilon, acc, p_accept, j, pmwgs$n_pars, alphaStar)
+    if (!is.null(p_accept)) {
+      if (j > n0) {
+        acc <-  pmwgs$samples$alpha[1, , j] != pmwgs$samples$alpha[1, , (j - 1)]
+        subj_epsilon <- update_epsilon(subj_epsilon, acc, p_accept, j,
+                                       pmwgs$n_pars, alpha_star)
       }
     }
-    
+
     if (stage == "adapt") {
       res <- test_sampler_adapted(pmwgs, n_unique, i)
       if (res == "success") {
@@ -609,9 +610,14 @@ accept_rate <- function(pmwgs, window_size = 200) {
   )
 }
 
-update_epsilon<- function(epsilon, acc, p, i, d, alpha) {
-  c=((1-1/d)*sqrt(2*pi)*exp(alpha^2/2)/(2*alpha) + 1/(d*p*(1-p)))
-  Theta=log(epsilon)
-  Theta=Theta+c*(acc-p)/max(200, i/d)
-  return(exp(Theta))
+update_epsilon <- function(epsilon, acc, p, i, d, alpha) {
+  # optimal steplength constant (Proposition 5)
+  opt_step_const <- sqrt(2 * pi) * exp(alpha^2 / 2) / (2 * alpha)
+  # Linear function of 1/d  (where d is size of multivariate dimension)
+  # Eqn (7)
+  c <- (1 - 1 / d) * opt_step_const + 1 / (d * p * (1 - p))
+  theta <- log(epsilon)
+  # Robbins-Monro process - Eqn 1
+  theta <- theta + c * (acc - p) / max(200, i / d)
+  return(exp(theta))
 }
