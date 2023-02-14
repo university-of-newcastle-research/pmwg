@@ -179,7 +179,7 @@ run_stage <- function(pmwgs,
     if(!is.null(p_accept)){
       if(j > n0){
         acc <-  pmwgs$samples$alpha[1,,j] != pmwgs$samples$alpha[1,,(j-1)]
-        subj_epsilon <-update_epsilon(subj_epsilon^2, acc, p_accept, j, pmwgs$n_pars, alphaStar)
+        subj_epsilon <-update_epsilon(subj_epsilon, acc, p_accept, j, pmwgs$n_pars, alphaStar)
       }
     }
     
@@ -608,9 +608,9 @@ accept_rate <- function(pmwgs, window_size = 200) {
   )
 }
 
-update_epsilon<- function(epsilon2, acc, p, i, d, alpha) {
+update_epsilon<- function(epsilon, acc, p, i, d, alpha) {
   c=((1-1/d)*sqrt(2*pi)*exp(alpha^2/2)/(2*alpha) + 1/(d*p*(1-p)))
-  Theta=log(sqrt(epsilon2))
+  Theta=log(epsilon)
   Theta=Theta+c*(acc-p)/max(200, i/d)
   return(exp(Theta))
 }
