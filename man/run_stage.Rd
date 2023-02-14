@@ -8,13 +8,14 @@ run_stage(
   pmwgs,
   stage,
   iter = 1000,
-  particles = 1000,
+  particles = 100,
   display_progress = TRUE,
   n_cores = 1,
   n_unique = ifelse(stage == "adapt", 20, NA),
   epsilon = NULL,
+  p_accept = 0.8,
   mix = NULL,
-  pdist_update_n = ifelse(stage == "sample", 500, NA)
+  pdist_update_n = ifelse(stage == "sample", 50, NA)
 )
 }
 \arguments{
@@ -46,6 +47,10 @@ of the proposal distribution). Only used during the \code{'adapt'} stage.}
 covariance matrix is scaled when generating particles from the previous
 random effect. The default will be chosen based on the number of random
 effects in the model.}
+
+\item{p_accept}{A value between 0 and 1 that will flexibly tune epsilon to
+achieve an acceptance ratio close to what you set p_accept to. The default
+is set at 0.8.}
 
 \item{mix}{A vector of floats that controls the mixture of different sources
 for particles. The function \code{\link{numbers_from_proportion}} is

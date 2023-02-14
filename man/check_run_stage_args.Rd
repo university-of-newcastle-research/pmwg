@@ -13,6 +13,8 @@ check_run_stage_args(
   n_cores,
   n_unique,
   epsilon,
+  subj_epsilon,
+  p_accept,
   mix,
   pdist_update_n
 )
@@ -46,6 +48,10 @@ of the proposal distribution). Only used during the \code{'adapt'} stage.}
 covariance matrix is scaled when generating particles from the previous
 random effect. The default will be chosen based on the number of random
 effects in the model.}
+
+\item{p_accept}{A value between 0 and 1 that will flexibly tune epsilon to
+achieve an acceptance ratio close to what you set p_accept to. The default
+is set at 0.8.}
 
 \item{mix}{A vector of floats that controls the mixture of different sources
 for particles. The function \code{\link{numbers_from_proportion}} is
