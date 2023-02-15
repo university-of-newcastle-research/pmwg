@@ -55,7 +55,7 @@
 #' sampler <- init(sampler)
 #' @export
 init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
-                 display_progress = TRUE, particles = 1000) {
+                 display_progress = TRUE, particles = 100) {
   if (is.null(attr(pmwgs, "class"))) {
     print("No object to add start points to")
   }

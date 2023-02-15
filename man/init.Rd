@@ -9,7 +9,7 @@ init(
   start_mu = NULL,
   start_sig = NULL,
   display_progress = TRUE,
-  particles = 1000
+  particles = 100
 )
 }
 \arguments{
