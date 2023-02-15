@@ -617,6 +617,24 @@ accept_rate <- function(pmwgs, window_size = 200) {
   )
 }
 
+#' Update the subject specific scaling parameters (epsilon)
+#'
+#' Update the subject specific scaling parameter according to procedures
+#' outlined in  P. H. Garthwaite, Y. Fan & S. A. Sisson (2016) Adaptive optimal
+#' scaling of Metropolis–Hastings algorithms using the Robbins–Monro process,
+#' Communications in Statistics - Theory and Methods, 45:17, 5098-5111,
+#' DOI: 10.1080/03610926.2014.936562
+#'
+#' @param epsilon The scaling parameter for all subjects
+#' @param acc A boolean vector, TRUE if current sample != last sample
+#' @param p The target sample acceptance rate (0-1)
+#' @param i The current iteration for sampling
+#' @param d The number of parameters for the model
+#' @param alpha A hyperparameter for the epsilon tuning
+#'
+#' @return A vector with the new subject specific epsilon values
+#'
+#' @keywords internal
 update_epsilon <- function(epsilon, acc, p, i, d, alpha) {
   # optimal steplength constant (Proposition 5)
   opt_step_const <- sqrt(2 * pi) * exp(alpha^2 / 2) / (2 * alpha)
