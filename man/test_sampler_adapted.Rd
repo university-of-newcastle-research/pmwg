@@ -15,8 +15,9 @@ for each subject.}
 \item{i}{The number for the current iteration of the sampler}
 }
 \value{
-A string representing successful/unsuccessful adaptation. Can be one
-  of c("success", "continue", "increase")
+A list containing a string representing successful/unsuccessful
+  adaptation and an optional message. The string representing the success
+  or failure can be one of c("success", "continue", "increase")
 }
 \description{
 Test that the sampler has successfully adapted

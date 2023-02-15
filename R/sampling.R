@@ -159,7 +159,7 @@ run_stage <- function(pmwgs,
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
     lapply(tmp, function(x) {
       if (inherits(x, "try-error")) {
-        cat("At least 1 call to log likelihood method caused an error\n")
+        cat("ERROR: At least 1 call to log likelihood method caused an error\n")
         traceback(x)
         stop()
       }

@@ -99,8 +99,9 @@ conditional_parms <- function(s, samples) {
 #'   for each subject.
 #' @param i The number for the current iteration of the sampler
 #'
-#' @return A string representing successful/unsuccessful adaptation. Can be one
-#'   of c("success", "continue", "increase")
+#' @return A list containing a string representing successful/unsuccessful
+#'   adaptation and an optional message. The string representing the success
+#'   or failure can be one of c("success", "continue", "increase")
 #'
 #' @keywords internal
 test_sampler_adapted <- function(pmwgs, n_unique, i) {
@@ -120,9 +121,9 @@ test_sampler_adapted <- function(pmwgs, n_unique, i) {
     },
     silent = TRUE)
     if (inherits(attempt, "try-error")) {
-      return(list("increase", paste("WARNING:", n_unique, fail_msg)))
+      return(list("increase", paste("WARNING:", n_unique, fail_msg, "\n")))
     } else {
-      return(list("success", paste("MESSAGE:", i, succ_msg)))
+      return(list("success", paste("MESSAGE:", i, succ_msg, "\n")))
     }
   }
   return(list("continue"))
