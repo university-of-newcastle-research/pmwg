@@ -57,7 +57,7 @@
 init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
                  display_progress = TRUE, particles = 100) {
   if (is.null(attr(pmwgs, "class"))) {
-    print("No object to add start points to")
+    message("ERROR: No object to add start points to")
   }
   # If no starting point for group mean just use zeros
   if (is.null(start_mu)) start_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
@@ -74,7 +74,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   # Create and fill initial random effects for each subject
   alpha <- array(NA, dim = c(pmwgs$n_pars, pmwgs$n_subjects))
   if (display_progress) {
-    cat("Sampling Initial values for random effects\n")
+    message("MESSAGE: Sampling Initial values for random effects")
     pb <- utils::txtProgressBar(min = 0, max = pmwgs$n_subjects, style = 3)
   }
   likelihoods <- array(NA_real_, dim = c(pmwgs$n_subjects))
