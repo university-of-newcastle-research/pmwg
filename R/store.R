@@ -308,3 +308,23 @@ as_mcmc <- function(sampler, selection = "theta_mu", filter = stages) {
   }
   stop("Argument `selection` should be one of theta_mu, theta_sig, alpha")
 }
+
+#' Augment existing sampler object to have subject specific epsilon storage
+#'
+#' Older sampler object will be missing subject specific scaling parameter
+#' (epsilon) storage, and running a stage with an updated pmwg will fail. To
+#' fix this you can run the augment_sampler_epsilon function to fill the
+#' appropriate array internals with NA values
+#'
+#' @param sampler The sampler object to augment
+#'
+#' @return A pmwgs sampler with epsilon array set internally
+#'
+#' @export
+augment_sampler_epsilon <- function(sampler) {
+  new_epsilon <- array(NA_real_,
+                   dim = c(sampler$n_subjects, sampler$samples$idx),
+                   dimnames = list(sampler$subjects, NULL))
+  sampler$samples$epsilon <- new_epsilon
+  sampler
+}

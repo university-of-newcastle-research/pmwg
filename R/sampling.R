@@ -82,6 +82,11 @@ run_stage <- function(pmwgs,
                       pdist_update_n = ifelse(stage == "sample", 50, NA)) {
   # Set defaults for NULL values
   subj_epsilon <- pmwgs$samples$epsilon[, pmwgs$samples$idx]
+  if (is.null(subj_epsilon)) {
+    message("ERROR: no subject specific epsilon values found in sampler object")
+    stop("Try running augment_sampler_epsilon(sampler) first")
+  }
+
   if (is.na(subj_epsilon[1])) {
     epsilon <- set_epsilon(pmwgs$n_pars, epsilon)
     subj_epsilon <- rep(epsilon, pmwgs$n_subjects)
