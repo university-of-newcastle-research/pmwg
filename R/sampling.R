@@ -131,6 +131,8 @@ run_stage <- function(pmwgs,
   }
   start_iter <- pmwgs$samples$idx
 
+  collected_msgs <- list()
+
   # Main iteration loop
   for (i in 1:iter) {
     if (display_progress) {
@@ -188,17 +190,21 @@ run_stage <- function(pmwgs,
 
     if (stage == "adapt") {
       res <- test_sampler_adapted(pmwgs, n_unique, i)
-      if (res == "success") {
+      if (res[1] == "success") {
+        collected_msgs <- c(collected_msgs, res[2])
         break
-      } else if (res == "increase") {
+      } else if (res[1] == "increase") {
         n_unique <- n_unique + .n_unique
+        collected_msgs <- c(collected_msgs, res[2])
       }
     }
   }
   if (display_progress) close(pb)
+  if (length(collected_msgs) > 0) lapply(collected_msgs, cat)
   if (stage == "adapt") {
     if (i == iter) {
       message(paste(
+        "WARNING:",
         "Particle Metropolis within Gibbs Sampler did not",
         "finish adaptation phase early (all", i, "iterations were",
         "run).\nYou should examine your samples and perhaps start",
@@ -438,7 +444,7 @@ set_epsilon <- function(n_pars, epsilon) {
     }
     message(
       sprintf(
-        "Epsilon has been set to %.1f based on number of parameters",
+        "MESSAGE: Epsilon has been set to %.1f based on number of parameters",
         epsilon
       )
     )
@@ -465,7 +471,7 @@ set_mix <- function(stage, mix) {
     }
     message(
       sprintf(
-        "mix has been set to c(%s) based on the stage being run",
+        "MESSAGE: mix has been set to c(%s) based on the stage being run",
         paste(mix, collapse = ", ")
       )
     )

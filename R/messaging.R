@@ -123,12 +123,12 @@ gibbs_step_err <- function(pmwgs, err_cond) {
     tmpdir = ".",
     fileext = ".RDS"
   )
-  message("\nError while generating new group level parameters")
+  message("\nERROR: Error while generating new group level parameters")
   message(err_cond)
   traceback()
-  message("\nSaving current state of pmwgs object: ", sampler_tmp)
+  message("\nMESSAGE: Saving current state of pmwgs object: ", sampler_tmp)
   # Remove NA values from the end of the sampler
   pmwgs <- trim_na(pmwgs)
   saveRDS(pmwgs, file = sampler_tmp)
-  stop("Stopping execution")
+  stop("ERROR: Stopping execution")
 }
