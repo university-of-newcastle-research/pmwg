@@ -17,7 +17,7 @@ that can have subsets created in an identical way.}
 
 \item{ll_func}{A log likelihood function that given a list of parameter
 values and a data frame (or other data store) containing subject data will
-return the log likelihood of \code{x} given \code{data}.}
+return the log likelihood of \code{data} given \code{x}.}
 
 \item{prior}{Specification of the prior distribution for the model
 parameters. It should be a list with two elements, \code{theta_mu_mean} and

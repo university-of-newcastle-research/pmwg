@@ -12,7 +12,7 @@
 #' @param pars The list of parameter names to be used in the model
 #' @param ll_func A log likelihood function that given a list of parameter
 #'   values and a data frame (or other data store) containing subject data will
-#'   return the log likelihood of \code{x} given \code{data}.
+#'   return the log likelihood of \code{data} given \code{x}.
 #' @param prior Specification of the prior distribution for the model
 #'   parameters. It should be a list with two elements, \code{theta_mu_mean} and
 #'   \code{theta_mu_var} which fully specify the prior distribution. If left as
