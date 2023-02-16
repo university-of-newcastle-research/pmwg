@@ -43,9 +43,13 @@ For example, with 5 parameters and 10 subjects, the model parameter start
 means must be a vector of length 5 and the covariance matrix must be an array
 of 5 x 5.
 
-Alternatively the if argument values for the starting points are left at the
-default (NULL) then starting points will be sampled from the prior for group
-level values (model parameters and covariance matrix)
+If the start_mu and start_sig arguments are left at the default (NULL) then
+start_mu will be sampled from a normal distribution with mean as the prior
+mean for eac variable and sd as the square of the variance from the prior
+covariance matrix. start_sig by default is sampled from an inverse wishart
+(IW) distribution. For a model with the number of parameters N the degrees of
+freedom of the IW distribution is set to N*3 and the scale matrix is the
+identity matrix of size NxN.
 }
 \examples{
 lba_ll <- function(x, data) {

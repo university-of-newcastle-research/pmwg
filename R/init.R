@@ -14,9 +14,13 @@
 #' means must be a vector of length 5 and the covariance matrix must be an array
 #' of 5 x 5.
 #'
-#' Alternatively the if argument values for the starting points are left at the
-#' default (NULL) then starting points will be sampled from the prior for group
-#' level values (model parameters and covariance matrix)
+#' If the start_mu and start_sig arguments are left at the default (NULL) then
+#' start_mu will be sampled from a normal distribution with mean as the prior
+#' mean for eac variable and sd as the square of the variance from the prior
+#' covariance matrix. start_sig by default is sampled from an inverse wishart
+#' (IW) distribution. For a model with the number of parameters N the degrees of
+#' freedom of the IW distribution is set to N*3 and the scale matrix is the
+#' identity matrix of size NxN.
 #'
 #' @param pmwgs The sampler object that provides the parameters.
 #' @param start_mu An array of starting values for the group means
@@ -59,8 +63,13 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   if (is.null(attr(pmwgs, "class"))) {
     message("ERROR: No object to add start points to")
   }
-  # If no starting point for group mean just use zeros
-  if (is.null(start_mu)) start_mu <- stats::rnorm(pmwgs$n_pars, sd = 1)
+  # If no starting point for group mean just sample from prior
+  if (is.null(start_mu)) {
+    start_mu <- stats::rnorm(
+      pmwgs$n_pars,
+      mean = pmwgs$prior$theta_mu_mean,
+      sd = diag(pmwgs$prior$theta_mu_var))
+  }
   # If no starting point for group var just sample from inverse wishart
   if (is.null(start_sig)) {
     start_sig <- MCMCpack::riwish(
