@@ -61,6 +61,7 @@ Authors:
   \item David Gunawan \email{dgunawan@uow.edu.au} (Author of original MATLAB code)
   \item Guy Hawkins \email{guy.hawkins@newcastle.edu.au}
   \item Scott Brown \email{scott.brown@newcastle.edu.au} (Original translation from MATLAB to R) [translator]
+  \item Niek Stevenson \email{niek.stevenson@gmail.com}
 }
 
 }

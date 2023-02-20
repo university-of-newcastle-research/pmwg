@@ -8,7 +8,8 @@ Authors@R: c(
     person("Jon-Paul", "Cavallaro", email = "jon-paul.cavallaro@uon.edu.au", role = c("aut")),
     person("David", "Gunawan", email = "dgunawan@uow.edu.au", role = c("aut"), comment = "Author of original MATLAB code"),
     person("Guy", "Hawkins", email = "guy.hawkins@newcastle.edu.au", role = c("aut")),
-    person("Scott", "Brown", email = "scott.brown@newcastle.edu.au", role = c("aut", "trl"), comment = "Original translation from MATLAB to R"))
+    person("Scott", "Brown", email = "scott.brown@newcastle.edu.au", role = c("aut", "trl"), comment = "Original translation from MATLAB to R"),
+    person("Niek", "Stevenson", email = "niek.stevenson@gmail.com", role = c("aut")))
 Description: Provides an R implementation of the Particle Metropolis within
     Gibbs sampler for model parameter, covariance matrix and random effect
     estimation. A more general implementation of the sampler based on the paper
