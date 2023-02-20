@@ -78,6 +78,15 @@ conditional_parms <- function(s, samples) {
   )
   mu_tilde <- apply(all_samples, 1, mean)
   sigma_tilde <- stats::var(t(all_samples))
+  if (!isSymmetric(sigma_tilde)) {
+    message("ERROR: covariance matrix for subject #", s, " not symmetric")
+    stop()
+  }
+  if (any(eigen(sigma_tilde, TRUE, only.values = TRUE)$values < 1e-08)) {
+    message("ERROR: covariance matrix for subject #",
+            s, " not positive definite")
+    stop()
+  }
   condmvn <- condMVNorm::condMVN(
     mean = mu_tilde,
     sigma = sigma_tilde,
@@ -86,7 +95,8 @@ conditional_parms <- function(s, samples) {
     X.given = c(
       samples$theta_mu[, n_iter],
       unwind(samples$theta_sig[, , n_iter])
-    )
+    ),
+    check.sigma = FALSE
   )
   list(cmeans = condmvn$condMean, cvars = condmvn$condVar)
 }
