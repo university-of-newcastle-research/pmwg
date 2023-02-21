@@ -510,7 +510,7 @@ set_proposal <- function(i, stage, pmwgs, pdist_update_n) {
   }
 
   tryCatch(
-    prop_args <- try(create_efficient(pmwgs)),
+    prop_args <- create_efficient(pmwgs),
     error = function(err_cond) {
       outfile <- tempfile(
         pattern = "PMwG_err_",
@@ -518,13 +518,13 @@ set_proposal <- function(i, stage, pmwgs, pdist_update_n) {
         fileext = ".RData"
       )
       msg <- paste(
-        "An error was detected whilst creating conditional",
-        "distribution.\n",
-        "Saving current state of environment in file:",
-        outfile
+        "ERROR: Unrecoverable error in conditional distribution creation.\n",
+        err_cond,
+        "MESSAGE: Saving current state of environment in file:", outfile
       )
       save.image(outfile)
-      stop(msg)
+      message(msg)
+      stop("Quitting")
     }
   )
   prop_args
