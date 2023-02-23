@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.4</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/pmwg.html">Get started</a>
 </li>
@@ -60,7 +56,7 @@
   <a href="FAQ.html">FAQ</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -68,10 +64,11 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Releases</li>
     <li>
-      <a href="https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html">pmwg 0.2.0</a>
+      <a href="https://newcastlecl.github.io/2021/02/10/PMWG-version-0.2.0-released.html" class="external-link">pmwg 0.2.0</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="news/index.html">Changelog</a>
     </li>
   </ul>
@@ -79,8 +76,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/newcastlecl/pmwg/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/newcastlecl/pmwg/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -96,95 +93,101 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="pmwg---particle-metropolis-within-gibbs" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#pmwg---particle-metropolis-within-gibbs" class="anchor"></a>pmwg - Particle Metropolis within Gibbs <img src="reference/figures/hexlogo_small.png" align="right">
+<div class="section level1">
+<div class="page-header"><h1 id="pmwg---particle-metropolis-within-gibbs-">pmwg - Particle Metropolis within Gibbs <img src="reference/figures/hexlogo_small.png" align="right"><a class="anchor" aria-label="anchor" href="#pmwg---particle-metropolis-within-gibbs-"></a>
 </h1></div>
 <!-- badges: start -->
-
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>To install the latest stable version you can use the following command to install from CRAN:</p>
-<p><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("pmwg")</a></code></p>
+<p><code>install.packages("pmwg")</code></p>
 <p>If you want the (possibly unstable) development version, you can also install the package using devtools as follows:</p>
-<p><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('newcastlecl/pmwg', ref="develop")</a></code></p>
+<p><code>devtools::install_github('newcastlecl/pmwg', ref="develop")</code></p>
 <p>This package is tested and should work on all versions of R &gt; 3.5, however instructions on installing to an earlier version of R are included below.</p>
 </div>
-<div id="using-the-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-the-package" class="anchor"></a>Using the package</h2>
-<p>The best introduction to the package can be found at the bookdown site located at: <a href="https://newcastlecl.github.io/samplerDoc/" class="uri">https://newcastlecl.github.io/samplerDoc/</a> The document there includes the motivation for the approach, several detailed examples of the package in action and a list of common problems and troubleshooting techniques. Also available online is the package documentation at <a href="https://newcastlecl.github.io/pmwg/" class="uri">https://newcastlecl.github.io/pmwg/</a> which consists of this README, a Reference of help documentation for individual functions, a list of changes to the project over time and more. Finally there is a page containing some frequently asked questions which can be found at <a href="https://newcastlecl.github.io/pmwg/FAQ.html" class="uri">https://newcastlecl.github.io/pmwg/FAQ.html</a></p>
-<p>Included on the pmwg website is also a getting started guide to the package, available from <a href="https://newcastlecl.github.io/pmwg/articles/pmwg.html" class="uri">https://newcastlecl.github.io/pmwg/articles/pmwg.html</a></p>
+<div class="section level2">
+<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
+</h2>
+<p>The best introduction to the package can be found at the bookdown site located at: <a href="https://newcastlecl.github.io/samplerDoc/" class="external-link uri">https://newcastlecl.github.io/samplerDoc/</a> The document there includes the motivation for the approach, several detailed examples of the package in action and a list of common problems and troubleshooting techniques. Also available online is the package documentation at <a href="https://newcastlecl.github.io/pmwg/" class="external-link uri">https://newcastlecl.github.io/pmwg/</a> which consists of this README, a Reference of help documentation for individual functions, a list of changes to the project over time and more. Finally there is a page containing some frequently asked questions which can be found at <a href="https://newcastlecl.github.io/pmwg/FAQ.html" class="external-link uri">https://newcastlecl.github.io/pmwg/FAQ.html</a></p>
+<p>Included on the pmwg website is also a getting started guide to the package, available from <a href="https://newcastlecl.github.io/pmwg/articles/pmwg.html" class="external-link uri">https://newcastlecl.github.io/pmwg/articles/pmwg.html</a></p>
 </div>
-<div id="installing-to-an-older-version-of-r-3-5" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installing-to-an-older-version-of-r-3-5" class="anchor"></a>Installing to an older version of R (&lt; 3.5)</h2>
+<div class="section level2">
+<h2 id="installing-to-an-older-version-of-r--35">Installing to an older version of R (&lt; 3.5)<a class="anchor" aria-label="anchor" href="#installing-to-an-older-version-of-r--35"></a>
+</h2>
 <p><strong>Terminal</strong></p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip
-<span class="fu">unzip</span> reduce_requirements.zip</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="fu">wget</span> https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="fu">unzip</span> reduce_requirements.zip</a></code></pre></div>
 <p><strong>R</strong></p>
-<div class="sourceCode"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_version</a></span><span class="op">(</span><span class="st">'mvtnorm'</span>, version<span class="op">=</span><span class="st">'1.0-0'</span><span class="op">)</span>
-<span class="co"># (Maybe need install.packages("mcmc")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_version</a></span><span class="op">(</span><span class="st">'MCMCpack'</span>, version<span class="op">=</span><span class="st">'1.4-0'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pmwg-reduce_requirements/"</span><span class="op">)</span>, repos<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_version.html" class="external-link">install_version</a></span><span class="op">(</span><span class="st">'mvtnorm'</span>, version<span class="op">=</span><span class="st">'1.0-0'</span><span class="op">)</span></span>
+<span><span class="co"># (Maybe need install.packages("mcmc")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_version.html" class="external-link">install_version</a></span><span class="op">(</span><span class="st">'MCMCpack'</span>, version<span class="op">=</span><span class="st">'1.4-0'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pmwg-reduce_requirements/"</span><span class="op">)</span>, repos<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=pmwg">https://​cloud.r-project.org/​package=pmwg</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/newcastlecl/pmwg/">https://​github.com/​newcastlecl/​pmwg/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/newcastlecl/pmwg/issues">https://​github.com/​newcastlecl/​pmwg/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Gavin Cooper <br><small class="roles"> Author, maintainer, translator </small>  <br><small>(Package creator and maintainer)</small>
-</li>
-<li>Reilly Innes <br><small class="roles"> Author </small>  </li>
-<li>Caroline Kuhne <br><small class="roles"> Author </small>  </li>
-<li>Jon-Paul Cavallaro <br><small class="roles"> Author </small>  </li>
-<li>David Gunawan <br><small class="roles"> Author </small>  <br><small>(Author of original MATLAB code)</small>
-</li>
-<li>Guy Hawkins <br><small class="roles"> Author </small>  </li>
-<li>Scott Brown <br><small class="roles"> Author, translator </small>  <br><small>(Original translation from MATLAB to R)</small>
-</li>
+<li><a href="https://cloud.r-project.org/package=pmwg" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/newcastlecl/pmwg/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/newcastlecl/pmwg/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.com/NewcastleCL/pmwg"><img src="https://travis-ci.com/NewcastleCL/pmwg.svg?branch=release" alt="Travis build status"></a></li>
-<li><a href="https://codecov.io/gh/NewcastleCL/pmwg?branch=release"><img src="https://codecov.io/gh/NewcastleCL/pmwg/branch/release/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://github.com/NewcastleCL/pmwg/actions"><img src="https://github.com/NewcastleCL/pmwg/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing pmwg</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Gavin Cooper <br><small class="roles"> Author, maintainer, translator </small>  </li>
+<li>Reilly Innes <br><small class="roles"> Author </small>  </li>
+<li>Caroline Kuhne <br><small class="roles"> Author </small>  </li>
+<li>Jon-Paul Cavallaro <br><small class="roles"> Author </small>  </li>
+<li>David Gunawan <br><small class="roles"> Author </small>  </li>
+<li>Guy Hawkins <br><small class="roles"> Author </small>  </li>
+<li>Scott Brown <br><small class="roles"> Author, translator </small>  </li>
+<li>Niek Stevenson <br><small class="roles"> Author </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/university-of-newcastle-research/pmwg/actions/workflows/check-standard.yaml" class="external-link"><img src="https://github.com/university-of-newcastle-research/pmwg/actions/workflows/check-standard.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/NewcastleCL/pmwg?branch=release" class="external-link"><img src="https://codecov.io/gh/NewcastleCL/pmwg/branch/release/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown.</p>
+  <p></p>
+<p>Developed by Gavin Cooper, Reilly Innes, Caroline Kuhne, Jon-Paul Cavallaro, David Gunawan, Guy Hawkins, Scott Brown, Niek Stevenson.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -192,6 +195,8 @@
 
   
 
+
+  
 
   </body>
 </html>
