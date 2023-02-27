@@ -11,7 +11,7 @@ run_stage(
   particles = 100,
   display_progress = TRUE,
   n_cores = 1,
-  n_unique = ifelse(stage == "adapt", 20, NA),
+  n_unique = ifelse(stage == "adapt", 100, NA),
   epsilon = NULL,
   p_accept = 0.8,
   mix = NULL,
