@@ -75,7 +75,7 @@ run_stage <- function(pmwgs,
                       particles = 100,
                       display_progress = TRUE,
                       n_cores = 1,
-                      n_unique = ifelse(stage == "adapt", 20, NA),
+                      n_unique = ifelse(stage == "adapt", 100, NA),
                       epsilon = NULL,
                       p_accept = .8,
                       mix = NULL,
@@ -101,7 +101,7 @@ run_stage <- function(pmwgs,
   alpha_star <- -stats::qnorm(p_accept / 2)
   n0 <- round(5 / (p_accept * (1 - p_accept)))
   # Set necessary local variables
-  .n_unique <- n_unique
+  .unique_inc <- 20
   apply_fn <- lapply
   # Set stable (fixed) new_sample argument for this run
   stable_args <- list(
@@ -201,7 +201,7 @@ run_stage <- function(pmwgs,
         collected_msgs <- c(collected_msgs, res[2])
         break
       } else if (res[1] == "increase") {
-        n_unique <- n_unique + .n_unique
+        n_unique <- n_unique + .unique_inc
         collected_msgs <- c(collected_msgs, res[2])
       }
     }
