@@ -164,9 +164,7 @@ run_stage <- function(pmwgs,
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
     lapply(tmp, function(x) {
       if (inherits(x, "try-error")) {
-        cat("ERROR: At least 1 call to log likelihood method caused an error\n")
-        traceback(x)
-        stop()
+        new_sample_err(pmwgs, environment(), x)
       }
     })
 
@@ -328,7 +326,12 @@ new_sample <- function(s, data, num_particles, parameters,
   # log of importance weights.
   l <- lw + lp - lm
   weights <- exp(l - max(l))
-  idx <- sample(x = num_particles, size = 1, prob = weights)
+  tryCatch(
+    idx <- sample(x = num_particles, size = 1, prob = weights),
+    error = function(err_cond) {
+      particle_select_err(s, environment(), err_cond)
+    }
+  )
   winner <- proposals[idx, ]
   attr(winner, "ll") <- lw[idx]
   winner

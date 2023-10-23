@@ -15,7 +15,7 @@ subject random effects in a hierarchical Bayesian way.
 }
 \section{Documentation}{
 
-The documentation found at \url{https://newcastlecl.github.io/samplerDoc/}
+The documentation found at
 contains background information and motivation for the approach used in
 this package and several detailed examples of the package in action. It also
 includes a list of common problems and associated troubleshooting steps.
