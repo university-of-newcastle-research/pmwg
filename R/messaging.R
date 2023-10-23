@@ -123,10 +123,10 @@ gibbs_step_err <- function(pmwgs, err_cond) {
     tmpdir = ".",
     fileext = ".RDS"
   )
-  message("\nERROR: Error while generating new group level parameters")
+  message("ERROR: Error while generating new group level parameters")
   message(err_cond)
   traceback()
-  message("\nMESSAGE: Saving current state of pmwgs object: ", sampler_tmp)
+  message("MESSAGE: Saving current state of pmwgs object: ", sampler_tmp)
   # Remove NA values from the end of the sampler
   pmwgs <- trim_na(pmwgs)
   saveRDS(pmwgs, file = sampler_tmp)
@@ -148,11 +148,11 @@ particle_select_err <- function(subj, envir, err_cond) {
     tmpdir = ".",
     fileext = ".RData"
   )
-  message(paste("\nERROR: Error while selecting winning proposal particle",
+  message(paste("ERROR: Error while selecting winning proposal particle",
                 "for subject number", subj))
   message(err_cond)
-  traceback()
-  message("\nMESSAGE: Saving environment in new_sample function: ", envir_tmp)
+  traceback(err_cond)
+  message("MESSAGE: Saving environment in new_sample function: ", envir_tmp)
   save(envir = envir, file = envir_tmp, list = names(envir))
   stop("ERROR: particle_select_err")
 }
@@ -178,11 +178,11 @@ new_sample_err <- function(pmwgs, envir, err_cond) {
     tmpdir = ".",
     fileext = ".RDS"
   )
-  message("\nERROR: An error was detected during evaluation of the new_sample function.\n")
+  message("ERROR: An error was detected during evaluation of the new_sample function.")
   traceback(err_cond)
-  message("\nMESSAGE: Saving environment in run_stage function: ", envir_tmp)
+  message("MESSAGE: Saving environment in run_stage function: ", envir_tmp)
   save(envir = envir, file = envir_tmp, list = names(envir))
-  message("\nMESSAGE: Saving current state of pmwgs object: ", sampler_tmp)
+  message("MESSAGE: Saving current state of pmwgs object: ", sampler_tmp)
   # Remove NA values from the end of the sampler
   pmwgs <- trim_na(pmwgs)
   saveRDS(pmwgs, file = sampler_tmp)

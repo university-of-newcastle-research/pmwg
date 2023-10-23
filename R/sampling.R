@@ -164,7 +164,7 @@ run_stage <- function(pmwgs,
     tmp <- do.call(apply_fn, c(stable_args, iter_args))
     lapply(tmp, function(x) {
       if (inherits(x, "try-error")) {
-        new_sample_err(pmwgs, environment(), x)
+        new_sample_err(pmwgs, parent.env(environment()), x)
       }
     })
 
