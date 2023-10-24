@@ -329,7 +329,7 @@ new_sample <- function(s, data, num_particles, parameters,
   tryCatch(
     idx <- sample(x = num_particles, size = 1, prob = weights),
     error = function(err_cond) {
-      particle_select_err(s, environment(), err_cond)
+      particle_select_err(s, parent.env(environment()), err_cond)
     }
   )
   winner <- proposals[idx, ]
