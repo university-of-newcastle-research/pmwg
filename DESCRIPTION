@@ -28,7 +28,6 @@ Imports:
     coda,
     condMVNorm,
     MASS,
-    MCMCpack,
     mvtnorm,
     stats
 Suggests:

@@ -72,10 +72,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
   }
   # If no starting point for group var just sample from inverse wishart
   if (is.null(start_sig)) {
-    start_sig <- MCMCpack::riwish(
-      pmwgs$n_pars * 3,
-      diag(pmwgs$n_pars)
-    )
+    start_sig <- riwish(pmwgs$n_pars * 3, diag(pmwgs$n_pars))
   }
   n_particles <- particles
   # Sample the mixture variables' initial values.
@@ -148,7 +145,7 @@ gibbs_step <- function(sampler) {
   theta_temp <- last$alpha - tmu
   cov_temp <- (theta_temp) %*% (t(theta_temp))
   B_half <- 2 * hyper$v_half * diag(1 / last$a_half) + cov_temp # nolint
-  tsig <- MCMCpack::riwish(hyper$k_half, B_half) # New sample for group variance
+  tsig <- riwish(hyper$k_half, B_half) # New sample for group variance
   tsinv <- MASS::ginv(tsig)
 
   # Sample new mixing weights.
