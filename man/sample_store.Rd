@@ -9,12 +9,12 @@ sample_store(par_names, subject_ids, iters = 1, stage = "init")
 \arguments{
 \item{par_names}{The names of each parameter as a character vector}
 
+\item{subject_ids}{The unique ID of each subjects as a character vector}
+
 \item{iters}{The number of iterations to be pre-allocated}
 
 \item{stage}{The stage for which the samples will be created. Should be one
 of \code{c("init", "burn", "adapt", "sample")}}
-
-\item{subjects_ids}{The unique ID of each subjects as a character vector}
 }
 \value{
 A list containing the conditional mean and variances for this subject

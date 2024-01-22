@@ -58,7 +58,7 @@ wind <- function(var_vector, ...) {
 #' Create a new list for storage samples in the pmwgs object
 #'
 #' @param par_names The names of each parameter as a character vector
-#' @param subjects_ids The unique ID of each subjects as a character vector
+#' @param subject_ids The unique ID of each subjects as a character vector
 #' @param iters The number of iterations to be pre-allocated
 #' @param stage The stage for which the samples will be created. Should be one
 #'   of \code{c("init", "burn", "adapt", "sample")}
