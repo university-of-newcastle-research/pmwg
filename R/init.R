@@ -68,7 +68,7 @@ init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
     start_mu <- stats::rnorm(
       pmwgs$n_pars,
       mean = pmwgs$prior$theta_mu_mean,
-      sd = diag(pmwgs$prior$theta_mu_var))
+      sd = sqrt(diag(pmwgs$prior$theta_mu_var)))
   }
   # If no starting point for group var just sample from inverse wishart
   if (is.null(start_sig)) {
