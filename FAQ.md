@@ -9,7 +9,7 @@
 
 ### I've found a problem with the package, what now?
 
-Head over to the [Issues](https://github.com/NewcastleCL/pmwg/issues) page and ask a question, suggest a new feature or report a bug.
+Head over to the [Issues](https://github.com/university-of-newcastle-research/pmwg/issues) page and ask a question, suggest a new feature or report a bug.
 
 ## Data Problems
 
