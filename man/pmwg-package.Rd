@@ -45,8 +45,8 @@ model. \emph{Journal of Mathematical Psychology, 96}, 102368.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/newcastlecl/pmwg}
-  \item Report bugs at \url{https://github.com/newcastlecl/pmwg/issues}
+  \item \url{https://github.com/university-of-newcastle-research/pmwg}
+  \item Report bugs at \url{https://github.com/university-of-newcastle-research/pmwg/issues}
 }
 
 }

@@ -15,12 +15,13 @@ Description: Provides an R implementation of the Particle Metropolis within
     estimation. A more general implementation of the sampler based on the paper
     by Gunawan, D., Hawkins, G. E., Tran, M. N., Kohn, R., & Brown, S. D.
     (2020) <doi:10.1016/j.jmp.2020.102368>. An HTML tutorial document describing
-    the package is available at <https://newcastlecl.github.io/samplerDoc/> and
+    the package is available at
+    <https://university-of-newcastle-research.github.io/samplerDoc/> and
     includes several detailed examples, some background and troubleshooting
     steps.
 License: GPL-3
-URL: https://github.com/newcastlecl/pmwg
-BugReports: https://github.com/newcastlecl/pmwg/issues
+URL: https://github.com/university-of-newcastle-research/pmwg
+BugReports: https://github.com/university-of-newcastle-research/pmwg/issues
 Depends: 
     R (>= 3.6.0)
 Imports:

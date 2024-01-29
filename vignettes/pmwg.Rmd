@@ -35,7 +35,7 @@ We can see that there are 5 columns:
 * `resp` - whether the participant responded left or right
 * `rt` - the response time for the trial
 
-We will use the `rtdists` package to look at threshold differences between the three conditions to see whether there is evidence for different thresholds (the evidence required to trigger a response) in each of the three conditions. For a full explanation of the model please see the [full documentation](https://newcastlecl.github.io/samplerDoc/) in Chapter 3.
+We will use the `rtdists` package to look at threshold differences between the three conditions to see whether there is evidence for different thresholds (the evidence required to trigger a response) in each of the three conditions. For a full explanation of the model please see the [full documentation](https://university-of-newcastle-research.github.io/samplerDoc/) in Chapter 3.
 
 ## The log-likelihood function
 
@@ -129,6 +129,6 @@ sampler <- run_stage(sampler, stage = "adapt")
 sampler <- run_stage(sampler, stage = "sample")
 ```
 
-The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others and more. For a full list see [the description in the PMwG Tutorial Book](https://newcastlecl.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
+The `run_stage` command can also be passed other arguments such as `iter` for number of iterations, `particles` for number of particles among others and more. For a full list see [the description in the PMwG Tutorial Book](https://university-of-newcastle-research.github.io/samplerDoc/pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler).
 
 # References
