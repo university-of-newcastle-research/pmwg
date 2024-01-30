@@ -113,19 +113,6 @@
 <p>The best introduction to the package can be found at the bookdown site located at: <a href="https://university-of-newcastle-research.github.io/samplerDoc/" class="external-link uri">https://university-of-newcastle-research.github.io/samplerDoc/</a> The document there includes the motivation for the approach, several detailed examples of the package in action and a list of common problems and troubleshooting techniques. Also available online is the package documentation at <a href="https://university-of-newcastle-research.github.io/pmwg/" class="external-link uri">https://university-of-newcastle-research.github.io/pmwg/</a> which consists of this README, a Reference of help documentation for individual functions, a list of changes to the project over time and more. Finally there is a page containing some frequently asked questions which can be found at <a href="https://university-of-newcastle-research.github.io/pmwg/FAQ.html" class="external-link uri">https://university-of-newcastle-research.github.io/pmwg/FAQ.html</a></p>
 <p>Included on the pmwg website is also a getting started guide to the package, available from <a href="https://university-of-newcastle-research.github.io/pmwg/articles/pmwg.html" class="external-link uri">https://university-of-newcastle-research.github.io/pmwg/articles/pmwg.html</a></p>
 </div>
-<div class="section level2">
-<h2 id="installing-to-an-older-version-of-r--35">Installing to an older version of R (&lt; 3.5)<a class="anchor" aria-label="anchor" href="#installing-to-an-older-version-of-r--35"></a>
-</h2>
-<p><strong>Terminal</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="fu">wget</span> https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="fu">unzip</span> reduce_requirements.zip</a></code></pre></div>
-<p><strong>R</strong></p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_version.html" class="external-link">install_version</a></span><span class="op">(</span><span class="st">'mvtnorm'</span>, version<span class="op">=</span><span class="st">'1.0-0'</span><span class="op">)</span></span>
-<span><span class="co"># (Maybe need install.packages("mcmc")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_version.html" class="external-link">install_version</a></span><span class="op">(</span><span class="st">'MCMCpack'</span>, version<span class="op">=</span><span class="st">'1.4-0'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pmwg-reduce_requirements/"</span><span class="op">)</span>, repos<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-</div>
 </div>
   </div>
 

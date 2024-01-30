@@ -25,21 +25,3 @@ Also available online is the package documentation at https://university-of-newc
 Finally there is a page containing some frequently asked questions which can be found at https://university-of-newcastle-research.github.io/pmwg/FAQ.html
 
 Included on the pmwg website is also a getting started guide to the package, available from https://university-of-newcastle-research.github.io/pmwg/articles/pmwg.html
-
-## Installing to an older version of R (< 3.5)
-
-**Terminal**
-
-```bash
-wget https://github.com/newcastlecl/pmwg/archive/reduce_requirements.zip
-unzip reduce_requirements.zip
-```
-
-**R**
-
-```R
-devtools::install_version('mvtnorm', version='1.0-0')
-# (Maybe need install.packages("mcmc")
-devtools::install_version('MCMCpack', version='1.4-0')
-install.packages(c("pmwg-reduce_requirements/"), repos=NULL)
-```
