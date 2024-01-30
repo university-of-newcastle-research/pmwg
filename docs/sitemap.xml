@@ -7,9 +7,6 @@
     <loc>/FAQ.html</loc>
   </url>
   <url>
-    <loc>/articles/PMwG.html</loc>
-  </url>
-  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -23,9 +20,6 @@
   </url>
   <url>
     <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/acceptProgressBar.html</loc>
   </url>
   <url>
     <loc>/reference/accept_progress_bar.html</loc>
@@ -79,16 +73,10 @@
     <loc>/reference/init.html</loc>
   </url>
   <url>
-    <loc>/reference/init.pmwgs.html</loc>
-  </url>
-  <url>
     <loc>/reference/is.pmwgs.html</loc>
   </url>
   <url>
     <loc>/reference/last_sample.html</loc>
-  </url>
-  <url>
-    <loc>/reference/new_group_pars.html</loc>
   </url>
   <url>
     <loc>/reference/new_sample.html</loc>
@@ -100,9 +88,6 @@
     <loc>/reference/numbers_from_proportion.html</loc>
   </url>
   <url>
-    <loc>/reference/numbers_from_ratio.html</loc>
-  </url>
-  <url>
     <loc>/reference/particle_draws.html</loc>
   </url>
   <url>
@@ -112,13 +97,7 @@
     <loc>/reference/pmwg-package.html</loc>
   </url>
   <url>
-    <loc>/reference/pmwg.html</loc>
-  </url>
-  <url>
     <loc>/reference/pmwgs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/psamplers.html</loc>
   </url>
   <url>
     <loc>/reference/relabel_samples.html</loc>
@@ -128,9 +107,6 @@
   </url>
   <url>
     <loc>/reference/run_stage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_stage.pmwgs.html</loc>
   </url>
   <url>
     <loc>/reference/rwish.html</loc>
@@ -164,9 +140,6 @@
   </url>
   <url>
     <loc>/reference/update_progress_bar.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_sampler.html</loc>
   </url>
   <url>
     <loc>/reference/wind.html</loc>
