@@ -21,3 +21,5 @@
 ^FAQ.md$
 ^R/tags$
 ^revdep/
+^doc$
+^Meta$
