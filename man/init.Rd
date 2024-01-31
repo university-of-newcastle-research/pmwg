@@ -77,5 +77,5 @@ sampler <- pmwgs(
   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
   lba_ll
 )
-sampler <- init(sampler)
+sampler <- init(sampler, particles=10)
 }

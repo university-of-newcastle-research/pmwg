@@ -7,9 +7,12 @@
 particle_select_err(subj, envir, err_cond)
 }
 \arguments{
-\item{err_cond}{The original error condition that prompted this.}
+\item{subj}{The index of the subject where the error was detected.}
 
-\item{pmwgs}{The pmwgs object for the current run.}
+\item{envir}{The enclosing environment of the function where the error
+occurred.}
+
+\item{err_cond}{The original error condition that prompted this.}
 }
 \description{
 If an error was detected when selecting the winning particle, save the state

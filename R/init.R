@@ -56,7 +56,7 @@
 #'   c("b1", "b2", "b3", "A", "v1", "v2", "t0"),
 #'   lba_ll
 #' )
-#' sampler <- init(sampler)
+#' sampler <- init(sampler, particles=10)
 #' @export
 init <- function(pmwgs, start_mu = NULL, start_sig = NULL,
                  display_progress = TRUE, particles = 100) {

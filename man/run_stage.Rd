@@ -101,5 +101,5 @@ values per subject.
 \examples{
 library(rtdists)
 sampled_forstmann$data <- forstmann
-run_stage(sampled_forstmann, "sample", iter = 1, particles = 20)
+run_stage(sampled_forstmann, "sample", iter = 1, particles = 10)
 }

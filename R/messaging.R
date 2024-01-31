@@ -138,7 +138,9 @@ gibbs_step_err <- function(pmwgs, err_cond) {
 #' If an error was detected when selecting the winning particle, save the state
 #' of the samples and particles at that moment to help with debugging.
 #'
-#' @param pmwgs The pmwgs object for the current run.
+#' @param subj The index of the subject where the error was detected.
+#' @param envir The enclosing environment of the function where the error
+#'   occurred.
 #' @param err_cond The original error condition that prompted this.
 #'
 #' @keywords internal
