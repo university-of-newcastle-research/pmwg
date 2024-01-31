@@ -19,7 +19,7 @@ full PMwG sampling we need to run this three times."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.7</span>
       </span>
     </div>
 
@@ -193,7 +193,7 @@ values per subject.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rtdists/rtdists/" class="external-link">rtdists</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sampled_forstmann</span><span class="op">$</span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">forstmann</span></span></span>
-<span class="r-in"><span><span class="fu">run_stage</span><span class="op">(</span><span class="va">sampled_forstmann</span>, <span class="st">"sample"</span>, iter <span class="op">=</span> <span class="fl">1</span>, particles <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">run_stage</span><span class="op">(</span><span class="va">sampled_forstmann</span>, <span class="st">"sample"</span>, iter <span class="op">=</span> <span class="fl">1</span>, particles <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MESSAGE: mix has been set to c(0.1, 0.2, 0.7) based on the stage being run</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phase 3: Sampling</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                  |                                                            |   0% | New(  0%)                                                                                 |============================================================| 100% | New(100%)</span>
@@ -273,7 +273,7 @@ values per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     out &lt;- sum(log(out))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(out)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5564de652a18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x556063a98830&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$alpha</span>
@@ -5637,38 +5637,38 @@ values per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 163</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             1          2          3           4          5           6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.1994059  0.4098954  0.2362481 -0.92972903 -0.3629834  0.03418297</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -1.6692912 -4.2779647  0.3815544 -1.60657663 -2.5344162 -4.29209389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.1393331 -0.3898846 -0.1147437 -0.04455675 -0.3789683 -0.56479362</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -1.0805406 -1.4159784 -0.2298247 -1.21745273 -1.0049171 -1.45931561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.2283022  1.2515245  1.1546538  0.88256422  0.7993856  1.04774713</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.2956061  0.1054939 -0.5330327 -0.32351282 -0.1949949  0.10875333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.8651198 -2.8329839 -2.3157141 -3.83122508 -2.5219920 -2.82242359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              7          8           9         10          11          12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.08076067 -0.4724214 -0.19456382 -1.0108487  0.02661346 -0.02168732</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -0.39505559  0.7223863  1.30195450  3.7288993 -1.17470945 -0.06348182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.10673206  0.3599811  0.38943475  0.1047941  0.05879197 -0.29353585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -1.05577339 -0.5704404  0.03679878 -0.2239181 -0.56060030 -0.68103095</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.02180818  1.0954506  1.35371438  0.8526812  1.20968024  1.11778445</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.39449725 -0.7042721 -0.69613805 -0.9765457 -0.31506997 -0.36895397</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.53015774 -3.0733649 -2.26154370 -2.8184490 -2.48850622 -3.01648006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             13         14         15         16         17         18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.34102246 -0.5211759 -0.1802042 -0.2950714 -0.0433691 -0.3260892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -1.51989572  2.1837896  0.5905735  0.9680527 -2.8885176  2.6400418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3  0.15915626  0.5051072 -0.2103650  0.3586775  0.1971693  0.2423908</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.06802467  0.3929088 -0.8575065  0.2286456 -0.4483905  0.1428365</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.59058250  1.6063636  0.8657450  1.4038305  1.5551465  0.9108968</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.49642120 -0.8673102 -0.5616479 -0.7385613 -0.1720175 -0.8359040</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.17338112 -2.2800066 -3.1579728 -2.1137371 -2.5949297 -2.5948622</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.08408395</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -3.20449085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.17517829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.84511109</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.18913083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc  0.06360883</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.56986889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             1          2           3          4          5          6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.1747485 -0.5295064 -0.09614133 -0.1602879  0.2063547  0.1664342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -3.4475290  1.2552849 -0.89452740 -1.7342972 -5.8117032 -4.2341357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.3156597  0.1808541 -0.11548954 -0.4056840 -0.6666301 -0.3280199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -1.7453044 -0.6393827 -0.54233208 -0.5180388 -1.5611864 -1.7388217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  0.6518986  1.1948057  1.25364680  1.8823183  1.0876680  0.8703074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc  0.2702425 -0.5723445 -0.43348966 -0.1306117  0.3192802  0.1905077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.8762148 -3.0265449 -2.21144207 -2.9768977 -2.6188272 -2.8899031</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              7          8          9          10         11          12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.18565673 -0.4863434 -0.2790177 -0.65551675 -0.5175222  0.20621624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -5.52937689  0.6338194  0.4267013  2.79705189  4.1066721 -4.63452329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.33431832  0.3530149  0.2136141  0.22613725  0.1375904  0.19969746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -1.06976888 -0.1616131 -0.4942879  0.03630862 -0.1509117 -0.57863070</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.14729290  1.5929932  0.9170784  1.34603693  1.1484692  1.24889261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc  0.04859382 -0.5378853 -0.5861216 -0.86780596 -0.9639936  0.01325557</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -3.02183230 -2.4975034 -2.2558260 -2.36767060 -2.7762864 -1.86908669</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            13          14          15         16          17          18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.1245986 -0.45972046 -0.05120721 -0.2352546 -0.08645861  0.28138235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -2.9946435  3.46558360 -0.39939141  1.2089342 -1.88625023  0.20992323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.1438613  0.25984436  0.19726672  0.1351294 -0.05851315  0.04373584</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.8562966  0.04077018 -0.14287815 -0.3565062 -0.80524352 -0.48405934</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.5667818  1.12663638  1.42490349  1.1771194  1.37550163  0.99548071</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.2959349 -1.00145896 -0.50376141 -0.6488633 -0.16754430 -0.48749646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.5072439 -2.51310394 -2.57030710 -2.5505951 -2.86534824 -2.94028911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.3768017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -2.1395926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.1933864</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.8059114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.2095308</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.1883447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.6974731</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$theta_mu</span>
@@ -5881,13 +5881,13 @@ values per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.4732369 -0.4938255 -0.3892684 -0.4201834 -0.33626541 -0.34759723</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.6377117 -2.6999707 -2.5668617 -2.6148605 -2.59160263 -2.50689312</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         [,161]      [,162]      [,163]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.04803963 -0.03045564 -0.13983320</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -0.99076774 -2.20623138 -0.47231690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3  0.12634299 -0.08003289  0.02602577</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.56627688 -0.75490382 -0.50560634</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.11151217  1.13503535  1.18063335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.36552701 -0.22706947 -0.43607397</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.48209930 -2.59816516 -2.57482721</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.04803963 -0.03045564 -0.07827347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -0.99076774 -2.20623138 -0.96231022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3  0.12634299 -0.08003289 -0.09191595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.56627688 -0.75490382 -0.68214784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  1.11151217  1.13503535  1.11281564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.36552701 -0.22706947 -0.34350656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -2.48209930 -2.59816516 -2.63745464</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$theta_sig</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
@@ -8962,22 +8962,22 @@ values per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 163</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             b1         b2           b3           A           ve          vc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.08916287 -0.4462927 -0.038621142 -0.05257103  0.022404381  0.06497235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -0.44629275  5.2799614  0.278212957  0.81953617 -0.123580464 -0.70427803</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.03862114  0.2782130  0.067188451  0.09638623  0.009065418 -0.05170693</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.05257103  0.8195362  0.096386231  0.26481219  0.024466122 -0.13018635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  0.02240438 -0.1235805  0.009065418  0.02446612  0.040396439  0.01417927</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc  0.06497235 -0.7042780 -0.051706926 -0.13018635  0.014179274  0.10370848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0  0.02055473  0.1608729  0.044973863  0.11948470  0.032269427 -0.03451416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             t0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.02055473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2  0.16087289</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3  0.04497386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A   0.11948470</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  0.03226943</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.03451416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0  0.15029751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              b1          b2           b3           A            ve           vc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1  0.084637068 -0.49582820 -0.049449237 -0.09275192 -0.0094421212  0.069010636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2 -0.495828201  6.57340009  0.554575371  1.29112721 -0.0388787814 -0.889259264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 -0.049449237  0.55457537  0.082045638  0.14207981  0.0019204780 -0.087457698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A  -0.092751922  1.29112721  0.142079815  0.35358033  0.0150624137 -0.195329101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve -0.009442121 -0.03887878  0.001920478  0.01506241  0.0371462353  0.001884894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc  0.069010636 -0.88925926 -0.087457698 -0.19532910  0.0018848944  0.130586206</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0 -0.018743999  0.35411910  0.058267282  0.12644004 -0.0007208891 -0.065004323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               t0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1 -0.0187439986</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2  0.3541190998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3  0.0582672818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A   0.1264400416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve -0.0007208891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc -0.0650043225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0  0.0900371769</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$stage</span>
@@ -10101,31 +10101,23 @@ values per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> vc 13.2594870  67.8645338 66.459395 87.687662  72.036882 104.482086 280.640168</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> t0 28.1465200  14.5530865 14.905389  9.807488  23.739815   8.922808  17.270803</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        [,160]    [,161]     [,162]     [,163]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b1   4.949971 12.606945   7.699826  73.336659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b2   1.085894  1.006985   2.805741   1.891158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> b3 147.280570 81.078539  55.745848  16.612048</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A   31.624591 21.104297   9.872584  15.872484</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ve  29.119189 10.026267  39.210392  73.764867</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vc  53.630145 43.632975 156.095672 149.269958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> t0  11.279949  8.807044  12.906983  39.839524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b1   4.949971 12.606945   7.699826  11.325187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b2   1.085894  1.006985   2.805741   2.609357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> b3 147.280570 81.078539  55.745848  38.770558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A   31.624591 21.104297   9.872584  12.263001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ve  29.119189 10.026267  39.210392  35.944024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vc  53.630145 43.632975 156.095672 144.074015</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> t0  11.279949  8.807044  12.906983  23.594698</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$last_theta_sig_inv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]       [,3]         [,4]        [,5]       [,6]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  37.9006039  0.78504009  21.168681  -8.02002969  -3.1179309 -20.862727</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   0.7850401  2.77819296   5.043481  -0.01040868  -0.8470526  21.143571</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  21.1686805  5.04348055  51.698163 -11.40381292  -7.3617303  31.496707</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  -8.0200297 -0.01040868 -11.403813  26.71454570 -16.4017162  33.190575</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  -3.1179309 -0.84705263  -7.361730 -16.40171622  49.8320607 -35.639965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -20.8627275 21.14357141  31.496707  33.19057459 -35.6399652 230.175776</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7,] -10.1035637  0.45531852  -5.883792  -5.57403196  -2.3083550   4.920317</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -10.1035637</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   0.4553185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  -5.8837922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  -5.5740320</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  -2.3083550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,]   4.9203165</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7,]  15.3652974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]      [,3]       [,4]       [,5]       [,6]       [,7]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 27.761365  1.543150 11.149516  -6.940989  11.303651  -9.490370  -4.519236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  1.543150  3.027834  3.256707  -1.944982   3.190435  21.205194   4.371575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 11.149516  3.256707 58.636201  -7.317076   3.971840  39.922218  -9.303892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -6.940989 -1.944982 -7.317076  28.990439 -16.573851  22.227993 -13.856334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 11.303651  3.190435  3.971840 -16.573851  39.948157  -2.441877   9.066448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -9.490370 21.205194 39.922218  22.227993  -2.441877 228.200561  22.307935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7,] -4.519236  4.371575 -9.303892 -13.856334   9.066448  22.307935  34.630020</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples$idx</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 163</span>

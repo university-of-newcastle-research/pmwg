@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmwg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.7</span>
       </span>
     </div>
 
@@ -65,12 +65,30 @@
       <small>Source: <a href="https://github.com/university-of-newcastle-research/pmwg/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.6" id="pmwg-026">pmwg 0.2.6<a class="anchor" aria-label="anchor" href="#pmwg-026"></a></h2></div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.5" id="pmwg-025">pmwg 0.2.5<a class="anchor" aria-label="anchor" href="#pmwg-025"></a></h2></div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.4" id="pmwg-024">pmwg 0.2.4<a class="anchor" aria-label="anchor" href="#pmwg-024"></a></h2></div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.3" id="pmwg-023">pmwg 0.2.3<a class="anchor" aria-label="anchor" href="#pmwg-023"></a></h2></div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.2" id="pmwg-022">pmwg 0.2.2<a class="anchor" aria-label="anchor" href="#pmwg-022"></a></h2></div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.2.1" id="pmwg-021">pmwg 0.2.1<a class="anchor" aria-label="anchor" href="#pmwg-021"></a></h2></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.7" id="pmwg-027">pmwg 0.2.7<a class="anchor" aria-label="anchor" href="#pmwg-027"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-2-7">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-7"></a></h3>
+<ul><li>The <code>run_stage</code> function now takes a new argument: <code>p_accept</code>. The pmwg sampler object now stores a per subject epsilon (scale parameter for the covariance matrix). The <code>p_accept</code> argument is a target value for acceptance of new particles. Subjects with a low acceptance rate compared to the target lead to a lower epsilon and subjects with a high acceptance rate lead to a higher epsilon. Hyper parameters for this epsilon tuning come from: Garthwaite, P. H., Fan, Y., &amp; Sisson, S. A. (2016).</li>
+<li>The <code>augment_sampler_epsilon</code> function allows the new pmwg package functions to work with older (saved) pmwg objects by extending the internal storage of the pmwg object and allowing subject specific epsilon values to be stored.</li>
+<li>Start points for sampling are now sampled from the prior rather than a standard normal. In cases where parameter values are not expected to be centred on zero this can lead to better start values.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-improvements-and-fixes-0-2-7">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-0-2-7"></a></h3>
+<ul><li>Improve error traceback when an error in the user supplied log-likelihood function is detected. Improves the ability of the enduser to debug their code.</li>
+<li>Improve progress bar formatting to remove warnings which caused display issues.</li>
+<li>BUGFIX: Calculation of scale parameter for a_half generation implemented incorrectly when sampling the mixture weights. Updated to reflect the original specification.</li>
+<li>Remove missing values from the debug object created when the gibbs step fails. Removes friction when debugging errors.</li>
+<li>Default on the number of particles for a <code>run_stage</code> call has been changed from 1000 to 100 particles. 100 particles should be more than sufficient for most models/data.</li>
+<li>Default on the number of particles for an <code>init</code> call has been changed from 1000 to 100 particles. 100 particles should be more than sufficient for most models/data.</li>
+<li>Default on the update frequency of the proposal distribution has been changed from 500 to 50 particles. This is a relatively cheap operation, so more frequent updates to improve estimation efficiency seems appropriate.</li>
+<li>Improve message formatting to make output cleaner and more informative.</li>
+<li>Better tests for malformed covariance matrixes have been imported into pmwg for cleaner reporting to the end user.</li>
+<li>Increases to the number of unique samples before attempting proposal distribution creation. With the new subject specific epsilon we are more likely to reach the <code>n_unique</code> value earlier. We now run for a bit longer to improve initial proposal distributions.</li>
+<li>Vendored in the random sampling from an inverse wishart distribution functions, allowing the removal of the MCMCpack dependency.</li>
+<li>Minor changes to documentation.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="pmwg-020">pmwg 0.2.0<small>2021-02-17</small><a class="anchor" aria-label="anchor" href="#pmwg-020"></a></h2>
 <div class="section level3">
