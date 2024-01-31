@@ -1,16 +1,25 @@
 # pmwg 0.2.7
 
-# pmwg 0.2.6
+## New features
 
-# pmwg 0.2.5
+* The `run_stage` function now takes a new argument: `p_accept`. The pmwg sampler object now stores a per subject epsilon (scale parameter for the covariance matrix). The `p_accept` argument is a target value for acceptance of new particles. Subjects with a low acceptance rate compared to the target lead to a lower epsilon and subjects with a high acceptance rate lead to a higher epsilon. Hyper parameters for this epsilon tuning come from: Garthwaite, P. H., Fan, Y., & Sisson, S. A. (2016).
+* The `augment_sampler_epsilon` function allows the new pmwg package functions to work with older (saved) pmwg objects by extending the internal storage of the pmwg object and allowing subject specific epsilon values to be stored.
+* Start points for sampling are now sampled from the prior rather than a standard normal. In cases where parameter values are not expected to be centred on zero this can lead to better start values.
 
-# pmwg 0.2.4
+## Minor improvements and fixes
 
-# pmwg 0.2.3
-
-# pmwg 0.2.2
-
-# pmwg 0.2.1
+* Improve error traceback when an error in the user supplied log-likelihood function is detected. Improves the ability of the enduser to debug their code.
+* Improve progress bar formatting to remove warnings which caused display issues.
+* BUGFIX: Calculation of scale parameter for a_half generation implemented incorrectly when sampling the mixture weights. Updated to reflect the original specification.
+* Remove missing values from the debug object created when the gibbs step fails. Removes friction when debugging errors.
+* Default on the number of particles for a `run_stage` call has been changed from 1000 to 100 particles. 100 particles should be more than sufficient for most models/data.
+* Default on the number of particles for an `init` call has been changed from 1000 to 100 particles. 100 particles should be more than sufficient for most models/data.
+* Default on the update frequency of the proposal distribution has been changed from 500 to 50 particles. This is a relatively cheap operation, so more frequent updates to improve estimation efficiency seems appropriate.
+* Improve message formatting to make output cleaner and more informative.
+* Better tests for malformed covariance matrixes have been imported into pmwg for cleaner reporting to the end user.
+* Increases to the number of unique samples before attempting proposal distribution creation. With the new subject specific epsilon we are more likely to reach the `n_unique` value earlier. We now run for a bit longer to improve initial proposal distributions.
+* Vendored in the random sampling from an inverse wishart distribution functions, allowing the removal of the MCMCpack dependency.
+* Minor changes to documentation.
 
 # pmwg 0.2.0
 
