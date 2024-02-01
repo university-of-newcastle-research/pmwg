@@ -66,7 +66,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.2.7" id="pmwg-027">pmwg 0.2.7<a class="anchor" aria-label="anchor" href="#pmwg-027"></a></h2>
+<h2 class="page-header" data-toc-text="0.2.7" id="pmwg-027">pmwg 0.2.7<small>2024-01-31</small><a class="anchor" aria-label="anchor" href="#pmwg-027"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-2-7">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-7"></a></h3>
 <ul><li>The <code>run_stage</code> function now takes a new argument: <code>p_accept</code>. The pmwg sampler object now stores a per subject epsilon (scale parameter for the covariance matrix). The <code>p_accept</code> argument is a target value for acceptance of new particles. Subjects with a low acceptance rate compared to the target lead to a lower epsilon and subjects with a high acceptance rate lead to a higher epsilon. Hyper parameters for this epsilon tuning come from: Garthwaite, P. H., Fan, Y., &amp; Sisson, S. A. (2016).</li>
